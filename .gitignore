@@ -1,0 +1,8 @@
+*~
+main
+vendor/*
+!vendor/vendor.json
+.vscode/
+cmd/viagemPlanejamentoAPI/debug
+m2m-viagem-planejamento-api.bin
+*debug.test
