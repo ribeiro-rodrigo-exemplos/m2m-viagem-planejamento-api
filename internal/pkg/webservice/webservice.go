@@ -48,6 +48,7 @@ func InitServer() {
 	mid.Use(intercept.ValidaToken)
 
 	router.POST("/v1/viagemPlanejamento/filtrar", ConsultaViagemPlanejamento)
+	router.POST("/api/v1/planejamentoviagem/dashboard", ConsultaViagemPlanejamento)
 
 	logger.Infof("Servidor rodando na porta %v\n", cfg.Config.Server.Port)
 	err := http.ListenAndServe(":"+cfg.Config.Server.Port, myWeb{})
