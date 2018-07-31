@@ -2,6 +2,8 @@
 main
 vendor/*
 !vendor/vendor.json
+configs/*
+!configs/config-sample.json
 .vscode/
 cmd/viagemPlanejamentoAPI/debug
 m2m-viagem-planejamento-api.bin

@@ -1,0 +1,63 @@
+{
+    "environment" : {
+        "name": "zndev"
+    },
+
+    "service":{
+        "viagemplanejamento":{
+            "maxConcurrent": 4
+        }
+    },
+
+    "mysql":{
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "password": "root",
+        "database": "frota_local",
+        "maxIdleConns": 5,
+        "maxOpenConns": 15,
+        "reconnect": 5,
+        "reconnectSleep": 5
+    },
+
+    "mongodb":{
+        "host": "localhost",
+        "port": 27017,
+        "database": "frota_local",
+        "timeout": 120
+    },
+
+    "hazelcast":{
+        "name": "VP_API",
+        "host": "127.0.0.1",
+        "port": "5701"
+    },
+
+    "logging":{
+        "file": "/var/log/m2m-viagem-planejamento-api.log",
+        "level":{
+            "ROOT": "INFO",
+            "cache": "DEBUG",
+            "database": "DEBUG",
+            "intercept": "DEBUG",
+            "menssageria": "DEBUG",
+            "repository": "DEBUG",
+            "service.viagemplanejamento": "DEBUG",
+            "service.viagemplanejamento.CONCORRENCIA": "DEBUG",
+            "service.viagemplanejamento.FILTROS": "DEBUG",
+            "service.viagemplanejamento.ESCALA": "DEBUG",
+            "service.viagemplanejamento.PLANEJAMENTO": "DEBUG",
+            "service.viagemplanejamento.VIAGEM_EXECUTADA": "DEBUG",
+            "service.viagemplanejamento.RESULTADO": "DEBUG",
+            "webservice": "DEBUG"
+        }
+    },
+
+    "chavejwt": "m2m-secret",
+
+    "server":{
+        "port": "8080"
+    }
+}
+

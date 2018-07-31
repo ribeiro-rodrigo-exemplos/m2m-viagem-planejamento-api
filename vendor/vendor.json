@@ -1,0 +1,183 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"path": "configor",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "Pc2ORQp+VY3Un/dkh4QwLC7R6lE=",
+			"path": "github.com/BurntSushi/toml",
+			"revision": "a368813c5e648fee92e5f6c30e3944ff9d5e8895",
+			"revisionTime": "2017-06-26T11:06:00Z"
+		},
+		{
+			"checksumSHA1": "4772zXrOaPVeDeSgdiV7Vp4KEjk=",
+			"path": "github.com/dgrijalva/jwt-go",
+			"revision": "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e",
+			"revisionTime": "2018-03-08T23:13:08Z"
+		},
+		{
+			"checksumSHA1": "k9izYoyobR8Upb3Yjsw9htgE/Mk=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "99ff426eb706cffe92ff3d058e168b278cabf7c7",
+			"revisionTime": "2018-07-19T07:19:42Z"
+		},
+		{
+			"checksumSHA1": "g3yh4Fc7Opz9cwnICvUQCFQQ1RA=",
+			"path": "github.com/hazelcast/hazelcast-go-client",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "5+veYVjPIVUqS6zhHFVIqBDXyd4=",
+			"path": "github.com/hazelcast/hazelcast-go-client/config",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "8lKZyEu70BrZXrewgu48BOfIwdo=",
+			"path": "github.com/hazelcast/hazelcast-go-client/core",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "Ludxc5Ix8iUayn3KjrCU2QPg7c4=",
+			"path": "github.com/hazelcast/hazelcast-go-client/internal",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "xB4+BkDlB9eDlrX86vjjlLYqhr4=",
+			"path": "github.com/hazelcast/hazelcast-go-client/internal/common",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "jfI2cuW4Oaa5pDXd0LE6o8W5WMM=",
+			"path": "github.com/hazelcast/hazelcast-go-client/internal/common/collection",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "Y8aiy5b2pzRl7uv3GLt6z4Y+91g=",
+			"path": "github.com/hazelcast/hazelcast-go-client/internal/flake_id",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "dQNNZRH1EqyKfZ4OlXm/9DDohN4=",
+			"path": "github.com/hazelcast/hazelcast-go-client/internal/predicates",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "gOjaTOdSL7M75lpV1lg3m5thjaM=",
+			"path": "github.com/hazelcast/hazelcast-go-client/internal/protocol",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "MizxfHBeTm/30ayWzfBTT24tuwU=",
+			"path": "github.com/hazelcast/hazelcast-go-client/internal/serialization",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "n0ByMvk9L3NfLu13Mcws5f/549A=",
+			"path": "github.com/hazelcast/hazelcast-go-client/internal/serialization/classdef",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "C37ZhReViTbOS515lMcr6XCrPyw=",
+			"path": "github.com/hazelcast/hazelcast-go-client/serialization",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "ThfOImwzp6iPuU6g+Dw3wFMVvvI=",
+			"path": "github.com/hazelcast/hazelcast-go-client/serialization/classdef",
+			"revision": "da1bb5ba3442798e68f8cbe54a76e966edee5ccd",
+			"revisionTime": "2018-03-29T14:53:39Z"
+		},
+		{
+			"checksumSHA1": "4TQcd1G7pH8xwHg50zebCn3lRPw=",
+			"path": "github.com/jinzhu/configor",
+			"revision": "ec34f328956f53dfbd06e9f5306e37e6943443c3",
+			"revisionTime": "2018-03-08T03:45:38Z"
+		},
+		{
+			"checksumSHA1": "T+kh2poktvucf6QrY3nRo09otto=",
+			"path": "github.com/julienschmidt/httprouter",
+			"revision": "d1898390779332322e6b5ca5011da4bf249bb056",
+			"revisionTime": "2018-02-22T16:05:26Z"
+		},
+		{
+			"path": "github.com/julienschmidt/httprouter.",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "UOQ1nSRZ3f+CmrGuMuBItADE/44=",
+			"path": "github.com/natefinch/lumberjack",
+			"revision": "6d54cbc97d7e419cb85c9a5d2123d24f9610817d",
+			"revisionTime": "2015-04-11T23:30:54Z"
+		},
+		{
+			"checksumSHA1": "+l9J8Fkd6bCMu/xmdzITktY4RlE=",
+			"path": "github.com/rileyr/middleware",
+			"revision": "adaf4755ca16196265a29ec50a05936b60a5b5a8",
+			"revisionTime": "2017-12-18T20:29:14Z"
+		},
+		{
+			"checksumSHA1": "bUqy9i5qUKJ05XeI6ZaccYeLOSA=",
+			"path": "github.com/streadway/amqp",
+			"revision": "8e4aba63da9fc5571e01c6a45dc809a58cbc5a68",
+			"revisionTime": "2018-03-15T18:46:02Z"
+		},
+		{
+			"checksumSHA1": "1D8GzeoFGUs5FZOoyC2DpQg8c5Y=",
+			"path": "gopkg.in/mgo.v2",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "YsB2DChSV9HxdzHaKATllAUKWSI=",
+			"path": "gopkg.in/mgo.v2/bson",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "XQsrqoNT1U0KzLxOFcAZVvqhLfk=",
+			"path": "gopkg.in/mgo.v2/internal/json",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "LEvMCnprte47qdAxWvQ/zRxVF1U=",
+			"path": "gopkg.in/mgo.v2/internal/sasl",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "+1WDRPaOphSCmRMxVPIPBV4aubc=",
+			"path": "gopkg.in/mgo.v2/internal/scram",
+			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
+			"revisionTime": "2016-08-18T02:01:20Z"
+		},
+		{
+			"checksumSHA1": "TM3Neoy1xRAKyZYMGzKc41sDFW4=",
+			"path": "gopkg.in/natefinch/lumberjack.v2",
+			"revision": "a96e63847dc3c67d17befa69c303767e2f84e54f",
+			"revisionTime": "2017-05-31T16:03:50Z"
+		},
+		{
+			"checksumSHA1": "HmUAWd1Jm25cGH4Pyf3Zgp2RhkI=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "86f5ed62f8a0ee96bd888d2efdfd6d4fb100a4eb",
+			"revisionTime": "2018-03-26T05:07:29Z"
+		}
+	],
+	"rootPath": "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api"
+}
