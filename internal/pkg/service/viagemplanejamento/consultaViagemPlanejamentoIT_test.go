@@ -123,7 +123,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 		DataInicio: "2018-07-24 18:00:00",
 		// DataFim:    "2018-07-24 23:59:59",
 		// DataFim: "2018-07-25 17:59:59",
-		DataFim: "2018-07-24 20:00:00",
+		DataFim: "2018-08-02 20:00:00",
 	}
 
 	con, err := database.GetSQLConnection()
