@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
+	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/cache"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/database"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/dto"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/model"
@@ -19,6 +20,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	logger = logging.NewLogger("service.viagemplanejamento", cfg.Config.Logging.Level)
 	database.InitConfig()
 	repository.InitConfig()
+	cache.InitConfig()
 	t.Log("TestConsultarViagemPlanejamentoPorUmTrajeto")
 
 	var err error
@@ -48,7 +50,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	}
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository)
+	cacheCliente, _ := cache.GetCliente(nil)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -104,6 +107,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 	InitConfig()
 	database.InitConfig()
 	repository.InitConfig()
+	cache.InitConfig()
 	t.Log("TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias")
 
 	var err error
@@ -119,7 +123,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 		DataInicio: "2018-07-24 18:00:00",
 		// DataFim:    "2018-07-24 23:59:59",
 		// DataFim: "2018-07-25 17:59:59",
-		DataFim: "2018-08-02 20:00:00",
+		DataFim: "2018-07-24 20:00:00",
 	}
 
 	con, err := database.GetSQLConnection()
@@ -134,7 +138,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 	}
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository)
+	cacheCliente, _ := cache.GetCliente(nil)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 

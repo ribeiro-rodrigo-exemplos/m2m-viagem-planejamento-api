@@ -19,12 +19,12 @@ func NewClienteRepository(connection *sql.DB) *ClienteRepository {
 }
 
 //CarregarMapaClientes -
-func (c *ClienteRepository) CarregarMapaClientes() (map[int16]*model.Cliente, error) {
-	mapaClientes := make(map[int16]*model.Cliente)
+func (c *ClienteRepository) CarregarMapaClientes() (map[int32]*model.Cliente, error) {
+	mapaClientes := make(map[int32]*model.Cliente)
 	var err error
 
 	var (
-		id       int16
+		id       int32
 		nome     string
 		timezone string
 	)

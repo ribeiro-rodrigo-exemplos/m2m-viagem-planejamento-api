@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
+	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/cache"
 	cfg "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/config"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/dto"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/model"
@@ -26,15 +27,17 @@ func InitConfig() {
 
 //Service -
 type Service struct {
-	planEscRep *repository.PlanejamentoEscalaRepository
-	vigExecRep *repository.ViagemExecutadaRepository
+	planEscRep   *repository.PlanejamentoEscalaRepository
+	vigExecRep   *repository.ViagemExecutadaRepository
+	cacheCliente *cache.Cliente
 }
 
 //NewViagemPlanejamentoService -
-func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository) *Service {
+func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente) *Service {
 	vps := &Service{}
 	vps.planEscRep = planEscRep
 	vps.vigExecRep = vigExecRep
+	vps.cacheCliente = cacheCliente
 	return vps
 }
 
@@ -46,6 +49,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	periodos := util.SplitDiasPeriodo(periodo)
 	trajetos := filtro.ListaTrajetos
 	var filtrosConsulta []dto.FilterDTO
+	cliente := vps.cacheCliente.Cache[filtro.IDCliente]
 	for _, p := range periodos {
 		for _, t := range trajetos {
 			f := dto.FilterDTO{
@@ -58,6 +62,9 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 				DataInicio: util.FormatarAMDHMS(p.Inicio),
 				DataFim:    util.FormatarAMDHMS(p.Fim),
 				TipoDia:    model.TiposDia.FromDate(p.Inicio, []string{"O", "F"}),
+				Complemento: dto.DadosComplementares{
+					Cliente: cliente,
+				},
 			}
 			filtrosConsulta = append(filtrosConsulta, f)
 		}

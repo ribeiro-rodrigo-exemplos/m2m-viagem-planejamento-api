@@ -10,7 +10,7 @@ var cacheCliente *Cliente
 
 //Cliente -
 type Cliente struct {
-	Cache map[int16]*model.Cliente
+	Cache map[int32]*model.Cliente
 }
 
 //GetCliente retorna instancia funcional de cache de cliente

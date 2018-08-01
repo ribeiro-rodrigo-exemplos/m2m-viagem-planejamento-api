@@ -27,7 +27,7 @@ func NewPlanejamentoEscalaRepository(connection *sql.DB) *PlanejamentoEscalaRepo
 }
 
 //ListarPlanejamentosEscala -
-func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.FilterDTO, cache map[int16]*model.Cliente) ([]*model.ProcPlanejamentoEscala, error) {
+func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.FilterDTO) ([]*model.ProcPlanejamentoEscala, error) {
 	planejamentosEscala := []*model.ProcPlanejamentoEscala{}
 	var err error
 
@@ -51,7 +51,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 
 	dtInicio := filtro.GetDataInicioString()
 	dtFim := filtro.GetDataFimString()
-	idCliente := strconv.Itoa(filtro.IDCliente)
+	idCliente := strconv.Itoa(int(filtro.IDCliente))
 	var tiposDia = make([]string, len(filtro.TipoDia))
 	for i, tipoDia := range filtro.TipoDia {
 		tiposDia[i] = "\"" + tipoDia + "\""
@@ -67,6 +67,13 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		return nil, err
 	}
 	defer rows.Close()
+
+	var loc *time.Location
+
+	if filtro.Complemento.Cliente != nil {
+		loc = filtro.Complemento.Cliente.Location
+	}
+
 	for rows.Next() {
 		err := rows.Scan(
 			&dataPlan,
@@ -104,12 +111,6 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		var veiculo int32
 		if codVeiculoPlan.Valid {
 			veiculo = int32(codVeiculoPlan.Int64)
-		}
-
-		//TODO - Obter Location do cache do cliente
-		loc, err := time.LoadLocation("America/Sao_Paulo")
-		if err != nil {
-			panic(err)
 		}
 
 		planejamentoEscala := &model.ProcPlanejamentoEscala{

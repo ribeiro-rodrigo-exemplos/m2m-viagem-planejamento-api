@@ -11,12 +11,13 @@ import (
 //FilterDTO filtro para consultas
 type FilterDTO struct {
 	ListaTrajetos []bson.ObjectId `json:"lista_trajetos"`
-	IDCliente     int             `json:"id_cliente"`
+	IDCliente     int32           `json:"id_cliente"`
 	IDVeiculo     int             `json:"id_veiculo"`
 	Ordenacao     []string        `json:"ordenacao"`
 	DataInicio    string          `json:"data_inicio"`
 	DataFim       string          `json:"data_fim"`
 	TipoDia       []string
+	Complemento   DadosComplementares
 }
 
 //GetDataInicio -
@@ -35,6 +36,11 @@ func (f *FilterDTO) GetDataInicioString() string {
 	}
 	str := util.FormatarAMDHMS(dt)
 	return str
+}
+
+//DadosComplementares -
+type DadosComplementares struct {
+	Cliente *model.Cliente
 }
 
 //GetDataFim -

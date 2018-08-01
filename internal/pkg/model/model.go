@@ -27,9 +27,19 @@ type ProcPlanejamentoEscala struct {
 
 //Cliente -
 type Cliente struct {
-	IDCliente int16  `json:""`
+	IDCliente int32  `json:""`
 	Nome      string `json:""`
 	Timezone  string `json:""`
+	Location  *time.Location
+}
+
+// AtualizarLocation -
+func (c *Cliente) AtualizarLocation() {
+	loc, err := time.LoadLocation(c.Timezone)
+	if err == nil {
+		c.Location = loc
+	}
+
 }
 
 //Modelo - MongoDB

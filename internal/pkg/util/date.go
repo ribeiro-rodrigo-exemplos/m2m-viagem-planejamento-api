@@ -133,9 +133,11 @@ func ArredondarFimDia(t *time.Time) *time.Time {
 }
 
 //Concatenar -
-func Concatenar(data time.Time, hora time.Time, loc *time.Location) time.Time {
-	novaDataHora := time.Date(data.Year(), data.Month(), data.Day(), hora.Hour(), hora.Minute(), hora.Second(), 0, loc)
-	return novaDataHora
+func Concatenar(data time.Time, hora time.Time, loc *time.Location) (novaDataHora time.Time) {
+	if loc != nil {
+		novaDataHora = time.Date(data.Year(), data.Month(), data.Day(), hora.Hour(), hora.Minute(), hora.Second(), 0, loc)
+	}
+	return
 }
 
 //Periodo -
