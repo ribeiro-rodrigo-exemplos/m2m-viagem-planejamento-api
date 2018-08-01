@@ -27,7 +27,7 @@ func NewPlanejamentoEscalaRepository(connection *sql.DB) *PlanejamentoEscalaRepo
 }
 
 //ListarPlanejamentosEscala -
-func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.FilterDTO) ([]*model.ProcPlanejamentoEscala, error) {
+func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.FilterDTO, cache map[int16]*model.Cliente) ([]*model.ProcPlanejamentoEscala, error) {
 	planejamentosEscala := []*model.ProcPlanejamentoEscala{}
 	var err error
 
