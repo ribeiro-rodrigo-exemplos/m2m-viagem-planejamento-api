@@ -74,6 +74,7 @@ type ViagemDTO struct {
 	VeiculoPlan         string        `json:"veiculoPlan"`
 	VeiculoReal         string        `json:"veiculoReal"`
 	NmTabela            string        `json:"nmTabela"`
+	PartidaOrdenacao    time.Time     `json:"-"`
 	PartidaPlanTime     time.Time     `json:"-"`
 	PartidaPlan         string        `json:"partidaPlan"`
 	ChegadaPlanTime     time.Time     `json:"-"`

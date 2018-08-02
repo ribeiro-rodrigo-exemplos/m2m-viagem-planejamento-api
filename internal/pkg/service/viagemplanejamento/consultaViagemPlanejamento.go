@@ -125,6 +125,8 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	}()
 	wg.Wait()
 
+	dto.OrdenarViagemExecutadaPorData(consultaViagemPlanejamento.Viagens)
+
 	//TODO - Rever totalização
 	consultaViagemPlanejamento.TotExecucao = []int32{int32(len(consultaViagemPlanejamento.Viagens))}
 
@@ -201,6 +203,7 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala) (*dto.Viag
 		IDHorario:          ples.IDHorario,
 		IDEmpresaPlanejada: ples.IDEmpresaPlan,
 		NmTabela:           ples.NmTabela,
+		PartidaOrdenacao:   ples.Partida,
 		PartidaPlanTime:    ples.Partida,
 		PartidaPlan:        util.FormatarHMS(ples.Partida),
 		ChegadaPlanTime:    ples.Chegada,
@@ -272,6 +275,8 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 		diffChegada, diffChegadaFormatada := util.DuracaoEFormatacao(vg.ChegadaPlanTime, vgex.Executada.DataFim)
 		vg.DiffChegadaStr = diffChegadaFormatada
 		vg.DiffChegada = int64(diffChegada.Seconds())
+	} else { //Se planejamento não encontrado
+		vg.PartidaOrdenacao = vgex.Executada.DataInicio
 	}
 
 	vg.VelocidadeMedia = vgex.VelocidadeMedia

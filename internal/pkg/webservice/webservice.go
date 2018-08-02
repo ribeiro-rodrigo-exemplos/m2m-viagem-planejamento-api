@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
+	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/cache"
 	cfg "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/config"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/database"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/dto"
@@ -73,7 +74,12 @@ func carragarDependencias() error {
 	}
 	vigExecRep := repository.NewViagemExecutadaRepository(mongoDB)
 
-	viagemplanejamentoService = viagemplanejamento.NewViagemPlanejamentoService(planEscRep, vigExecRep)
+	cacheCliente, err := cache.GetCliente(nil)
+	if err != nil {
+		return err
+	}
+
+	viagemplanejamentoService = viagemplanejamento.NewViagemPlanejamentoService(planEscRep, vigExecRep, cacheCliente)
 	return err
 }
 

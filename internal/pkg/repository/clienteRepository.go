@@ -45,12 +45,15 @@ func (c *ClienteRepository) CarregarMapaClientes() (map[int32]*model.Cliente, er
 		logger.Debugf("%v, %v, %v", id, nome, timezone)
 		/**/
 
-		mapaClientes[id] = &model.Cliente{
+		cliente := &model.Cliente{
 			IDCliente: id,
 			Nome:      nome,
 			Timezone:  timezone,
 		}
-		logger.Tracef("%#v\n", mapaClientes[id])
+		cliente.AtualizarLocation()
+		mapaClientes[id] = cliente
+
+		logger.Tracef("%#v\n", cliente)
 	}
 	err = rows.Err()
 	if err != nil {
