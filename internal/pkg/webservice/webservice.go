@@ -3,6 +3,7 @@ package webservice
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/cache"
@@ -50,6 +51,7 @@ func InitServer() {
 
 	router.POST("/v1/viagemPlanejamento/filtrar", ConsultaViagemPlanejamento)
 	router.POST("/api/v1/planejamentoviagem/dashboard", ConsultaViagemPlanejamento)
+	router.PUT("/api/v1/planejamentoviagem/dashboard", ConsultaViagemPlanejamentoDashboard)
 
 	logger.Infof("Servidor rodando na porta %v\n", cfg.Config.Server.Port)
 	err := http.ListenAndServe(":"+cfg.Config.Server.Port, myWeb{})
@@ -97,6 +99,41 @@ func ConsultaViagemPlanejamento(res http.ResponseWriter, req *http.Request, para
 	logger.Tracef("FILTRO: %#v\n", filter)
 
 	consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filter)
+
+	if err != nil {
+		logger.Errorf("Erro ConsultarViagemPlanejamento %+v - %s\n", filter, err)
+		res.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	res.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	res.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(res).Encode(consultaViagemPlanejamentoDTO)
+}
+
+//ConsultaViagemPlanejamentoDashboard - é responsável pela consulta de Viagens x Planejamento
+func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Request, params httprouter.Params) {
+
+	var filter dto.FilterDashboardDTO
+	err := json.NewDecoder(req.Body).Decode(&filter)
+	if err != nil {
+		logger.Errorf("Erro ao converter filtro %v\n", err)
+		res.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	logger.Tracef("FILTRO: %#v\n", filter)
+
+	filterAdaptado := dto.FilterDTO{
+		ListaTrajetos: filter.ListaTrajetos,
+		IDCliente:     filter.IDCliente,
+		Ordenacao:     filter.Ordenacao,
+		DataInicio:    filter.DataInicio + " " + strings.Replace(filter.HoraInicio, " ", "", -1),
+		DataFim:       filter.DataFim + " " + strings.Replace(filter.HoraFim, " ", "", -1),
+	}
+
+	consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filterAdaptado)
 
 	if err != nil {
 		logger.Errorf("Erro ConsultarViagemPlanejamento %+v - %s\n", filter, err)

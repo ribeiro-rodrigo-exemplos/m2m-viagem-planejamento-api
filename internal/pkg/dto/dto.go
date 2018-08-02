@@ -20,6 +20,20 @@ type FilterDTO struct {
 	Complemento   DadosComplementares
 }
 
+//FilterDashboardDTO filtro para consultas dashboard
+type FilterDashboardDTO struct {
+	ListaLinhas   []bson.ObjectId `json:"linhas"`
+	ListaTrajetos []bson.ObjectId `json:"trajetos"`
+	IDCliente     int32           `json:"idCliente"`
+	Status        []string        `json:"status"`
+	Ordenacao     []string        `json:"ordenacao"`
+	DataInicio    string          `json:"dataInicio"`
+	HoraInicio    string          `json:"horaInicio"`
+	DataFim       string          `json:"dataFim"`
+	HoraFim       string          `json:"horaFim"`
+	Timezone      string          `json:"timezone"`
+}
+
 //GetDataInicio -
 func (f *FilterDTO) GetDataInicio() time.Time {
 	var dt time.Time
