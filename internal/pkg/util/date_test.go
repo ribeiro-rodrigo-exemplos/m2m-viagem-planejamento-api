@@ -77,6 +77,30 @@ func TestDuracaoEFormatacao02h00m15s(t *testing.T) {
 	}
 }
 
+func TestDuracaoEArredondamentoMinutos02h00m15s(t *testing.T) {
+	var err error
+	inicio, err := time.Parse("2006-01-02 15:04:05", "2018-07-27 12:00:00")
+	if err != nil {
+		t.Error(err)
+	}
+	fim, err := time.Parse("2006-01-02 15:04:05", "2018-07-27 14:00:15")
+	if err != nil {
+		t.Error(err)
+	}
+	duracaoEsperada := 120
+	formatacaoEsperada := "02:00:15"
+
+	d, f := DuracaoEFormatacao(inicio, fim)
+
+	if formatacaoEsperada != f {
+		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
+	}
+
+	if d.Round(time.Minute).Minutes() != float64(duracaoEsperada) {
+		t.Errorf("Duração esperada %vs é diferente de %v\n", duracaoEsperada, d.Round(time.Minute).Minutes())
+	}
+}
+
 func TestDuracaoEFormatacao3horas(t *testing.T) {
 	var err error
 	inicio, err := time.Parse("2006-01-02 15:04:05", "2018-07-27 12:00:00")

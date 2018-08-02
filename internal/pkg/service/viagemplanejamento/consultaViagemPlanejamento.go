@@ -265,16 +265,16 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 
 	duracao, duracaoFormatada := util.DuracaoEFormatacao(vgex.Executada.DataInicio, vgex.Executada.DataFim)
 	vg.Duracao = duracaoFormatada
-	vg.DuracaoSeg = int64(duracao.Seconds())
+	vg.DuracaoSeg = int64(duracao.Round(time.Minute).Minutes())
 
 	if vg.IDHorario > 0 { //Se planejamento encontrado
 		diffPartida, diffPartidaFormatada := util.DuracaoEFormatacao(vg.PartidaPlanTime, vgex.Executada.DataInicio)
 		vg.DiffPartidaStr = diffPartidaFormatada
-		vg.DiffPartida = int64(diffPartida.Seconds())
+		vg.DiffPartida = int64(diffPartida.Round(time.Minute).Minutes())
 
 		diffChegada, diffChegadaFormatada := util.DuracaoEFormatacao(vg.ChegadaPlanTime, vgex.Executada.DataFim)
 		vg.DiffChegadaStr = diffChegadaFormatada
-		vg.DiffChegada = int64(diffChegada.Seconds())
+		vg.DiffChegada = int64(diffChegada.Round(time.Minute).Minutes())
 	} else { //Se planejamento não encontrado
 		vg.PartidaOrdenacao = vgex.Executada.DataInicio
 	}
