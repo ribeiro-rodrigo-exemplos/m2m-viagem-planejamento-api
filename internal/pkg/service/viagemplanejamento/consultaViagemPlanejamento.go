@@ -112,6 +112,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	consultaViagemPlanejamento := new(dto.ConsultaViagemPlanejamentoDTO)
 	consultaViagemPlanejamento.ViagensExecutada = []*model.ViagemExecutada{}
+	consultaViagemPlanejamento.Totalizadores = &dto.TotalizadoresDTO{}
 	consultaViagemPlanejamento.Viagens = []*dto.ViagemDTO{}
 
 	go func() {
@@ -143,8 +144,42 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	dto.OrdenarViagemExecutadaPorData(consultaViagemPlanejamento.Viagens)
 
-	//TODO - Rever totalização
-	consultaViagemPlanejamento.TotExecucao = []int32{int32(len(consultaViagemPlanejamento.Viagens))}
+	var totPlanejadas int32
+	var totPlanejadasAteMomento int32
+	var totRealizadas int32
+	var totRealizadasPlanejadas int32
+	var totEmAndamento int32
+	var totCanceladas int32
+	var totPassageiros int32
+	var totNaoIniciadas int32
+	var totNaoRealizadas int32
+	var totReforco int32
+	var totAtrasada int32
+
+	totPlanejadas = 5
+	totPlanejadasAteMomento = 5
+	totRealizadas = 5
+	totRealizadasPlanejadas = 5
+	totEmAndamento = 5
+	totCanceladas = 5
+	totPassageiros = 5
+	totNaoIniciadas = 5
+	totNaoRealizadas = 5
+	totReforco = 5
+	totAtrasada = 5
+
+	consultaViagemPlanejamento.Totalizadores.Planejadas = totPlanejadas
+	consultaViagemPlanejamento.Totalizadores.PlanejadasAteMomento = totPlanejadasAteMomento
+	consultaViagemPlanejamento.Totalizadores.Realizadas = totRealizadas
+	consultaViagemPlanejamento.Totalizadores.RealizadasPlanejadas = totRealizadasPlanejadas
+	consultaViagemPlanejamento.Totalizadores.EmAndamento = totEmAndamento
+	consultaViagemPlanejamento.Totalizadores.Canceladas = totCanceladas
+	consultaViagemPlanejamento.Totalizadores.Passageiros = totPassageiros
+	consultaViagemPlanejamento.Totalizadores.NaoIniciadas = totNaoIniciadas
+	consultaViagemPlanejamento.Totalizadores.NaoRealizadas = totNaoRealizadas
+	consultaViagemPlanejamento.Totalizadores.Reforco = totReforco
+	consultaViagemPlanejamento.Totalizadores.Atrasada = totAtrasada
+	consultaViagemPlanejamento.Totalizadores.IndiceExecucao = []int32{int32(len(consultaViagemPlanejamento.Viagens))}
 
 	duracao := time.Since(start)
 

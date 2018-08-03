@@ -124,22 +124,27 @@ type ViagemDTO struct {
 	Placa               string        `json:"placa"`
 }
 
+//TotalizadoresDTO -
+type TotalizadoresDTO struct {
+	Planejadas           int32   `json:"planejadas"`
+	PlanejadasAteMomento int32   `json:"planejadasAteMomento"`
+	Realizadas           int32   `json:"realizadas"`
+	RealizadasPlanejadas int32   `json:"realizadasPlanejadas"`
+	EmAndamento          int32   `json:"emAndamento"`
+	Canceladas           int32   `json:"canceladas"`
+	Passageiros          int32   `json:"passageiros"`
+	NaoIniciadas         int32   `json:"naoIniciadas"`
+	NaoRealizadas        int32   `json:"naoRealizadas"`
+	Reforco              int32   `json:"reforco"`
+	Atrasada             int32   `json:"atrasada"`
+	IndiceExecucao       []int32 `json:"indiceExecucao"`
+	IndicePartida        []int32 `json:"indicePartida"`
+}
+
 //ConsultaViagemPlanejamentoDTO Mapeia resultado da consulta enviados para tela
 type ConsultaViagemPlanejamentoDTO struct {
-	Informacoes             map[string]interface{}   `json:"informacoes"`
-	TotPlanejadas           int32                    `json:"totPlanejadas"`
-	TotPlanejadasAteMomento int32                    `json:"totPlanejadasAteMomento"`
-	TotRealizadas           int32                    `json:"totRealizadas"`
-	TotRealizadasPlanejadas int32                    `json:"totRealizadasPlanejadas"`
-	TotViagensEmAndamento   int32                    `json:"totViagensEmAndamento"`
-	TotCanceladas           int32                    `json:"totCanceladas"`
-	TotPassageiros          int32                    `json:"totPassageiros"`
-	TotNaoIniciadas         int32                    `json:"totNaoIniciadas"`
-	TotNaoRealizadas        int32                    `json:"totNaoRealizadas"`
-	TotReforco              int32                    `json:"totReforco"`
-	TotAtrasada             int32                    `json:"totAtrasada"`
-	TotExecucao             []int32                  `json:"totExecucao"`
-	TotIndicePartida        []int32                  `json:"totIndicePartida"`
-	ViagensExecutada        []*model.ViagemExecutada `json:"viagensExecutada"`
-	Viagens                 []*ViagemDTO             `json:"viagens"`
+	Informacoes      map[string]interface{}   `json:"informacoes"`
+	ViagensExecutada []*model.ViagemExecutada `json:"viagensExecutada"`
+	Totalizadores    *TotalizadoresDTO        `json:"totalizadores"`
+	Viagens          []*ViagemDTO             `json:"viagens"`
 }
