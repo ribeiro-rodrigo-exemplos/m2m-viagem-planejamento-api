@@ -16,7 +16,7 @@ func ObterTimezoneTime(l *time.Location, dataHora string) (time.Time, error) {
 		return timeParse, err
 	}
 
-	return timeParse.UTC(), err
+	return timeParse, err
 }
 
 //ObterMes - obtem o mês do ano
