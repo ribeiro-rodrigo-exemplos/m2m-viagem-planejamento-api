@@ -7,6 +7,7 @@ import (
 	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/database"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/dto"
+	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/model"
 	"gopkg.in/mgo.v2/bson"
 
 	cfg "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/config"
@@ -17,6 +18,13 @@ func TestListarViagensPorTrajetoUmDia(t *testing.T) {
 	logger = logging.NewLogger("repository", cfg.Config.Logging.Level)
 	database.InitConfig()
 	fmt.Println("TestListarViagensPorTrajetoUmDia")
+
+	cliente := &model.Cliente{
+		IDCliente: 209,
+		Nome:      "BRT",
+		Timezone:  "",
+	}
+	cliente.AtualizarLocation()
 
 	filter := dto.FilterDTO{
 		ListaTrajetos: []bson.ObjectId{
@@ -29,6 +37,9 @@ func TestListarViagensPorTrajetoUmDia(t *testing.T) {
 		DataInicio: "2018-07-24 18:00:00",
 		DataFim:    "2018-07-24 23:59:59",
 		TipoDia:    []string{"O", "E", "3", "U"},
+		Complemento: dto.DadosComplementares{
+			Cliente: cliente,
+		},
 	}
 
 	session, err := database.GetMongoDB()

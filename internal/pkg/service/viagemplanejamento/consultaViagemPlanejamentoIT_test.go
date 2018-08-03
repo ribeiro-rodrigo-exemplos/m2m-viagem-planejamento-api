@@ -25,6 +25,9 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 
 	var err error
 
+	cacheCliente, _ := cache.GetCliente(nil)
+	cliente := cacheCliente.Cache[209]
+
 	filter := dto.FilterDTO{
 		ListaTrajetos: []bson.ObjectId{
 			bson.ObjectIdHex("555b6e830850536438063762"),
@@ -35,6 +38,9 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 		Ordenacao:  []string{"veiculo", "data"},
 		DataInicio: "2018-07-24 18:00:00",
 		DataFim:    "2018-07-24 23:59:59",
+		Complemento: dto.DadosComplementares{
+			Cliente: cliente,
+		},
 	}
 	filter.TipoDia = model.TiposDia.FromDate(filter.GetDataInicio(), []string{"O", "F"})
 
@@ -50,7 +56,6 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	}
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
-	cacheCliente, _ := cache.GetCliente(nil)
 	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO

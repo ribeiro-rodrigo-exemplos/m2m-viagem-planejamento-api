@@ -37,6 +37,8 @@ type FilterDashboardDTO struct {
 //GetDataInicio -
 func (f *FilterDTO) GetDataInicio() time.Time {
 	var dt time.Time
+	//TODO - Rever esta trilha de dependências.
+	// Validação deve ser garantida pelo criador(NewFilterDTO()...) da instância,
 	dt, _ = util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataInicio)
 	return dt
 }
@@ -44,6 +46,8 @@ func (f *FilterDTO) GetDataInicio() time.Time {
 //GetDataInicioString -
 func (f *FilterDTO) GetDataInicioString() string {
 	var dt time.Time
+	//TODO - Rever esta trilha de dependências.
+	// Validação deve ser garantida pelo criador(NewFilterDTO()...) da instância,
 	dt, err := util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataInicio)
 	if err != nil {
 		return ""
@@ -60,6 +64,8 @@ type DadosComplementares struct {
 //GetDataFim -
 func (f *FilterDTO) GetDataFim() time.Time {
 	var dt time.Time
+	//TODO - Rever esta trilha de dependências.
+	// Validação deve ser garantida pelo criador(NewFilterDTO()...) da instância,
 	dt, _ = util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataFim)
 	return dt
 }
@@ -67,6 +73,8 @@ func (f *FilterDTO) GetDataFim() time.Time {
 //GetDataFimString -
 func (f *FilterDTO) GetDataFimString() string {
 	var dt time.Time
+	//TODO - Rever esta trilha de dependências.
+	// Validação deve ser garantida pelo criador(NewFilterDTO()...) da instância,
 	dt, err := util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataFim)
 	if err != nil {
 		return ""
