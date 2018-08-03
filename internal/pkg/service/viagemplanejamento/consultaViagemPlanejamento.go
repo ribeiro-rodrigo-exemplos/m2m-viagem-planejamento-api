@@ -126,6 +126,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 				if b {
 					wg.Done()
 					// consultaViagemPlanejamento.ViagensExecutada = append(consultaViagemPlanejamento.ViagensExecutada, resultadoParceialConsulta.ViagensExecutada...)
+					consultaViagemPlanejamento.ViagensExecutadaPendentes = append(consultaViagemPlanejamento.ViagensExecutadaPendentes, resultadoParceialConsulta.ViagensExecutadaPendentes...)
 					consultaViagemPlanejamento.Viagens = append(consultaViagemPlanejamento.Viagens, resultadoParceialConsulta.Viagens...)
 					confirm++
 					loggerConcorrencia.Debugf("Confirm Ok [%d/%d]", confirm, total)
@@ -201,6 +202,7 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 
 	consultaViagemPlanejamentoDTO := &dto.ConsultaViagemPlanejamentoDTO{}
 	viagensDTO := []*dto.ViagemDTO{}
+	viagensExecutadaPendentes := []*model.ViagemExecutada{}
 
 	retornoMapaHorarioViagem := make(chan map[int32]*dto.ViagemDTO)
 
@@ -234,12 +236,14 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 
 		} else if vgexNaoEncontrada != nil {
 
+			viagensExecutadaPendentes = append(viagensExecutadaPendentes, vgexNaoEncontrada)
 		}
 
 	}
 
 	// consultaViagemPlanejamentoDTO.ViagensExecutada = viagensExecutada
 	consultaViagemPlanejamentoDTO.Viagens = viagensDTO
+	consultaViagemPlanejamentoDTO.ViagensExecutadaPendentes = viagensExecutadaPendentes
 
 	logger.Tracef("%+v\n", consultaViagemPlanejamentoDTO)
 

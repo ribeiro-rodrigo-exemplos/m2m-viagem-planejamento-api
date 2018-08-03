@@ -151,8 +151,9 @@ type TotalizadoresDTO struct {
 
 //ConsultaViagemPlanejamentoDTO Mapeia resultado da consulta enviados para tela
 type ConsultaViagemPlanejamentoDTO struct {
-	Informacoes      map[string]interface{}   `json:"informacoes"`
-	ViagensExecutada []*model.ViagemExecutada `json:"viagensExecutada"`
-	Totalizadores    *TotalizadoresDTO        `json:"totalizadores"`
-	Viagens          []*ViagemDTO             `json:"viagens"`
+	Informacoes               map[string]interface{}   `json:"informacoes"`
+	ViagensExecutada          []*model.ViagemExecutada `json:"viagensExecutada"`
+	Totalizadores             *TotalizadoresDTO        `json:"totalizadores"`
+	Viagens                   []*ViagemDTO             `json:"viagens"`
+	ViagensExecutadaPendentes []*model.ViagemExecutada `json:"-"`
 }
