@@ -75,9 +75,17 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	total := len(filtrosConsulta)
 	loggerConcorrencia.Debugf("Pending [%d]", total)
 
+	//TODO - Tornar channels atributos de instância para diminuir quantidade de objetos criados, com isso
+	//		Channel concluido não será mais necessário
+	// Criar pool de *viagemplanejamento.Service para limitar quantidade de consultas simultâneas
 	filaTrabalho := make(chan dto.FilterDTO, 50)
 	resultado := make(chan *dto.ConsultaViagemPlanejamentoDTO, 5)
 	captura := make(chan error, 5)
+	concluido := make(chan bool, 2)
+	defer close(filaTrabalho)
+	defer close(resultado)
+	defer close(captura)
+	defer close(concluido)
 
 	var wg sync.WaitGroup
 	wg.Add(total)
@@ -109,17 +117,25 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	go func() {
 		confirm := 0
 		for {
+			var b bool
 			select {
-			case resultadoParceialConsulta := <-resultado:
-				wg.Done()
-				// consultaViagemPlanejamento.ViagensExecutada = append(consultaViagemPlanejamento.ViagensExecutada, resultadoParceialConsulta.ViagensExecutada...)
-				consultaViagemPlanejamento.Viagens = append(consultaViagemPlanejamento.Viagens, resultadoParceialConsulta.Viagens...)
-				confirm++
-				loggerConcorrencia.Debugf("Confirm Ok [%d/%d]", confirm, total)
-			case err = <-captura:
-				wg.Done()
-				confirm++
-				loggerConcorrencia.Debugf("Confirm Err [%d/%d]", confirm, total)
+			case resultadoParceialConsulta, b := <-resultado:
+				if b {
+					wg.Done()
+					// consultaViagemPlanejamento.ViagensExecutada = append(consultaViagemPlanejamento.ViagensExecutada, resultadoParceialConsulta.ViagensExecutada...)
+					consultaViagemPlanejamento.Viagens = append(consultaViagemPlanejamento.Viagens, resultadoParceialConsulta.Viagens...)
+					confirm++
+					loggerConcorrencia.Debugf("Confirm Ok [%d/%d]", confirm, total)
+
+				}
+			case err, b = <-captura:
+				if b {
+					wg.Done()
+					confirm++
+					loggerConcorrencia.Debugf("Confirm Err [%d/%d]", confirm, total)
+				}
+			case <-concluido:
+				return
 			}
 		}
 	}()
@@ -137,6 +153,8 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	consultaViagemPlanejamento.Informacoes = informacoes
 
 	logger.Debugf("QTD Total de Viagens: %d\t em %v\n", len(consultaViagemPlanejamento.Viagens), duracao)
+
+	concluido <- true
 	return consultaViagemPlanejamento, err
 }
 
