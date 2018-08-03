@@ -47,6 +47,12 @@ func ObterDataAtual() string {
 	return dataHoraAtual.Format("2006-01-02")
 }
 
+//FormatarHM retornar hh:mm:ss
+func FormatarHM(t time.Time) string {
+	timeFormat := t.Format("15:04")
+	return timeFormat
+}
+
 //FormatarHMS retornar hh:mm:ss
 func FormatarHMS(t time.Time) string {
 	timeFormat := t.Format("15:04:05")
@@ -77,6 +83,48 @@ func DuracaoEFormatacao(inicio time.Time, fim time.Time) (duration time.Duration
 		formatacao = fmt.Sprintf("%02d:%02d:%02d", h, m, s)
 	} else {
 		formatacao = fmt.Sprintf("-%02d:%02d:%02d", h, m, s)
+	}
+
+	return
+}
+
+//DuracaoEFormatacaoMinutos -
+func DuracaoEFormatacaoMinutos(inicio time.Time, fim time.Time) (duration time.Duration, formatacao string) {
+	duration = fim.Sub(inicio)
+	durationRounded := duration.Round(time.Minute)
+	var neg bool
+	if durationRounded < 0 {
+		durationRounded = durationRounded * -1
+		neg = true
+	}
+	h := durationRounded / time.Hour
+	durationRounded -= h * time.Hour
+	m := durationRounded / time.Minute
+	if !neg {
+		formatacao = fmt.Sprintf("%02d:%02d", h, m)
+	} else {
+		formatacao = fmt.Sprintf("-%02d:%02d", h, m)
+	}
+
+	return
+}
+
+//DuracaoEFormatacaoMinutosTrunc -
+func DuracaoEFormatacaoMinutosTrunc(inicio time.Time, fim time.Time) (duration time.Duration, formatacao string) {
+	duration = fim.Truncate(60 * time.Second).Sub(inicio.Truncate(60 * time.Second))
+	durationRounded := duration.Round(time.Minute)
+	var neg bool
+	if durationRounded < 0 {
+		durationRounded = durationRounded * -1
+		neg = true
+	}
+	h := durationRounded / time.Hour
+	durationRounded -= h * time.Hour
+	m := durationRounded / time.Minute
+	if !neg {
+		formatacao = fmt.Sprintf("%02d:%02d", h, m)
+	} else {
+		formatacao = fmt.Sprintf("-%02d:%02d", h, m)
 	}
 
 	return

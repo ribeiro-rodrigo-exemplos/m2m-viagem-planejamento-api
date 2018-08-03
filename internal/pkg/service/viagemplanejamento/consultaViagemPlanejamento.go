@@ -205,9 +205,9 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala) (*dto.Viag
 		NmTabela:           ples.NmTabela,
 		PartidaOrdenacao:   ples.Partida,
 		PartidaPlanTime:    ples.Partida,
-		PartidaPlan:        util.FormatarHMS(ples.Partida),
+		PartidaPlan:        util.FormatarHM(ples.Partida),
 		ChegadaPlanTime:    ples.Chegada,
-		ChegadaPlan:        util.FormatarHMS(ples.Chegada),
+		ChegadaPlan:        util.FormatarHM(ples.Chegada),
 		VeiculoPlan:        strconv.Itoa(int(ples.CodVeiculoPlan)),
 		Status:             dto.StatusViagem.NaoRealizada,
 	}
@@ -256,8 +256,8 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 	}
 	vg.VeiculoReal = vgex.Executada.Veiculo.Prefixo
 
-	vg.PartidaReal = util.FormatarHMS(vgex.Executada.DataInicio)
-	vg.ChegadaReal = util.FormatarHMS(vgex.Executada.DataFim)
+	vg.PartidaReal = util.FormatarHM(vgex.Executada.DataInicio)
+	vg.ChegadaReal = util.FormatarHM(vgex.Executada.DataFim)
 
 	vg.Data = util.FormatarAMDHMS(vgex.Executada.DataInicio)
 	vg.DataAbertura = vg.Data
@@ -265,16 +265,16 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 
 	duracao, duracaoFormatada := util.DuracaoEFormatacao(vgex.Executada.DataInicio, vgex.Executada.DataFim)
 	vg.Duracao = duracaoFormatada
-	vg.DuracaoSeg = int64(duracao.Round(time.Minute).Minutes())
+	vg.DuracaoSeg = diferencaMinutos(duracao)
 
 	if vg.IDHorario > 0 { //Se planejamento encontrado
-		diffPartida, diffPartidaFormatada := util.DuracaoEFormatacao(vg.PartidaPlanTime, vgex.Executada.DataInicio)
+		diffPartida, diffPartidaFormatada := util.DuracaoEFormatacaoMinutosTrunc(vg.PartidaPlanTime, vgex.Executada.DataInicio)
 		vg.DiffPartidaStr = diffPartidaFormatada
-		vg.DiffPartida = int64(diffPartida.Round(time.Minute).Minutes())
+		vg.DiffPartida = diferencaMinutos(diffPartida)
 
-		diffChegada, diffChegadaFormatada := util.DuracaoEFormatacao(vg.ChegadaPlanTime, vgex.Executada.DataFim)
+		diffChegada, diffChegadaFormatada := util.DuracaoEFormatacaoMinutosTrunc(vg.ChegadaPlanTime, vgex.Executada.DataFim)
 		vg.DiffChegadaStr = diffChegadaFormatada
-		vg.DiffChegada = int64(diffChegada.Round(time.Minute).Minutes())
+		vg.DiffChegada = diferencaMinutos(diffChegada)
 	} else { //Se planejamento não encontrado
 		vg.PartidaOrdenacao = vgex.Executada.DataInicio
 	}
@@ -283,4 +283,12 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 
 	vg.QtdePassageiros = vgex.QntPassageiros
 
+}
+
+func diferencaMinutos(d time.Duration) (duracao int64) {
+	diff := d.Minutes()
+	if diff >= 1 || diff <= -1 {
+		duracao = int64(diff)
+	}
+	return
 }
