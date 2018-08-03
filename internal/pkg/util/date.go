@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-//ObterUTCTime - obtem time UTC
-func ObterUTCTime(dataHora string) (time.Time, error) {
+//ObterTimezoneTime - obtem time UTC
+func ObterTimezoneTime(l *time.Location, dataHora string) (time.Time, error) {
 
-	timeParse, err := time.Parse("2006-01-02 15:04:05", dataHora)
+	timeParse, err := time.ParseInLocation("2006-01-02 15:04:05", dataHora, l)
 
 	if err != nil {
 		return timeParse, err

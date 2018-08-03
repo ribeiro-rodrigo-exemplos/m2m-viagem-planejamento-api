@@ -45,26 +45,28 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejamentoDTO, error) {
 	start := time.Now()
 	var err error
+	cliente := vps.cacheCliente.Cache[filtro.IDCliente]
+	filtro.Complemento = dto.DadosComplementares{
+		Cliente: cliente,
+	}
+
 	periodo := util.Periodo{Inicio: filtro.GetDataInicio(), Fim: filtro.GetDataFim()}
 	periodos := util.SplitDiasPeriodo(periodo)
 	trajetos := filtro.ListaTrajetos
 	var filtrosConsulta []dto.FilterDTO
-	cliente := vps.cacheCliente.Cache[filtro.IDCliente]
 	for _, p := range periodos {
 		for _, t := range trajetos {
 			f := dto.FilterDTO{
 				ListaTrajetos: []bson.ObjectId{
 					t,
 				},
-				IDCliente:  filtro.IDCliente,
-				IDVeiculo:  filtro.IDVeiculo,
-				Ordenacao:  filtro.Ordenacao,
-				DataInicio: util.FormatarAMDHMS(p.Inicio),
-				DataFim:    util.FormatarAMDHMS(p.Fim),
-				TipoDia:    model.TiposDia.FromDate(p.Inicio, []string{"O", "F"}),
-				Complemento: dto.DadosComplementares{
-					Cliente: cliente,
-				},
+				IDCliente:   filtro.IDCliente,
+				IDVeiculo:   filtro.IDVeiculo,
+				Ordenacao:   filtro.Ordenacao,
+				DataInicio:  util.FormatarAMDHMS(p.Inicio),
+				DataFim:     util.FormatarAMDHMS(p.Fim),
+				TipoDia:     model.TiposDia.FromDate(p.Inicio, []string{"O", "F"}),
+				Complemento: filtro.Complemento,
 			}
 			filtrosConsulta = append(filtrosConsulta, f)
 		}

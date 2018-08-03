@@ -37,14 +37,14 @@ type FilterDashboardDTO struct {
 //GetDataInicio -
 func (f *FilterDTO) GetDataInicio() time.Time {
 	var dt time.Time
-	dt, _ = util.ObterUTCTime(f.DataInicio)
+	dt, _ = util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataInicio)
 	return dt
 }
 
 //GetDataInicioString -
 func (f *FilterDTO) GetDataInicioString() string {
 	var dt time.Time
-	dt, err := util.ObterUTCTime(f.DataInicio)
+	dt, err := util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataInicio)
 	if err != nil {
 		return ""
 	}
@@ -60,14 +60,14 @@ type DadosComplementares struct {
 //GetDataFim -
 func (f *FilterDTO) GetDataFim() time.Time {
 	var dt time.Time
-	dt, _ = util.ObterUTCTime(f.DataFim)
+	dt, _ = util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataFim)
 	return dt
 }
 
 //GetDataFimString -
 func (f *FilterDTO) GetDataFimString() string {
 	var dt time.Time
-	dt, err := util.ObterUTCTime(f.DataFim)
+	dt, err := util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataFim)
 	if err != nil {
 		return ""
 	}
