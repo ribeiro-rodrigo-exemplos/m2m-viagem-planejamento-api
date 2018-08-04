@@ -161,7 +161,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 		t.Errorf("Viagens de Consulta de ViagemPlanejamento %v não pode ser vazia\n", consultaViagemPlanejamento.Viagens)
 	}
 	if consultaViagemPlanejamento.Totalizadores.Canceladas != 1 {
-		t.Errorf("Totalizador canceladas não pode ser 0\n")
+		t.Errorf("Totalizador canceladas não pode ser diferente de 1, mas foi %v \n", consultaViagemPlanejamento.Totalizadores.Canceladas)
 	}
 
 	for _, vg := range consultaViagemPlanejamento.Viagens {
@@ -223,8 +223,8 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 	if len(consultaViagemPlanejamento.Viagens) < 1 {
 		t.Errorf("Viagens de Consulta de ViagemPlanejamento %v não pode ser vazia\n", consultaViagemPlanejamento.Viagens)
 	}
-	if consultaViagemPlanejamento.Totalizadores.Canceladas < 1 {
-		t.Errorf("Totalizador canceladas não pode ser 0\n")
+	if consultaViagemPlanejamento.Totalizadores.Canceladas != 9 {
+		t.Errorf("Totalizador canceladas não pode ser diferente de 9, mas foi %v \n", consultaViagemPlanejamento.Totalizadores.Canceladas)
 	}
 
 	for _, vg := range consultaViagemPlanejamento.Viagens {
