@@ -154,14 +154,28 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	tot, tots := newTotalizacao(consultaViagemPlanejamento.Totalizadores, wgTot)
 
+	chTotVG := make(chan *dto.ViagemDTO)
+	totalizarParalelamente := func() {
+		for vg := range chTotVG {
+			totalizar(vg, tot, wgTot)
+		}
+	}
+
+	for i := 0; i < 10; i++ {
+		go totalizarParalelamente()
+	}
+
 	for _, vg := range consultaViagemPlanejamento.Viagens {
 		wgTot.Add(tots)
-		go totalizar(vg, tot, wgTot)
+		chTotVG <- vg
 	}
 
 	consultaViagemPlanejamento.Totalizadores.IndiceExecucao = []int32{int32(len(consultaViagemPlanejamento.Viagens))}
 
 	wgTot.Wait()
+
+	close(chTotVG)
+
 	duracao := time.Since(start)
 
 	var informacoes = make(map[string]interface{})
