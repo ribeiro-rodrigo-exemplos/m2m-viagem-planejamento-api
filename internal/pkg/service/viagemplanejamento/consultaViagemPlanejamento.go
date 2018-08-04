@@ -197,23 +197,21 @@ func newTotalizacao(t *dto.TotalizadoresDTO, wg *sync.WaitGroup) (tot *totalizac
 	chSize := 10
 	tot = &totalizacao{}
 
-	lancar := func(f func(ch chan int32, p *int32), ch chan int32, p *int32) {
+	lancar := func(f func(ch *chan int32, p *int32), ch *chan int32, p *int32) {
 		tots++
+		*ch = make(chan int32, chSize)
 		go f(ch, p)
 	}
 
-	acumulador := func(ch chan int32, p *int32) {
-		for v := range ch {
+	acumulador := func(ch *chan int32, p *int32) {
+		for v := range *ch {
 			*p += v
 			wg.Done()
 		}
 	}
 
-	tot.RealizadasPlanejadas = make(chan int32, chSize)
-	tot.Canceladas = make(chan int32, chSize)
-
-	lancar(acumulador, tot.RealizadasPlanejadas, &t.RealizadasPlanejadas)
-	lancar(acumulador, tot.Canceladas, &t.Canceladas)
+	lancar(acumulador, &tot.RealizadasPlanejadas, &t.RealizadasPlanejadas)
+	lancar(acumulador, &tot.Canceladas, &t.Canceladas)
 
 	return
 }

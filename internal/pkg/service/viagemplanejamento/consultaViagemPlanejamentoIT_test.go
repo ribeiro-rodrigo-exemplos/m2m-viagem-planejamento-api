@@ -107,6 +107,131 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	}
 }
 
+func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
+	cfg.InitConfig("../../../../configs/config.json")
+	InitConfig()
+	database.InitConfig()
+
+	repository.InitConfig()
+	cache.InitConfig()
+	t.Log("TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite")
+
+	var err error
+	filter := dto.FilterDTO{
+		ListaTrajetos: []bson.ObjectId{
+			bson.ObjectIdHex("555b6e830850536438063762"),
+		},
+		IDCliente:  209,
+		IDVeiculo:  150,
+		Ordenacao:  []string{"veiculo", "data"},
+		DataInicio: "2018-07-24 18:00:00",
+		DataFim:    "2018-07-24 23:59:59",
+	}
+
+	con, err := database.GetSQLConnection()
+	if err != nil {
+		t.Errorf("Conexão banco de dados - %s\n", err)
+	}
+	planejamentoEscalaRepository := repository.NewPlanejamentoEscalaRepository(con)
+
+	mongoDB, err := database.GetMongoDB()
+	if err != nil {
+		t.Errorf("Conexão banco de dados - %s\n", err)
+	}
+	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
+
+	cacheCliente, _ := cache.GetCliente(nil)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente)
+
+	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
+
+	consultaViagemPlanejamento, err = vps.Consultar(filter)
+
+	if err != nil {
+		t.Errorf("Erro ao ConsultarViagemPlanejamento - %s\n", err)
+	}
+	if consultaViagemPlanejamento == nil {
+		t.Errorf("Consulta de ViagemPlanejamento não pode ser nula\n")
+		return
+	}
+	if consultaViagemPlanejamento.Viagens == nil {
+		t.Errorf("Viagens de Consulta de ViagemPlanejamento %v não pode ser nula\n", consultaViagemPlanejamento.Viagens)
+	}
+	if len(consultaViagemPlanejamento.Viagens) < 1 {
+		t.Errorf("Viagens de Consulta de ViagemPlanejamento %v não pode ser vazia\n", consultaViagemPlanejamento.Viagens)
+	}
+	if consultaViagemPlanejamento.Totalizadores.Canceladas != 1 {
+		t.Errorf("Totalizador canceladas não pode ser 0\n")
+	}
+
+	for _, vg := range consultaViagemPlanejamento.Viagens {
+		t.Logf("%+v\n", vg)
+	}
+}
+
+func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
+	cfg.InitConfig("../../../../configs/config.json")
+	InitConfig()
+	database.InitConfig()
+	repository.InitConfig()
+	cache.InitConfig()
+	t.Log("TestConsultarViagemPlanejamentoPorUmTrajetoEmUmDia")
+
+	var err error
+
+	filter := dto.FilterDTO{
+		ListaTrajetos: []bson.ObjectId{
+			bson.ObjectIdHex("555b6e830850536438063762"),
+			bson.ObjectIdHex("555b6e830850536438063761"),
+		},
+		IDCliente:  209,
+		IDVeiculo:  150,
+		Ordenacao:  []string{"veiculo", "data"},
+		DataInicio: "2018-08-02 00:00:00",
+		DataFim:    "2018-08-02 23:59:59",
+	}
+
+	con, err := database.GetSQLConnection()
+	if err != nil {
+		t.Errorf("Conexão banco de dados - %s\n", err)
+	}
+	planejamentoEscalaRepository := repository.NewPlanejamentoEscalaRepository(con)
+
+	mongoDB, err := database.GetMongoDB()
+	if err != nil {
+		t.Errorf("Conexão banco de dados - %s\n", err)
+	}
+	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
+
+	cacheCliente, _ := cache.GetCliente(nil)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente)
+
+	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
+
+	consultaViagemPlanejamento, err = vps.Consultar(filter)
+
+	if err != nil {
+		t.Errorf("Erro ao ConsultarViagemPlanejamento - %s\n", err)
+	}
+	if consultaViagemPlanejamento == nil {
+		t.Errorf("Consulta de ViagemPlanejamento não pode ser nula\n")
+		return
+	}
+	if consultaViagemPlanejamento.Viagens == nil {
+		t.Errorf("Viagens de Consulta de ViagemPlanejamento %v não pode ser nula\n", consultaViagemPlanejamento.Viagens)
+	}
+	if len(consultaViagemPlanejamento.Viagens) < 1 {
+		t.Errorf("Viagens de Consulta de ViagemPlanejamento %v não pode ser vazia\n", consultaViagemPlanejamento.Viagens)
+	}
+	if consultaViagemPlanejamento.Totalizadores.Canceladas < 1 {
+		t.Errorf("Totalizador canceladas não pode ser 0\n")
+	}
+
+	for _, vg := range consultaViagemPlanejamento.Viagens {
+		t.Logf("%+v\n", vg)
+	}
+}
+
 func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 	cfg.InitConfig("../../../../configs/config.json")
 	InitConfig()
