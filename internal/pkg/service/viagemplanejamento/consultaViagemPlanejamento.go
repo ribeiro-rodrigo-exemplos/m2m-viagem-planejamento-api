@@ -149,6 +149,22 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	//TODO - ordenar ViagensExecutadaPendentes e tentar alocar em planejamentos
 
+	calcularTotalizadores(consultaViagemPlanejamento)
+
+	duracao := time.Since(start)
+
+	var informacoes = make(map[string]interface{})
+	informacoes["duracao"] = fmt.Sprintf("%v", duracao)
+	consultaViagemPlanejamento.Informacoes = informacoes
+
+	logger.Debugf("QTD Total de Viagens: %d\t em %v\n", len(consultaViagemPlanejamento.Viagens), duracao)
+
+	concluido <- true
+	return consultaViagemPlanejamento, err
+}
+
+func calcularTotalizadores(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
+
 	var wgTot *sync.WaitGroup
 	wgTot = &sync.WaitGroup{}
 
@@ -176,16 +192,6 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	close(chTotVG)
 
-	duracao := time.Since(start)
-
-	var informacoes = make(map[string]interface{})
-	informacoes["duracao"] = fmt.Sprintf("%v", duracao)
-	consultaViagemPlanejamento.Informacoes = informacoes
-
-	logger.Debugf("QTD Total de Viagens: %d\t em %v\n", len(consultaViagemPlanejamento.Viagens), duracao)
-
-	concluido <- true
-	return consultaViagemPlanejamento, err
 }
 
 type totalizacao struct {
