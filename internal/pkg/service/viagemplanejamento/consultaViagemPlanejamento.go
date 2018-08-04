@@ -147,43 +147,21 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	dto.OrdenarViagemExecutadaPorData(consultaViagemPlanejamento.Viagens)
 
-	var totPlanejadas int32
-	var totPlanejadasAteMomento int32
-	var totRealizadas int32
-	var totRealizadasPlanejadas int32
-	var totEmAndamento int32
-	var totCanceladas int32
-	var totPassageiros int32
-	var totNaoIniciadas int32
-	var totNaoRealizadas int32
-	var totReforco int32
-	var totAtrasada int32
+	//TODO - ordenar ViagensExecutadaPendentes e tentar alocar em planejamentos
 
-	totPlanejadas = 5
-	totPlanejadasAteMomento = 5
-	totRealizadas = 5
-	totRealizadasPlanejadas = 5
-	totEmAndamento = 5
-	totCanceladas = 5
-	totPassageiros = 5
-	totNaoIniciadas = 5
-	totNaoRealizadas = 5
-	totReforco = 5
-	totAtrasada = 5
+	var wgTot *sync.WaitGroup
+	wgTot = &sync.WaitGroup{}
 
-	consultaViagemPlanejamento.Totalizadores.Planejadas = totPlanejadas
-	consultaViagemPlanejamento.Totalizadores.PlanejadasAteMomento = totPlanejadasAteMomento
-	consultaViagemPlanejamento.Totalizadores.Realizadas = totRealizadas
-	consultaViagemPlanejamento.Totalizadores.RealizadasPlanejadas = totRealizadasPlanejadas
-	consultaViagemPlanejamento.Totalizadores.EmAndamento = totEmAndamento
-	consultaViagemPlanejamento.Totalizadores.Canceladas = totCanceladas
-	consultaViagemPlanejamento.Totalizadores.Passageiros = totPassageiros
-	consultaViagemPlanejamento.Totalizadores.NaoIniciadas = totNaoIniciadas
-	consultaViagemPlanejamento.Totalizadores.NaoRealizadas = totNaoRealizadas
-	consultaViagemPlanejamento.Totalizadores.Reforco = totReforco
-	consultaViagemPlanejamento.Totalizadores.Atrasada = totAtrasada
+	tot, tots := newTotalizacao(consultaViagemPlanejamento.Totalizadores, wgTot)
+
+	for _, vg := range consultaViagemPlanejamento.Viagens {
+		wgTot.Add(tots)
+		go totalizar(vg, tot, wgTot)
+	}
+
 	consultaViagemPlanejamento.Totalizadores.IndiceExecucao = []int32{int32(len(consultaViagemPlanejamento.Viagens))}
 
+	wgTot.Wait()
 	duracao := time.Since(start)
 
 	var informacoes = make(map[string]interface{})
@@ -194,6 +172,55 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	concluido <- true
 	return consultaViagemPlanejamento, err
+}
+
+type totalizacao struct {
+	Canceladas           chan int32
+	RealizadasPlanejadas chan int32
+}
+
+func newTotalizacao(t *dto.TotalizadoresDTO, wg *sync.WaitGroup) (tot *totalizacao, tots int) {
+	chSize := 10
+	tot = &totalizacao{}
+
+	lancar := func(f func()) {
+		tots++
+		go f()
+	}
+
+	tot.RealizadasPlanejadas = make(chan int32, chSize)
+	realizadasPlanejadas := func() {
+		for v := range tot.RealizadasPlanejadas {
+			t.RealizadasPlanejadas += v
+			wg.Done()
+		}
+	}
+	tot.Canceladas = make(chan int32, chSize)
+	canceladas := func() {
+		for v := range tot.Canceladas {
+			t.Canceladas += v
+			wg.Done()
+		}
+	}
+
+	lancar(realizadasPlanejadas)
+	lancar(canceladas)
+
+	return
+}
+
+func totalizar(vg *dto.ViagemDTO, t *totalizacao, wg *sync.WaitGroup) {
+	if vg.Status == dto.StatusViagem.RealizadaPlanejada {
+		t.RealizadasPlanejadas <- 1
+	} else {
+		wg.Done()
+	}
+
+	if vg.Status == dto.StatusViagem.Cancelada {
+		t.Canceladas <- 1
+	} else {
+		wg.Done()
+	}
 }
 
 //ConsultarPorTrajeto -
