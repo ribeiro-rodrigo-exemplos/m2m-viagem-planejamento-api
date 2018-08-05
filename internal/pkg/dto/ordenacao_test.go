@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-//OrdenarViagemExecutadaPorData ordena viagem executada por data
-func TestOrdenarViagemExecutadaPorData(t *testing.T) {
+//OrdenarViagemPorData ordena viagem executada por data
+func TestOrdenarViagemPorData(t *testing.T) {
 	var lista []*ViagemDTO
 
 	data1 := time.Now()
@@ -39,7 +39,7 @@ func TestOrdenarViagemExecutadaPorData(t *testing.T) {
 		t.Logf("\t[%d] %v {%v}\n", i, v.PartidaOrdenacao.Format("2006-01-02 15:04"), v.Status)
 	}
 
-	OrdenarViagemExecutadaPorData(lista)
+	OrdenarViagemPorData(lista)
 
 	vg1 = lista[0]
 	vg2 = lista[1]

@@ -145,9 +145,9 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	}()
 	wg.Wait()
 
-	dto.OrdenarViagemExecutadaPorData(consultaViagemPlanejamento.Viagens)
+	dto.OrdenarViagemPorData(consultaViagemPlanejamento.Viagens)
 
-	//TODO - ordenar ViagensExecutadaPendentes e tentar alocar em planejamentos
+	processarAtrasadas(consultaViagemPlanejamento)
 
 	calcularTotalizadores(consultaViagemPlanejamento)
 
@@ -161,6 +161,44 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	concluido <- true
 	return consultaViagemPlanejamento, err
+}
+
+func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
+	model.OrdenarViagemExecutadaPorData(consultaViagemPlanejamento.ViagensExecutadaPendentes)
+
+	vgRealizadasNaoPlanejadas := []*dto.ViagemDTO{}
+
+	pos := 0
+	size := len(consultaViagemPlanejamento.Viagens)
+
+	for _, vgex := range consultaViagemPlanejamento.ViagensExecutadaPendentes {
+		for ; pos < size; pos++ {
+			j := pos + 1
+
+			vg := consultaViagemPlanejamento.Viagens[pos]
+			if j < size && vgex.Executada.DataInicio.After(consultaViagemPlanejamento.Viagens[j].PartidaOrdenacao) {
+				continue
+			}
+
+			if vgex.Executada.DataInicio.After(vg.PartidaOrdenacao) {
+				if vg.Status == dto.StatusViagem.NaoRealizada {
+					if vg.IDViagemExecutada == "" {
+						vg.Status = dto.StatusViagem.Atrasada
+						populaDadosViagem(vgex, vg)
+					} else {
+						novaVG := &dto.ViagemDTO{}
+						novaVG.Status = dto.StatusViagem.RealizadaNaoPlanejada
+						populaDadosViagem(vgex, novaVG)
+						vgRealizadasNaoPlanejadas = append(vgRealizadasNaoPlanejadas, novaVG)
+					}
+				}
+				break
+			}
+		}
+	}
+
+	consultaViagemPlanejamento.Viagens = append(consultaViagemPlanejamento.Viagens, vgRealizadasNaoPlanejadas...)
+	dto.OrdenarViagemPorData(consultaViagemPlanejamento.Viagens)
 }
 
 func calcularTotalizadores(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
@@ -195,8 +233,11 @@ func calcularTotalizadores(consultaViagemPlanejamento *dto.ConsultaViagemPlaneja
 }
 
 type totalizacao struct {
-	Canceladas           chan int32
+	Planejadas           chan int32
 	RealizadasPlanejadas chan int32
+	Canceladas           chan int32
+	NaoRealizadas        chan int32
+	Atrasada             chan int32
 }
 
 func newTotalizacao(t *dto.TotalizadoresDTO, wg *sync.WaitGroup) (tot *totalizacao, tots int) {
@@ -216,13 +257,23 @@ func newTotalizacao(t *dto.TotalizadoresDTO, wg *sync.WaitGroup) (tot *totalizac
 		}
 	}
 
+	lancar(acumulador, &tot.Planejadas, &t.Planejadas)
 	lancar(acumulador, &tot.RealizadasPlanejadas, &t.RealizadasPlanejadas)
 	lancar(acumulador, &tot.Canceladas, &t.Canceladas)
+	lancar(acumulador, &tot.NaoRealizadas, &t.NaoRealizadas)
+	lancar(acumulador, &tot.Atrasada, &t.Atrasada)
 
 	return
 }
 
 func totalizar(vg *dto.ViagemDTO, t *totalizacao, wg *sync.WaitGroup) {
+
+	if vg.Status == dto.StatusViagem.NaoRealizada || vg.Status == dto.StatusViagem.RealizadaPlanejada || vg.Status == dto.StatusViagem.Atrasada {
+		t.Planejadas <- 1
+	} else {
+		wg.Done()
+	}
+
 	if vg.Status == dto.StatusViagem.RealizadaPlanejada {
 		t.RealizadasPlanejadas <- 1
 	} else {
@@ -231,6 +282,18 @@ func totalizar(vg *dto.ViagemDTO, t *totalizacao, wg *sync.WaitGroup) {
 
 	if vg.Status == dto.StatusViagem.Cancelada {
 		t.Canceladas <- 1
+	} else {
+		wg.Done()
+	}
+
+	if vg.Status == dto.StatusViagem.NaoRealizada {
+		t.NaoRealizadas <- 1
+	} else {
+		wg.Done()
+	}
+
+	if vg.Status == dto.StatusViagem.Atrasada {
+		t.Atrasada <- 1
 	} else {
 		wg.Done()
 	}
