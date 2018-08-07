@@ -95,7 +95,7 @@ type VeiculoViagem struct {
 
 //Executada -
 type Executada struct {
-	DataFim    time.Time     `bson:"dataFim"`
+	DataFim    *time.Time    `bson:"dataFim"`
 	DataInicio time.Time     `bson:"dataInicio"`
 	Veiculo    VeiculoViagem `bson:"veiculo"`
 }

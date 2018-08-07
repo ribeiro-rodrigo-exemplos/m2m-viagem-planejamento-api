@@ -69,7 +69,7 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 		"partida":              1,
 	}
 
-	situacoes := [...]int{4, 5}
+	situacoes := [...]int{1, 2, 3, 4, 5, 7}
 	// situacoes := [...]int{4}
 
 	trajetos := filtro.ListaTrajetos

@@ -58,7 +58,8 @@ func (f *FilterDTO) GetDataInicioString() string {
 
 //DadosComplementares -
 type DadosComplementares struct {
-	Cliente *model.Cliente
+	Cliente  *model.Cliente
+	DataHora time.Time
 }
 
 //GetDataFim -
@@ -130,6 +131,8 @@ type ViagemDTO struct {
 	Cobrador            int           `json:"cobrador"`
 	DistanciaPercorrida float32       `json:"distanciaPercorrida"`
 	Placa               string        `json:"placa"`
+	Planejada           bool          `json:"-"`
+	PlanejadaAteMomento bool          `json:"-"`
 }
 
 //TotalizadoresDTO -
