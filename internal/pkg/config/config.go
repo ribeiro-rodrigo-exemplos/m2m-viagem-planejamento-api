@@ -25,6 +25,12 @@ type Configuration struct {
 		Port string `default:"8080"`
 	}
 
+	HTTP struct {
+		Request struct {
+			MaxConcurrent int `default:"10"`
+		}
+	}
+
 	Service struct {
 		ViagemPlanejamento struct {
 			MaxConcurrent int `default:"3"`

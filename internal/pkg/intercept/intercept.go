@@ -4,19 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
 	cfg "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/config"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
 )
-
-var logger logging.Logger
-
-//InitConfig - é responsável por iniciar configuração da package
-func InitConfig() {
-	logger = logging.NewLogger("intercept", cfg.Config.Logging.Level)
-}
 
 //ValidaToken - é responsavel por validar o token e seu tempo de duração(expiração)
 func ValidaToken(next httprouter.Handle) httprouter.Handle {
