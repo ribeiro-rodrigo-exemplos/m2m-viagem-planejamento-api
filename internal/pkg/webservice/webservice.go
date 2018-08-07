@@ -26,15 +26,6 @@ func InitConfig() {
 var viagemplanejamentoService *viagemplanejamento.Service
 var router *httprouter.Router
 
-var requestQueue = make(chan request)
-
-type request struct {
-	res    *http.ResponseWriter
-	req    *http.Request
-	params httprouter.Params
-	next   httprouter.Handle
-}
-
 type myWeb struct {
 }
 
@@ -42,18 +33,55 @@ func (c myWeb) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Access-Control-Allow-Origin", "*")
 	res.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
 	res.Header().Set("Access-Control-Allow-Methods", "GET, PUT, POST, PUT, DELETE, OPTIONS, HEAD, PATCH")
-	// router.ServeHTTP(res, req)
-	requestQueue <- request{&res, req, nil, nil}
+	router.ServeHTTP(res, req)
 	// req.Body.Close()
+}
+
+var requestQueue = make(chan request, 2)
+var responseQueue = make(chan chan response, 2)
+
+type response struct {
+	dto *dto.ConsultaViagemPlanejamentoDTO
+	err error
+}
+
+type request struct {
+	filter   dto.FilterDTO
+	response chan response
+}
+
+func consultarViagemPlanejamento(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejamentoDTO, error) {
+
+	chRes := <-responseQueue
+
+	consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filtro)
+
+	res := <-chRes
+
+	return res.dto, res.err
+	// return consultaViagemPlanejamentoDTO, err
 }
 
 //InitServer é responsável por inicializar o servidor http
 func InitServer() {
 	carragarDependencias()
 
+	responseQueue <- make(chan response, 2)
+
+	var process = func() {
+		for r := range requestQueue {
+			// router.ServeHTTP(*r.res, r.req)
+			// f := r.next
+			// f(*r.res, r.req, *r.params)
+			// r.next(r.res, r.req, r.params)
+		}
+	}
+	go process()
+
 	var delegate = func() {
 		for r := range requestQueue {
-			router.ServeHTTP(*r.res, r.req)
+			consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filtro)
+			// router.ServeHTTP(*r.res, r.req)
 			// f := r.next
 			// f(*r.res, r.req, *r.params)
 			// r.next(r.res, r.req, r.params)
@@ -120,7 +148,7 @@ func ConsultaViagemPlanejamento(res http.ResponseWriter, req *http.Request, para
 
 	logger.Tracef("FILTRO: %#v\n", filter)
 
-	consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filter)
+	consultaViagemPlanejamentoDTO, err := consultarViagemPlanejamento(filter)
 
 	if err != nil {
 		logger.Errorf("Erro ConsultarViagemPlanejamento %+v - %s\n", filter, err)
@@ -155,7 +183,7 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 		DataFim:       filter.DataFim + " " + strings.Replace(filter.HoraFim, " ", "", -1),
 	}
 
-	consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filterAdaptado)
+	consultaViagemPlanejamentoDTO, err := consultarViagemPlanejamento(filterAdaptado)
 
 	if err != nil {
 		logger.Errorf("Erro ConsultarViagemPlanejamento %+v - %s\n", filter, err)
