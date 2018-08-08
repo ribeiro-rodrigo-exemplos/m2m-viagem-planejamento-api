@@ -94,11 +94,17 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	var wg sync.WaitGroup
 	wg.Add(total)
 
-	initiated := 0
+	initiated := make(chan bool)
+	go func() {
+		c := 0
+		for range initiated {
+			c++
+			loggerConcorrencia.Tracef("Initiated [%d/%d] ", initiated, total)
+		}
+	}()
 	var processarConsultas = func() {
 		for f := range filaTrabalho {
-			initiated++
-			loggerConcorrencia.Tracef("Initiated [%d/%d] ", initiated, total)
+			initiated <- true
 			vps.ConsultarPorTrajeto(f, resultado, captura)
 		}
 	}
