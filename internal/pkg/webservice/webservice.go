@@ -12,6 +12,7 @@ import (
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/dto"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/repository"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/service/viagemplanejamento"
+	"gopkg.in/mgo.v2/bson"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -176,8 +177,14 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 
 	logger.Tracef("FILTRO: %#v\n", filter)
 
+	listaTrajetos := make([]bson.ObjectId, len(filter.ListaTrajetos))
+	for i := 0; i < len(filter.ListaTrajetos); i++ {
+		t := filter.ListaTrajetos[i]
+		listaTrajetos[i] = t.ID
+	}
+
 	filterAdaptado := dto.FilterDTO{
-		ListaTrajetos: filter.ListaTrajetos,
+		ListaTrajetos: listaTrajetos,
 		IDCliente:     filter.IDCliente,
 		Ordenacao:     filter.Ordenacao,
 		DataInicio:    filter.DataInicio + " " + strings.Replace(filter.HoraInicio, " ", "", -1),

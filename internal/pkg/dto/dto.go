@@ -22,16 +22,22 @@ type FilterDTO struct {
 
 //FilterDashboardDTO filtro para consultas dashboard
 type FilterDashboardDTO struct {
-	ListaLinhas   []bson.ObjectId `json:"linhas"`
-	ListaTrajetos []bson.ObjectId `json:"trajetos"`
-	IDCliente     int32           `json:"idCliente"`
-	Status        []string        `json:"status"`
-	Ordenacao     []string        `json:"ordenacao"`
-	DataInicio    string          `json:"dataInicio"`
-	HoraInicio    string          `json:"horaInicio"`
-	DataFim       string          `json:"dataFim"`
-	HoraFim       string          `json:"horaFim"`
-	Timezone      string          `json:"timezone"`
+	ListaLinhas   []bson.ObjectId       `json:"linhas"`
+	ListaTrajetos []TrajetoDashboardDTO `json:"trajetos"`
+	IDCliente     int32                 `json:"idCliente"`
+	Status        []string              `json:"status"`
+	Ordenacao     []string              `json:"ordenacao"`
+	DataInicio    string                `json:"dataInicio"`
+	HoraInicio    string                `json:"horaInicio"`
+	DataFim       string                `json:"dataFim"`
+	HoraFim       string                `json:"horaFim"`
+	Timezone      string                `json:"timezone"`
+}
+
+//TrajetoDashboardDTO -
+type TrajetoDashboardDTO struct {
+	ID        bson.ObjectId `json:"_id"`
+	Descricao string        `json:"descricao"`
 }
 
 //GetDataInicio -
