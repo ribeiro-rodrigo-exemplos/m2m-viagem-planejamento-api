@@ -119,19 +119,18 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 			select {
 			case resultadoParceialConsulta, b := <-resultado:
 				if b {
-					wg.Done()
 					// consultaViagemPlanejamento.ViagensExecutada = append(consultaViagemPlanejamento.ViagensExecutada, resultadoParceialConsulta.ViagensExecutada...)
 					consultaViagemPlanejamento.ViagensExecutadaPendentes = append(consultaViagemPlanejamento.ViagensExecutadaPendentes, resultadoParceialConsulta.ViagensExecutadaPendentes...)
 					consultaViagemPlanejamento.Viagens = append(consultaViagemPlanejamento.Viagens, resultadoParceialConsulta.Viagens...)
 					confirm++
 					loggerConcorrencia.Debugf("Confirm Ok [%d/%d]", confirm, total)
-
+					wg.Done()
 				}
 			case err, b = <-captura:
 				if b {
-					wg.Done()
 					confirm++
 					loggerConcorrencia.Debugf("Confirm Err [%d/%d]", confirm, total)
+					wg.Done()
 				}
 			case <-concluido:
 				return
