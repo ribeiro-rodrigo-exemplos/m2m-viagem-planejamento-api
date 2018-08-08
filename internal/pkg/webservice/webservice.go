@@ -37,57 +37,58 @@ func (c myWeb) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	// req.Body.Close()
 }
 
-var requestQueue = make(chan request, 2)
-var responseQueue = make(chan chan response, 2)
+var requestPool chan *request
+var requestQueue chan *request
+
+type request struct {
+	filter     dto.FilterDTO
+	res        *response
+	chResponse chan *response
+}
 
 type response struct {
 	dto *dto.ConsultaViagemPlanejamentoDTO
 	err error
-}
-
-type request struct {
-	filter   dto.FilterDTO
-	response chan response
+	req *request
 }
 
 func consultarViagemPlanejamento(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejamentoDTO, error) {
-
-	chRes := <-responseQueue
-
-	consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filtro)
-
-	res := <-chRes
-
+	req := <-requestPool
+	req.filter = filtro
+	requestQueue <- req
+	res := <-req.chResponse
+	requestPool <- req
 	return res.dto, res.err
-	// return consultaViagemPlanejamentoDTO, err
 }
 
 //InitServer é responsável por inicializar o servidor http
 func InitServer() {
 	carragarDependencias()
 
-	responseQueue <- make(chan response, 2)
+	requestPool = make(chan *request, cfg.Config.HTTP.Request.MaxConcurrent*2)
+	requestQueue = make(chan *request, cfg.Config.HTTP.Request.MaxConcurrent*2)
+	// responseQueue = make(chan response, 2)
 
-	var process = func() {
-		for r := range requestQueue {
-			// router.ServeHTTP(*r.res, r.req)
-			// f := r.next
-			// f(*r.res, r.req, *r.params)
-			// r.next(r.res, r.req, r.params)
-		}
-	}
-	go process()
+	logger.Infof("HTTP.Request.MaxConcurrent %v", cfg.Config.HTTP.Request.MaxConcurrent)
 
 	var delegate = func() {
-		for r := range requestQueue {
-			consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filtro)
-			// router.ServeHTTP(*r.res, r.req)
-			// f := r.next
-			// f(*r.res, r.req, *r.params)
-			// r.next(r.res, r.req, r.params)
+		for req := range requestQueue {
+			res := req.res
+			consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(req.filter)
+			res.dto = consultaViagemPlanejamentoDTO
+			res.err = err
+			req.chResponse <- res
 		}
 	}
-	go delegate()
+
+	for i := 0; i < cfg.Config.HTTP.Request.MaxConcurrent; i++ {
+		req := &request{chResponse: make(chan *response, 2)}
+		req.res = new(response)
+		// req.chResponse <- req.res
+		requestPool <- req
+
+		go delegate()
+	}
 
 	router = httprouter.New()
 
