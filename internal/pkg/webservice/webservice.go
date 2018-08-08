@@ -101,8 +101,8 @@ func InitServer() {
 
 	// router.POST("/v1/viagemPlanejamento/filtrar", mid.Wrap(ConsultaViagemPlanejamento))
 	router.POST("/v1/viagemPlanejamento/filtrar", ConsultaViagemPlanejamento)
-	// router.POST("/api/v1/planejamentoviagem/dashboard", ConsultaViagemPlanejamento)
-	// router.PUT("/api/v1/planejamentoviagem/dashboard", ConsultaViagemPlanejamentoDashboard)
+	router.POST("/api/v1/planejamentoviagem/dashboard", ConsultaViagemPlanejamento)
+	router.PUT("/api/v1/planejamentoviagem/dashboard", ConsultaViagemPlanejamentoDashboard)
 
 	logger.Infof("Servidor rodando na porta %v\n", cfg.Config.Server.Port)
 	err := http.ListenAndServe(":"+cfg.Config.Server.Port, myWeb{})
