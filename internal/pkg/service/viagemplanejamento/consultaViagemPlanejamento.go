@@ -94,7 +94,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	var wg sync.WaitGroup
 	wg.Add(total)
 
-	initiated := make(chan bool)
+	initiated := make(chan bool, cfg.Config.Service.ViagemPlanejamento.MaxConcurrent)
 	go func() {
 		c := 0
 		for range initiated {
