@@ -29,6 +29,9 @@ type Configuration struct {
 		Request struct {
 			MaxConcurrent int `default:"10"`
 		}
+		Transport struct {
+			MaxIdleConnsPerHost int `default:"100"`
+		}
 	}
 
 	Service struct {

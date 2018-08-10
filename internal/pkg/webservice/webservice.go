@@ -2,6 +2,7 @@ package webservice
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -65,6 +66,15 @@ func consultarViagemPlanejamento(filtro dto.FilterDTO) (*dto.ConsultaViagemPlane
 //InitServer é responsável por inicializar o servidor http
 func InitServer() {
 	carragarDependencias()
+
+	defaultRoundTripper := http.DefaultTransport
+	defaultTransportPointer, ok := defaultRoundTripper.(*http.Transport)
+	if !ok {
+		panic(fmt.Sprintf("defaultRoundTripper not an *http.Transport"))
+	}
+	// defaultTransportPointer.MaxIdleConns = 100
+	defaultTransportPointer.MaxIdleConnsPerHost = cfg.Config.HTTP.Transport.MaxIdleConnsPerHost
+	logger.Infof("HTTP.Transport.MaxIdleConnsPerHost %v", cfg.Config.HTTP.Transport.MaxIdleConnsPerHost)
 
 	requestPool = make(chan *request, cfg.Config.HTTP.Request.MaxConcurrent*2)
 	requestQueue = make(chan *request, cfg.Config.HTTP.Request.MaxConcurrent*2)

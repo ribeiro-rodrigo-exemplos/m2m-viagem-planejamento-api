@@ -3,6 +3,15 @@
         "name": "zndev"
     },
 
+    "http": {
+        "request": {
+            "maxConcurrent": 10
+        },
+        "transport": {
+            "maxIdleConnsPerHost": 10
+        }
+    },
+
     "service":{
         "viagemplanejamento":{
             "maxConcurrent": 4
