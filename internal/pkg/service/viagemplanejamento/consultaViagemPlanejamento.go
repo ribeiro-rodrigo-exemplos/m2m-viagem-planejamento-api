@@ -361,7 +361,8 @@ func totalizar(vg *dto.ViagemDTO, t *totalizacao, wg *sync.WaitGroup) {
 
 //ConsultarPorTrajeto -
 func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dto.ConsultaViagemPlanejamentoDTO, captura chan error) {
-	var err error
+	var errPlanejamentos error
+	var errViagensExecutadas error
 
 	consultaViagemPlanejamentoDTO := &dto.ConsultaViagemPlanejamentoDTO{}
 	viagensDTO := []*dto.ViagemDTO{}
@@ -371,9 +372,12 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 
 	go func() {
 		mapaHorarioViagemAUX := make(map[int32]*dto.ViagemDTO)
-		planejamentosEscala, err := vps.planEscRep.ListarPlanejamentosEscala(&filtro)
-		if err != nil {
-			logger.Errorf("Erro ao ListarPlanejamentosEscala - %s\n", err)
+		var planejamentosEscala []*model.ProcPlanejamentoEscala
+		planejamentosEscala, errPlanejamentos = vps.planEscRep.ListarPlanejamentosEscala(&filtro)
+		if errPlanejamentos != nil {
+			logger.Errorf("Erro ao ListarPlanejamentosEscala - %s\n", errPlanejamentos)
+			retornoMapaHorarioViagem <- nil
+			return
 		}
 
 		for _, ples := range planejamentosEscala {
@@ -384,14 +388,30 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 		retornoMapaHorarioViagem <- mapaHorarioViagemAUX
 	}()
 
-	viagensExecutada, err := vps.vigExecRep.ListarViagensPor(filtro)
-	if err != nil {
-		logger.Errorf("Erro ao ListarViagensPor %+v - %s\n", filtro, err)
+	viagensExecutada, errViagensExecutadas := vps.vigExecRep.ListarViagensPor(filtro)
+	if errViagensExecutadas != nil {
+		logger.Errorf("Erro ao ListarViagensPor %+v - %s\n", filtro, errViagensExecutadas)
+	}
+
+	mapaHorarioViagem := <-retornoMapaHorarioViagem
+
+	if errPlanejamentos != nil || errViagensExecutadas != nil {
+		var err error
+		if errPlanejamentos != nil {
+			err = errPlanejamentos
+		}
+		if errViagensExecutadas != nil {
+			if err != nil {
+				err = fmt.Errorf("%v\n%v", err, errViagensExecutadas)
+			} else {
+				err = errViagensExecutadas
+
+			}
+		}
 		captura <- err
 		return
 	}
 
-	mapaHorarioViagem := <-retornoMapaHorarioViagem
 	for _, vgex := range viagensExecutada {
 		vgexNaoEncontrada, vg, _ := converterViagemExecutada(vgex, mapaHorarioViagem)
 		if vg != nil {

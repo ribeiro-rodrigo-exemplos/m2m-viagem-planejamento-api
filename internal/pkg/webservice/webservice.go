@@ -163,8 +163,9 @@ func ConsultaViagemPlanejamento(res http.ResponseWriter, req *http.Request, para
 	consultaViagemPlanejamentoDTO, err := consultarViagemPlanejamento(filter)
 
 	if err != nil {
-		logger.Errorf("Erro ConsultarViagemPlanejamento %+v - %s\n", filter, err)
+		logger.Errorf("ConsultarViagemPlanejamento %s - %+v\n", err, filter)
 		res.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(res).Encode("Falha ao ConsultarViagemPlanejamento")
 		return
 	}
 
@@ -204,8 +205,9 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 	consultaViagemPlanejamentoDTO, err := consultarViagemPlanejamento(filterAdaptado)
 
 	if err != nil {
-		logger.Errorf("Erro ConsultarViagemPlanejamento %+v - %s\n", filter, err)
+		logger.Errorf("ConsultarViagemPlanejamento %s - %+v\n", err, filter)
 		res.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(res).Encode("Falha ao ConsultarViagemPlanejamento")
 		return
 	}
 
