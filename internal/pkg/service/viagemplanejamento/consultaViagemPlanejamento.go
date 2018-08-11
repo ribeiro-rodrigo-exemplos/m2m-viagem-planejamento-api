@@ -17,13 +17,17 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+var initiated bool
 var logger logging.Logger
 var loggerConcorrencia logging.Logger
 
 //InitConfig - é responsável por iniciar configuração da package
 func InitConfig() {
-	logger = logging.NewLogger("service.viagemplanejamento", cfg.Config.Logging.Level)
-	loggerConcorrencia = logging.NewLogger("service.viagemplanejamento.CONCORRENCIA", cfg.Config.Logging.Level)
+	if !initiated {
+		logger = logging.NewLogger("service.viagemplanejamento", cfg.Config.Logging.Level)
+		loggerConcorrencia = logging.NewLogger("service.viagemplanejamento.CONCORRENCIA", cfg.Config.Logging.Level)
+		initiated = true
+	}
 }
 
 //Service -
