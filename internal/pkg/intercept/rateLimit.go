@@ -3,55 +3,28 @@ package intercept
 import (
 	"net/http"
 
+	cfg "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/config"
 	"github.com/julienschmidt/httprouter"
 )
 
-var requestQueue = make(chan request)
+var requestQueue chan struct{}
 
 //ConfigRateLimit -
 func ConfigRateLimit() {
+	requestQueue = make(chan struct{}, cfg.Config.HTTP.Request.MaxConcurrent*2)
 
-	var delegate = func() {
-		for r := range requestQueue {
-			// f := r.next
-			// f(*r.res, r.req, *r.params)
-			r.next(r.res, r.req, r.params)
-		}
-	}
-	go delegate()
+	for i := 0; i < cfg.Config.HTTP.Request.MaxConcurrent; i++ {
+		requestQueue <- struct{}{}
 
-}
-
-/** /
-//RateLimit - é responsavel por limitar quantidade de requests tratadas simultaneamente
-func RateLimit(next httprouter.Handle) httprouter.Handle {
-
-	return func(res http.ResponseWriter, req *http.Request, params httprouter.Params) {
-		requestQueue <- request{&res, req, &params, next}
-		// next(res, req, params)
 	}
 }
-
-type request struct {
-	res    *http.ResponseWriter
-	req    *http.Request
-	params *httprouter.Params
-	next   httprouter.Handle
-}
-/**/
 
 //RateLimit - é responsavel por limitar quantidade de requests tratadas simultaneamente
 func RateLimit(next httprouter.Handle) httprouter.Handle {
 
 	return func(res http.ResponseWriter, req *http.Request, params httprouter.Params) {
-		requestQueue <- request{res, req, params, next}
-		// next(res, req, params)
+		r := <-requestQueue
+		next(res, req, params)
+		requestQueue <- r
 	}
-}
-
-type request struct {
-	res    http.ResponseWriter
-	req    *http.Request
-	params httprouter.Params
-	next   httprouter.Handle
 }
