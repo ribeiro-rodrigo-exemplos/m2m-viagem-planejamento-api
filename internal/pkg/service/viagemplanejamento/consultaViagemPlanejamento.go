@@ -86,7 +86,7 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 		}
 	}()
 
-	vps.initiated = make(chan bool, cfg.Config.Service.ViagemPlanejamento.MaxConcurrentSubTask)
+	vps.initiated = make(chan bool, cfg.Config.Service.ViagemPlanejamento.MaxConcurrentSubTask*2)
 	go func() {
 		for range vps.initiated {
 			vps.cInitiated++

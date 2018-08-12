@@ -133,12 +133,12 @@ func ConsultaViagemPlanejamento(res http.ResponseWriter, req *http.Request, para
 
 	vps := <-viagemplanejamentoService
 	consultaViagemPlanejamentoDTO, err := vps.Consultar(filter)
-	viagemplanejamentoService <- vps
 
 	if err != nil {
 		logger.Errorf("ConsultarViagemPlanejamento %s - %+v\n", err, filter)
 		res.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(res).Encode("Falha ao ConsultarViagemPlanejamento")
+		viagemplanejamentoService <- vps
 		return
 	}
 
@@ -146,6 +146,7 @@ func ConsultaViagemPlanejamento(res http.ResponseWriter, req *http.Request, para
 	res.WriteHeader(http.StatusOK)
 
 	json.NewEncoder(res).Encode(consultaViagemPlanejamentoDTO)
+	viagemplanejamentoService <- vps
 }
 
 //ConsultaViagemPlanejamentoDashboard - é responsável pela consulta de Viagens x Planejamento
@@ -177,12 +178,12 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 
 	vps := <-viagemplanejamentoService
 	consultaViagemPlanejamentoDTO, err := vps.Consultar(filterAdaptado)
-	viagemplanejamentoService <- vps
 
 	if err != nil {
 		logger.Errorf("ConsultarViagemPlanejamento %s - %+v\n", err, filter)
 		res.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(res).Encode("Falha ao ConsultarViagemPlanejamento")
+		viagemplanejamentoService <- vps
 		return
 	}
 
@@ -190,4 +191,5 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 	res.WriteHeader(http.StatusOK)
 
 	json.NewEncoder(res).Encode(consultaViagemPlanejamentoDTO)
+	viagemplanejamentoService <- vps
 }
