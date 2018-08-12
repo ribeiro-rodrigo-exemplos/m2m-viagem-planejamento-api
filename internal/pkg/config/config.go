@@ -36,7 +36,8 @@ type Configuration struct {
 
 	Service struct {
 		ViagemPlanejamento struct {
-			MaxConcurrent int `default:"3"`
+			MaxConcurrent        int `default:"10"`
+			MaxConcurrentSubTask int `default:"3"`
 		}
 	}
 

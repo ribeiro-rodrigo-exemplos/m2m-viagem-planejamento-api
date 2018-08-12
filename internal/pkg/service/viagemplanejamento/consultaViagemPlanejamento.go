@@ -36,13 +36,14 @@ type Service struct {
 	vigExecRep   *repository.ViagemExecutadaRepository
 	cacheCliente *cache.Cliente
 
+	err                        error
 	total                      int
 	filaTrabalho               chan dto.FilterDTO
 	resultado                  chan *dto.ConsultaViagemPlanejamentoDTO
 	captura                    chan error
-	concluido                  chan bool
 	wg                         sync.WaitGroup
 	initiated                  chan bool
+	cInitiated                 int
 	consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 	confirm                    uint8
 }
@@ -53,13 +54,63 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 	vps.planEscRep = planEscRep
 	vps.vigExecRep = vigExecRep
 	vps.cacheCliente = cacheCliente
+
+	//TODO - Tornar channels atributos de instância para diminuir quantidade de objetos criados, com isso
+	//		Channel concluido não será mais necessário
+	// Criar pool de *viagemplanejamento.Service para limitar quantidade de consultas simultâneas
+	vps.filaTrabalho = make(chan dto.FilterDTO, 50)
+	vps.resultado = make(chan *dto.ConsultaViagemPlanejamentoDTO, 5)
+	vps.captura = make(chan error, 5)
+
+	go func() {
+		vps.confirm = 0
+		for {
+			// var b bool
+			select {
+			case resultadoParceialConsulta, _ := <-vps.resultado:
+				// if b {
+				// consultaViagemPlanejamento.ViagensExecutada = append(consultaViagemPlanejamento.ViagensExecutada, resultadoParceialConsulta.ViagensExecutada...)
+				vps.consultaViagemPlanejamento.ViagensExecutadaPendentes = append(vps.consultaViagemPlanejamento.ViagensExecutadaPendentes, resultadoParceialConsulta.ViagensExecutadaPendentes...)
+				vps.consultaViagemPlanejamento.Viagens = append(vps.consultaViagemPlanejamento.Viagens, resultadoParceialConsulta.Viagens...)
+				vps.confirm++
+				loggerConcorrencia.Debugf("Confirm Ok [%d/%d]", vps.confirm, vps.total)
+				vps.wg.Done()
+				// }
+			case vps.err, _ = <-vps.captura:
+				// if b {
+				vps.confirm++
+				loggerConcorrencia.Debugf("Confirm Err [%d/%d]", vps.confirm, vps.total)
+				vps.wg.Done()
+				// }
+			}
+		}
+	}()
+
+	vps.initiated = make(chan bool, cfg.Config.Service.ViagemPlanejamento.MaxConcurrentSubTask)
+	go func() {
+		for range vps.initiated {
+			vps.cInitiated++
+			loggerConcorrencia.Tracef("Initiated [%d/%d] ", vps.cInitiated, vps.total)
+		}
+	}()
+	var processarConsultas = func() {
+		for f := range vps.filaTrabalho {
+			vps.initiated <- true
+			vps.ConsultarPorTrajeto(f, vps.resultado, vps.captura)
+		}
+	}
+
+	for i := 0; i < cfg.Config.Service.ViagemPlanejamento.MaxConcurrentSubTask; i++ {
+		go processarConsultas()
+	}
+
 	return vps
 }
 
 //Consultar -
 func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejamentoDTO, error) {
 	start := time.Now()
-	var err error
+
 	cliente := vps.cacheCliente.Cache[filtro.IDCliente]
 	filtro.Complemento = dto.DadosComplementares{
 		Cliente:  cliente,
@@ -88,75 +139,19 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 		}
 	}
 
-	loggerConcorrencia.Debugf("ViagemPlanejamento.MaxConcurrent [%d] ", cfg.Config.Service.ViagemPlanejamento.MaxConcurrent)
+	loggerConcorrencia.Debugf("ViagemPlanejamento.MaxConcurrentSubTask [%d] ", cfg.Config.Service.ViagemPlanejamento.MaxConcurrentSubTask)
 
 	vps.total = len(filtrosConsulta)
+	vps.cInitiated = 0
 	loggerConcorrencia.Debugf("Pending [%d]", vps.total)
-
-	//TODO - Tornar channels atributos de instância para diminuir quantidade de objetos criados, com isso
-	//		Channel concluido não será mais necessário
-	// Criar pool de *viagemplanejamento.Service para limitar quantidade de consultas simultâneas
-	vps.filaTrabalho = make(chan dto.FilterDTO, 50)
-	vps.resultado = make(chan *dto.ConsultaViagemPlanejamentoDTO, 5)
-	vps.captura = make(chan error, 5)
-	vps.concluido = make(chan bool, 2)
-
-	defer close(vps.filaTrabalho)
-	defer close(vps.resultado)
-	defer close(vps.captura)
 
 	vps.wg = sync.WaitGroup{}
 	vps.wg.Add(vps.total)
-
-	vps.initiated = make(chan bool, cfg.Config.Service.ViagemPlanejamento.MaxConcurrent)
-	go func() {
-		c := 0
-		for range vps.initiated {
-			c++
-			loggerConcorrencia.Infof("Initiated [%d/%d] ", c, vps.total)
-		}
-	}()
-	var processarConsultas = func() {
-		for f := range vps.filaTrabalho {
-			vps.initiated <- true
-			vps.ConsultarPorTrajeto(f, vps.resultado, vps.captura)
-		}
-	}
-
-	for i := 0; i < cfg.Config.Service.ViagemPlanejamento.MaxConcurrent; i++ {
-		go processarConsultas()
-	}
 
 	vps.consultaViagemPlanejamento = new(dto.ConsultaViagemPlanejamentoDTO)
 	vps.consultaViagemPlanejamento.ViagensExecutada = []*model.ViagemExecutada{}
 	vps.consultaViagemPlanejamento.Totalizadores = &dto.TotalizadoresDTO{}
 	vps.consultaViagemPlanejamento.Viagens = []*dto.ViagemDTO{}
-
-	go func() {
-		vps.confirm = 0
-		for {
-			var b bool
-			select {
-			case resultadoParceialConsulta, b := <-vps.resultado:
-				if b {
-					// consultaViagemPlanejamento.ViagensExecutada = append(consultaViagemPlanejamento.ViagensExecutada, resultadoParceialConsulta.ViagensExecutada...)
-					vps.consultaViagemPlanejamento.ViagensExecutadaPendentes = append(vps.consultaViagemPlanejamento.ViagensExecutadaPendentes, resultadoParceialConsulta.ViagensExecutadaPendentes...)
-					vps.consultaViagemPlanejamento.Viagens = append(vps.consultaViagemPlanejamento.Viagens, resultadoParceialConsulta.Viagens...)
-					vps.confirm++
-					loggerConcorrencia.Debugf("Confirm Ok [%d/%d]", vps.confirm, vps.total)
-					vps.wg.Done()
-				}
-			case err, b = <-vps.captura:
-				if b {
-					vps.confirm++
-					loggerConcorrencia.Debugf("Confirm Err [%d/%d]", vps.confirm, vps.total)
-					vps.wg.Done()
-				}
-			case <-vps.concluido:
-				return
-			}
-		}
-	}()
 
 	enqueued := 0
 	for _, f := range filtrosConsulta {
@@ -181,8 +176,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	logger.Debugf("QTD Total de Viagens: %d\t em %v\n", len(vps.consultaViagemPlanejamento.Viagens), duracao)
 
-	vps.concluido <- true
-	return vps.consultaViagemPlanejamento, err
+	return vps.consultaViagemPlanejamento, vps.err
 }
 
 func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {

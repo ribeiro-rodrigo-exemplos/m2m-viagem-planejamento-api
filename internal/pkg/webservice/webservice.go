@@ -27,7 +27,7 @@ func InitConfig() {
 	logger = logging.NewLogger("webservice", cfg.Config.Logging.Level)
 }
 
-var viagemplanejamentoService *viagemplanejamento.Service
+var viagemplanejamentoService chan *viagemplanejamento.Service
 var router *httprouter.Router
 
 type myWeb struct {
@@ -109,7 +109,12 @@ func carragarDependencias() error {
 		return err
 	}
 
-	viagemplanejamentoService = viagemplanejamento.NewViagemPlanejamentoService(planEscRep, vigExecRep, cacheCliente)
+	logger.Infof("ViagemPlanejamento.MaxConcurrent %d ", cfg.Config.Service.ViagemPlanejamento.MaxConcurrent)
+
+	viagemplanejamentoService = make(chan *viagemplanejamento.Service, cfg.Config.Service.ViagemPlanejamento.MaxConcurrent*2)
+	for i := 0; i < cfg.Config.Service.ViagemPlanejamento.MaxConcurrent; i++ {
+		viagemplanejamentoService <- viagemplanejamento.NewViagemPlanejamentoService(planEscRep, vigExecRep, cacheCliente)
+	}
 	return err
 }
 
@@ -126,7 +131,9 @@ func ConsultaViagemPlanejamento(res http.ResponseWriter, req *http.Request, para
 
 	logger.Tracef("FILTRO: %#v\n", filter)
 
-	consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filter)
+	vps := <-viagemplanejamentoService
+	consultaViagemPlanejamentoDTO, err := vps.Consultar(filter)
+	viagemplanejamentoService <- vps
 
 	if err != nil {
 		logger.Errorf("ConsultarViagemPlanejamento %s - %+v\n", err, filter)
@@ -168,7 +175,9 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 		DataFim:       filter.DataFim + " " + strings.Replace(filter.HoraFim, " ", "", -1),
 	}
 
-	consultaViagemPlanejamentoDTO, err := viagemplanejamentoService.Consultar(filterAdaptado)
+	vps := <-viagemplanejamentoService
+	consultaViagemPlanejamentoDTO, err := vps.Consultar(filterAdaptado)
+	viagemplanejamentoService <- vps
 
 	if err != nil {
 		logger.Errorf("ConsultarViagemPlanejamento %s - %+v\n", err, filter)

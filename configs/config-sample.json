@@ -14,7 +14,8 @@
 
     "service":{
         "viagemplanejamento":{
-            "maxConcurrent": 4
+            "maxConcurrent": 10,
+            "maxConcurrentSubTask": 4
         }
     },
 
