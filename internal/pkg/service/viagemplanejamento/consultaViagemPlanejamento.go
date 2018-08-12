@@ -55,9 +55,6 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 	vps.vigExecRep = vigExecRep
 	vps.cacheCliente = cacheCliente
 
-	//TODO - Tornar channels atributos de instância para diminuir quantidade de objetos criados, com isso
-	//		Channel concluido não será mais necessário
-	// Criar pool de *viagemplanejamento.Service para limitar quantidade de consultas simultâneas
 	vps.filaTrabalho = make(chan dto.FilterDTO, 50)
 	vps.resultado = make(chan *dto.ConsultaViagemPlanejamentoDTO, 5)
 	vps.captura = make(chan error, 5)
@@ -67,21 +64,17 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 		for {
 			// var b bool
 			select {
-			case resultadoParceialConsulta, _ := <-vps.resultado:
-				// if b {
+			case resultadoParceialConsulta := <-vps.resultado:
 				// consultaViagemPlanejamento.ViagensExecutada = append(consultaViagemPlanejamento.ViagensExecutada, resultadoParceialConsulta.ViagensExecutada...)
 				vps.consultaViagemPlanejamento.ViagensExecutadaPendentes = append(vps.consultaViagemPlanejamento.ViagensExecutadaPendentes, resultadoParceialConsulta.ViagensExecutadaPendentes...)
 				vps.consultaViagemPlanejamento.Viagens = append(vps.consultaViagemPlanejamento.Viagens, resultadoParceialConsulta.Viagens...)
 				vps.confirm++
 				loggerConcorrencia.Debugf("Confirm Ok [%d/%d]", vps.confirm, vps.total)
 				vps.wg.Done()
-				// }
-			case vps.err, _ = <-vps.captura:
-				// if b {
+			case vps.err = <-vps.captura:
 				vps.confirm++
 				loggerConcorrencia.Debugf("Confirm Err [%d/%d]", vps.confirm, vps.total)
 				vps.wg.Done()
-				// }
 			}
 		}
 	}()
