@@ -23,6 +23,11 @@ func GetMongoDB() (*MongoDB, error) {
 	if mongoDB == nil {
 		mongoDB = new(MongoDB)
 		mongoDB.inicializado = true
+
+		//Forçar estabelecimento da conexão inicial e criação interna do pool do mgo,
+		// setar o atributo MongoDB.mongoSession que funciona como proxy do pool
+		// de conexões interna do mgo. Conexões são obtidas posteriormente com mongoSession.Copy()
+		_, err = mongoDB.GetSession()
 	}
 	return mongoDB, err
 }
