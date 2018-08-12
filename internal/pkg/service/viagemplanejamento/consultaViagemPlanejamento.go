@@ -37,13 +37,13 @@ type Service struct {
 	cacheCliente *cache.Cliente
 
 	err                        error
+	chTotal                    chan int
 	total                      int
 	filaTrabalho               chan dto.FilterDTO
 	resultado                  chan *dto.ConsultaViagemPlanejamentoDTO
 	captura                    chan error
 	wg                         sync.WaitGroup
 	initiated                  chan bool
-	cInitiated                 int
 	consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 	confirm                    uint8
 }
@@ -59,8 +59,11 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 	vps.resultado = make(chan *dto.ConsultaViagemPlanejamentoDTO, 5)
 	vps.captura = make(chan error, 5)
 
+	vps.initiated = make(chan bool, cfg.Config.Service.ViagemPlanejamento.MaxConcurrentSubTask*2)
+	vps.chTotal = make(chan int, 1)
 	go func() {
 		vps.confirm = 0
+		cInitiated := 0
 		for {
 			select {
 			case resultadoParceialConsulta := <-vps.resultado:
@@ -74,17 +77,15 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 				vps.confirm++
 				loggerConcorrencia.Debugf("Confirm Err [%d/%d]", vps.confirm, vps.total)
 				vps.wg.Done()
+			case <-vps.initiated:
+				cInitiated++
+				loggerConcorrencia.Tracef("Initiated [%d/%d] ", cInitiated, vps.total)
+			case vps.total = <-vps.chTotal:
+				cInitiated = 0
 			}
 		}
 	}()
 
-	vps.initiated = make(chan bool, cfg.Config.Service.ViagemPlanejamento.MaxConcurrentSubTask*2)
-	go func() {
-		for range vps.initiated {
-			vps.cInitiated++
-			loggerConcorrencia.Tracef("Initiated [%d/%d] ", vps.cInitiated, vps.total)
-		}
-	}()
 	var processarConsultas = func() {
 		for f := range vps.filaTrabalho {
 			vps.initiated <- true
@@ -133,12 +134,12 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	loggerConcorrencia.Debugf("ViagemPlanejamento.MaxConcurrentSubTask [%d] ", cfg.Config.Service.ViagemPlanejamento.MaxConcurrentSubTask)
 
-	vps.total = len(filtrosConsulta)
-	vps.cInitiated = 0
-	loggerConcorrencia.Debugf("Pending [%d]", vps.total)
+	total := len(filtrosConsulta)
+	vps.chTotal <- total
+	loggerConcorrencia.Debugf("Pending [%d]", total)
 
 	vps.wg = sync.WaitGroup{}
-	vps.wg.Add(vps.total)
+	vps.wg.Add(total)
 
 	vps.consultaViagemPlanejamento = new(dto.ConsultaViagemPlanejamentoDTO)
 	vps.consultaViagemPlanejamento.ViagensExecutada = []*model.ViagemExecutada{}
@@ -148,7 +149,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	enqueued := 0
 	for _, f := range filtrosConsulta {
 		enqueued++
-		loggerConcorrencia.Tracef("Enqueued [%d/%d] ", enqueued, vps.total)
+		loggerConcorrencia.Tracef("Enqueued [%d/%d] ", enqueued, total)
 		vps.filaTrabalho <- f
 	}
 
