@@ -62,7 +62,6 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 	go func() {
 		vps.confirm = 0
 		for {
-			// var b bool
 			select {
 			case resultadoParceialConsulta := <-vps.resultado:
 				// consultaViagemPlanejamento.ViagensExecutada = append(consultaViagemPlanejamento.ViagensExecutada, resultadoParceialConsulta.ViagensExecutada...)
