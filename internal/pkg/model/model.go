@@ -17,7 +17,7 @@ type ProcPlanejamentoEscala struct {
 	IDHorario      int32     `json:"id_horario"`
 	IDTabela       int32     `json:"id_tabela"`
 	NmTabela       string    `json:"nm_tabela"`
-	IDEmpresaPlan  int32     `json:"id_empresa_plan"`
+	IDEmpresaPlan  *int32    `json:"id_empresa_plan"`
 	Partida        time.Time `json:"partida"`
 	Chegada        time.Time `json:"chegada"`
 	CodVeiculoPlan int32     `json:"cod_veiculo_plan"`

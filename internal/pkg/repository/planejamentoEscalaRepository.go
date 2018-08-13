@@ -38,7 +38,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		idHorario      int32
 		idTabela       int32
 		nmTabela       string
-		idEmpresaPlan  int32
+		idEmpresaPlan  *int32
 		partida        types.RawTime
 		chegada        types.RawTime
 		codVeiculoPlan sql.NullInt64

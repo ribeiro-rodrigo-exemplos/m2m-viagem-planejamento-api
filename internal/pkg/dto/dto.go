@@ -97,7 +97,7 @@ type ViagemDTO struct {
 	IDTabela            int32         `json:"idTabela"`
 	IDHorario           int32         `json:"idHorario"`
 	IDEmpresa           int32         `json:"idEmpresa"`
-	IDEmpresaPlanejada  int32         `json:"idEmpresaPlanejada"`
+	IDEmpresaPlanejada  *int32        `json:"idEmpresaPlanejada"`
 	Status              int           `json:"status"`
 	EmExecucao          bool          `json:"emExecucao"`
 	VeiculoPlan         string        `json:"veiculoPlan"`
