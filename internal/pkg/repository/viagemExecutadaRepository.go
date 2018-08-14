@@ -84,6 +84,7 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 	dtFim := filtro.GetDataFim()
 
 	query := bson.M{
+		"excluido":                     false,
 		"clienteId":                    filtro.IDCliente,
 		"situacaoAtual":                bson.M{"$in": situacoes},
 		"partida.trajetoExecutado._id": bson.M{"$in": trajetos},
