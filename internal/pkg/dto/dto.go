@@ -8,6 +8,11 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+//ToleranciaDTO -
+type ToleranciaDTO struct {
+	AtrasoPartida int32 `json:"atrasoPartida"`
+}
+
 //TrajetoDTO -
 type TrajetoDTO struct {
 	ID          bson.ObjectId `json:"_id"`
@@ -156,6 +161,7 @@ type ViagemDTO struct {
 	Planejada           bool          `json:"-"`
 	PlanejadaAteMomento bool          `json:"-"`
 	Trajeto             TrajetoDTO    `json:"trajeto"`
+	Tolerancia          ToleranciaDTO `json:"tolerancia"`
 }
 
 //TotalizadoresDTO -

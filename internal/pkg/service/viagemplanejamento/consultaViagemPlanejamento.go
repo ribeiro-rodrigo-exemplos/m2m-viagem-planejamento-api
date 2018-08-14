@@ -470,6 +470,7 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 			Sentido:     filtro.ListaTrajetos[0].Sentido,
 			NumeroLinha: Cache.TrajetoLinha[filtro.ListaTrajetos[0].ID].Numero,
 		},
+		Tolerancia: dto.ToleranciaDTO{AtrasoPartida: ples.ToleranciaAtrasoPartida},
 	}
 
 	if ples.Partida.Before(filtro.Complemento.DataHora) {

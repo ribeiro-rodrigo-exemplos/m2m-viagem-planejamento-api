@@ -32,16 +32,17 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	var err error
 
 	var (
-		dataPlan       time.Time
-		idPlanejamento int32
-		idTrajeto      string
-		idHorario      int32
-		idTabela       int32
-		nmTabela       string
-		idEmpresaPlan  *int32
-		partida        types.RawTime
-		chegada        types.RawTime
-		codVeiculoPlan sql.NullInt64
+		dataPlan                time.Time
+		idPlanejamento          int32
+		idTrajeto               string
+		idHorario               int32
+		idTabela                int32
+		nmTabela                string
+		idEmpresaPlan           *int32
+		partida                 types.RawTime
+		chegada                 types.RawTime
+		codVeiculoPlan          sql.NullInt64
+		toleranciaAtrasoPartida int32
 	)
 
 	var sql string
@@ -86,6 +87,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 			&partida,
 			&chegada,
 			&codVeiculoPlan,
+			&toleranciaAtrasoPartida,
 		)
 
 		if err != nil {
@@ -114,15 +116,16 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		}
 
 		planejamentoEscala := &model.ProcPlanejamentoEscala{
-			IDPlanejamento: idPlanejamento,
-			IDTrajeto:      idTrajeto,
-			IDHorario:      idHorario,
-			IDTabela:       idTabela,
-			NmTabela:       nmTabela,
-			IDEmpresaPlan:  idEmpresaPlan,
-			Partida:        util.Concatenar(dataPlan, timePartida, loc),
-			Chegada:        util.Concatenar(dataPlan, timeChegada, loc),
-			CodVeiculoPlan: veiculo,
+			IDPlanejamento:          idPlanejamento,
+			IDTrajeto:               idTrajeto,
+			IDHorario:               idHorario,
+			IDTabela:                idTabela,
+			NmTabela:                nmTabela,
+			IDEmpresaPlan:           idEmpresaPlan,
+			Partida:                 util.Concatenar(dataPlan, timePartida, loc),
+			Chegada:                 util.Concatenar(dataPlan, timeChegada, loc),
+			CodVeiculoPlan:          veiculo,
+			ToleranciaAtrasoPartida: toleranciaAtrasoPartida,
 		}
 		logger.Tracef("%#v\n", planejamentoEscala)
 		planejamentosEscala = append(planejamentosEscala, planejamentoEscala)
