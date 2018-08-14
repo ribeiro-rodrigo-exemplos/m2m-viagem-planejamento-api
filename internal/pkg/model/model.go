@@ -149,7 +149,9 @@ type Partida struct {
 
 //TrajetoExecutado -
 type TrajetoExecutado struct {
-	IDObject bson.ObjectId `bson:"_id"`
+	IDObject  bson.ObjectId `bson:"_id"`
+	Descricao string        `bson:"descricao"`
+	Sentido   string        `bson:"sentido"`
 }
 
 //Modelo - API Planejamento

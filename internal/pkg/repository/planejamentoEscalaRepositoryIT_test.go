@@ -23,8 +23,8 @@ func TestListarPlanejamentosEscalas(t *testing.T) {
 	cli.AtualizarLocation()
 
 	filter := &dto.FilterDTO{
-		ListaTrajetos: []bson.ObjectId{
-			bson.ObjectIdHex("555b6e830850536438063762"),
+		ListaTrajetos: []dto.TrajetoDTO{
+			dto.TrajetoDTO{ID: bson.ObjectIdHex("555b6e830850536438063762")},
 			// bson.ObjectIdHex("555b6e830850536438063761"),
 		},
 		IDCliente:  209,

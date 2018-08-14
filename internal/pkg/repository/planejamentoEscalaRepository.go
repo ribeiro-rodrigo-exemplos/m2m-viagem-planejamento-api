@@ -58,7 +58,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	}
 	var listaTrajetos = make([]string, len(filtro.ListaTrajetos))
 	for i, trajeto := range filtro.ListaTrajetos {
-		listaTrajetos[i] = "\"" + trajeto.Hex() + "\""
+		listaTrajetos[i] = "\"" + trajeto.ID.Hex() + "\""
 	}
 
 	rows, err := c.connection.Query(sql, dtInicio, dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))

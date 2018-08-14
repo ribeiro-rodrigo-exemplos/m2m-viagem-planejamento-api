@@ -14,7 +14,6 @@ import (
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/model"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/repository"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/util"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var cfgInitiated bool
@@ -117,7 +116,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	for _, p := range periodos {
 		for _, t := range trajetos {
 			f := dto.FilterDTO{
-				ListaTrajetos: []bson.ObjectId{
+				ListaTrajetos: []dto.TrajetoDTO{
 					t,
 				},
 				IDCliente:   filtro.IDCliente,
@@ -378,7 +377,7 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 		}
 
 		for _, ples := range planejamentosEscala {
-			vg, _ := converterPlanejamentosEscala(ples, filtro.Complemento.DataHora)
+			vg, _ := converterPlanejamentosEscala(ples, filtro)
 			viagensDTO = append(viagensDTO, vg)
 			mapaHorarioViagemAUX[vg.IDHorario] = vg
 		}
@@ -430,7 +429,7 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 	resultado <- consultaViagemPlanejamentoDTO
 }
 
-func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, dataHora time.Time) (*dto.ViagemDTO, error) {
+func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto.FilterDTO) (*dto.ViagemDTO, error) {
 	var vg *dto.ViagemDTO
 	var err error
 
@@ -449,9 +448,14 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, dataHora t
 		ChegadaPlan:        util.FormatarHMS(ples.Chegada),
 		VeiculoPlan:        strconv.Itoa(int(ples.CodVeiculoPlan)),
 		Planejada:          true,
+		Trajeto: dto.TrajetoDTO{
+			ID:        filtro.ListaTrajetos[0].ID,
+			Descricao: filtro.ListaTrajetos[0].Descricao,
+			Sentido:   filtro.ListaTrajetos[0].Sentido,
+		},
 	}
 
-	if ples.Partida.Before(dataHora) {
+	if ples.Partida.Before(filtro.Complemento.DataHora) {
 		vg.Status = dto.StatusViagem.NaoRealizada
 		vg.PlanejadaAteMomento = true
 	} else {
@@ -560,6 +564,11 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 	vg.VelocidadeMedia = vgex.VelocidadeMedia
 
 	vg.QtdePassageiros = vgex.QntPassageiros
+	vg.Trajeto = dto.TrajetoDTO{
+		ID:        vgex.Partida.TrajetoExecutado.IDObject,
+		Descricao: vgex.Partida.TrajetoExecutado.Descricao,
+		Sentido:   vgex.Partida.TrajetoExecutado.Sentido,
+	}
 
 }
 

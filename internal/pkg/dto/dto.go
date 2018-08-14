@@ -8,21 +8,27 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+//TrajetoDTO -
+type TrajetoDTO struct {
+	ID        bson.ObjectId `json:"_id"`
+	Descricao string        `json:"nome"`
+	Sentido   string        `json:"sentido"`
+}
+
 //FilterDTO filtro para consultas
 type FilterDTO struct {
-	ListaTrajetos []bson.ObjectId `json:"lista_trajetos"`
-	IDCliente     int32           `json:"id_cliente"`
-	IDVeiculo     int             `json:"id_veiculo"`
-	Ordenacao     []string        `json:"ordenacao"`
-	DataInicio    string          `json:"data_inicio"`
-	DataFim       string          `json:"data_fim"`
+	ListaTrajetos []TrajetoDTO `json:"lista_trajetos"`
+	IDCliente     int32        `json:"id_cliente"`
+	IDVeiculo     int          `json:"id_veiculo"`
+	Ordenacao     []string     `json:"ordenacao"`
+	DataInicio    string       `json:"data_inicio"`
+	DataFim       string       `json:"data_fim"`
 	TipoDia       []string
 	Complemento   DadosComplementares
 }
 
 //FilterDashboardDTO filtro para consultas dashboard
 type FilterDashboardDTO struct {
-	ListaLinhas   []bson.ObjectId       `json:"linhas"`
 	ListaTrajetos []TrajetoDashboardDTO `json:"trajetos"`
 	IDCliente     int32                 `json:"idCliente"`
 	Status        []string              `json:"status"`
@@ -37,7 +43,8 @@ type FilterDashboardDTO struct {
 //TrajetoDashboardDTO -
 type TrajetoDashboardDTO struct {
 	ID        bson.ObjectId `json:"_id"`
-	Descricao string        `json:"descricao"`
+	Descricao string        `json:"nome"`
+	Sentido   string        `json:"sentido"`
 }
 
 //GetDataInicio -
@@ -139,6 +146,7 @@ type ViagemDTO struct {
 	Placa               string        `json:"placa"`
 	Planejada           bool          `json:"-"`
 	PlanejadaAteMomento bool          `json:"-"`
+	Trajeto             TrajetoDTO    `json:"trajeto"`
 }
 
 //TotalizadoresDTO -
