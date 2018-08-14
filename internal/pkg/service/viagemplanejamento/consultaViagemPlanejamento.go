@@ -160,6 +160,10 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	calcularTotalizadores(vps.consultaViagemPlanejamento)
 
+	// for _, vg := range vps.consultaViagemPlanejamento.Viagens {
+	// 	fmt.Printf("%v - %v\n", vg.DataAbertura, vg.IDViagemExecutada.Hex())
+	// }
+
 	duracao := time.Since(start)
 
 	var informacoes = make(map[string]interface{})

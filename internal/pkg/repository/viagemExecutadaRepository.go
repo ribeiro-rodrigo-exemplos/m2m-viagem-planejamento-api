@@ -91,6 +91,10 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 		"executada.dataInicio":         bson.M{"$gte": dtInicio, "$lte": dtFim},
 		// "partida":                      bson.M{"$exists": true},
 		// "alocacao.idHorario":           bson.M{"$ne": ""},
+		// "_id": bson.M{"$in": []bson.ObjectId{
+		// 	bson.ObjectIdHex("5b6f38c3e4b0ad466e14ac3e"),
+		// 	bson.ObjectIdHex("5b6f31bce4b0ad466e14ab7a")},
+		// },
 	}
 
 	collection := session.DB(cfg.Config.MongoDB.Database).C("ViagemExecutada")
