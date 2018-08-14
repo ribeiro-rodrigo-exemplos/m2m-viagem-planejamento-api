@@ -119,7 +119,10 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 	var err error
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
-			dto.TrajetoDTO{ID: bson.ObjectIdHex("555b6e830850536438063762")},
+			dto.TrajetoDTO{
+				ID:    bson.ObjectIdHex("555b6e830850536438063762"),
+				Linha: dto.LinhaDTO{Numero: "5702A1"},
+			},
 		},
 		IDCliente:  209,
 		IDVeiculo:  150,

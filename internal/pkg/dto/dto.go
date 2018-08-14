@@ -10,9 +10,16 @@ import (
 
 //TrajetoDTO -
 type TrajetoDTO struct {
-	ID        bson.ObjectId `json:"_id"`
-	Descricao string        `json:"nome"`
-	Sentido   string        `json:"sentido"`
+	ID          bson.ObjectId `json:"_id"`
+	Descricao   string        `json:"nome"`
+	Sentido     string        `json:"sentido"`
+	Linha       LinhaDTO      `json:"-"`
+	NumeroLinha string        `json:"numeroLinha"`
+}
+
+//LinhaDTO -
+type LinhaDTO struct {
+	Numero string `json:"numero"`
 }
 
 //FilterDTO filtro para consultas
@@ -42,9 +49,10 @@ type FilterDashboardDTO struct {
 
 //TrajetoDashboardDTO -
 type TrajetoDashboardDTO struct {
-	ID        bson.ObjectId `json:"_id"`
-	Descricao string        `json:"nome"`
-	Sentido   string        `json:"sentido"`
+	ID          bson.ObjectId `json:"_id"`
+	Descricao   string        `json:"nome"`
+	Sentido     string        `json:"sentido"`
+	NumeroLinha string        `json:"numeroLinha"`
 }
 
 //GetDataInicio -
@@ -101,6 +109,7 @@ func (f *FilterDTO) GetDataFimString() string {
 type ViagemDTO struct {
 	ID                  bson.ObjectId `json:"id"`
 	IDViagemExecutada   bson.ObjectId `json:"idViagemExecutada"`
+	IDPlanejamento      int32         `json:"idPlanejamento"`
 	IDTabela            int32         `json:"idTabela"`
 	IDHorario           int32         `json:"idHorario"`
 	IDEmpresa           int32         `json:"idEmpresa"`

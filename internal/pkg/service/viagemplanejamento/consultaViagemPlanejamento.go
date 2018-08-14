@@ -127,6 +127,10 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 				TipoDia:     model.TiposDia.FromDate(p.Inicio, []string{"O", "F"}),
 				Complemento: filtro.Complemento,
 			}
+			if _, existe := Cache.TrajetoLinha[t.ID]; !existe {
+				Cache.TrajetoLinha[t.ID] = t.Linha
+			}
+
 			filtrosConsulta = append(filtrosConsulta, f)
 		}
 	}
@@ -448,6 +452,7 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 	// logger.Tracef("%#v\n", ples)
 
 	vg = &dto.ViagemDTO{
+		IDPlanejamento:     ples.IDPlanejamento,
 		IDTabela:           ples.IDTabela,
 		IDHorario:          ples.IDHorario,
 		IDEmpresaPlanejada: ples.IDEmpresaPlan,
@@ -460,9 +465,10 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 		VeiculoPlan:        strconv.Itoa(int(ples.CodVeiculoPlan)),
 		Planejada:          true,
 		Trajeto: dto.TrajetoDTO{
-			ID:        filtro.ListaTrajetos[0].ID,
-			Descricao: filtro.ListaTrajetos[0].Descricao,
-			Sentido:   filtro.ListaTrajetos[0].Sentido,
+			ID:          filtro.ListaTrajetos[0].ID,
+			Descricao:   filtro.ListaTrajetos[0].Descricao,
+			Sentido:     filtro.ListaTrajetos[0].Sentido,
+			NumeroLinha: Cache.TrajetoLinha[filtro.ListaTrajetos[0].ID].Numero,
 		},
 	}
 
@@ -576,9 +582,10 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 
 	vg.QtdePassageiros = vgex.QntPassageiros
 	vg.Trajeto = dto.TrajetoDTO{
-		ID:        vgex.Partida.TrajetoExecutado.IDObject,
-		Descricao: vgex.Partida.TrajetoExecutado.Descricao,
-		Sentido:   vgex.Partida.TrajetoExecutado.Sentido,
+		ID:          vgex.Partida.TrajetoExecutado.IDObject,
+		Descricao:   vgex.Partida.TrajetoExecutado.Descricao,
+		Sentido:     vgex.Partida.TrajetoExecutado.Sentido,
+		NumeroLinha: Cache.TrajetoLinha[vgex.Partida.TrajetoExecutado.IDObject].Numero,
 	}
 
 }

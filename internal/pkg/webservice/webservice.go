@@ -164,7 +164,7 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 	listaTrajetos := make([]dto.TrajetoDTO, len(filter.ListaTrajetos))
 	for i := 0; i < len(filter.ListaTrajetos); i++ {
 		t := filter.ListaTrajetos[i]
-		listaTrajetos[i] = dto.TrajetoDTO{ID: t.ID, Descricao: t.Descricao, Sentido: t.Sentido}
+		listaTrajetos[i] = dto.TrajetoDTO{ID: t.ID, Descricao: t.Descricao, Sentido: t.Sentido, Linha: dto.LinhaDTO{Numero: t.NumeroLinha}}
 	}
 
 	filterAdaptado := dto.FilterDTO{
