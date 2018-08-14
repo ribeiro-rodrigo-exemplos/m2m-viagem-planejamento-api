@@ -193,16 +193,14 @@ func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamen
 			}
 
 			if vgex.Executada.DataInicio.After(vg.PartidaOrdenacao) {
-				if vg.Status == dto.StatusViagem.NaoRealizada {
-					if vg.IDViagemExecutada == "" {
-						vg.Status = dto.StatusViagem.Atrasada
-						populaDadosViagem(vgex, vg)
-					} else {
-						novaVG := &dto.ViagemDTO{}
-						novaVG.Status = dto.StatusViagem.RealizadaNaoPlanejada
-						populaDadosViagem(vgex, novaVG)
-						vgRealizadasNaoPlanejadas = append(vgRealizadasNaoPlanejadas, novaVG)
-					}
+				if vg.Status == dto.StatusViagem.NaoRealizada && vg.IDViagemExecutada == "" {
+					vg.Status = dto.StatusViagem.Atrasada
+					populaDadosViagem(vgex, vg)
+				} else {
+					novaVG := &dto.ViagemDTO{}
+					novaVG.Status = dto.StatusViagem.Extra
+					populaDadosViagem(vgex, novaVG)
+					vgRealizadasNaoPlanejadas = append(vgRealizadasNaoPlanejadas, novaVG)
 				}
 				break
 			}
@@ -256,6 +254,7 @@ type totalizacao struct {
 	Canceladas           chan int32
 	NaoIniciadas         chan int32
 	NaoRealizadas        chan int32
+	Extra                chan int32
 	Atrasada             chan int32
 	PlanejadasAteMomento chan int32
 }
@@ -268,6 +267,7 @@ func (tot *totalizacao) close() {
 	close(tot.Canceladas)
 	close(tot.NaoIniciadas)
 	close(tot.NaoRealizadas)
+	close(tot.Extra)
 	close(tot.Atrasada)
 	close(tot.PlanejadasAteMomento)
 }
@@ -296,6 +296,7 @@ func newTotalizacao(t *dto.TotalizadoresDTO, wg *sync.WaitGroup) (tot *totalizac
 	lancar(acumulador, &tot.Canceladas, &t.Canceladas)
 	lancar(acumulador, &tot.NaoIniciadas, &t.NaoIniciadas)
 	lancar(acumulador, &tot.NaoRealizadas, &t.NaoRealizadas)
+	lancar(acumulador, &tot.Extra, &t.Extra)
 	lancar(acumulador, &tot.Atrasada, &t.Atrasada)
 	lancar(acumulador, &tot.PlanejadasAteMomento, &t.PlanejadasAteMomento)
 
@@ -310,7 +311,7 @@ func totalizar(vg *dto.ViagemDTO, t *totalizacao, wg *sync.WaitGroup) {
 		wg.Done()
 	}
 
-	if vg.Status == dto.StatusViagem.RealizadaPlanejada || vg.Status == dto.StatusViagem.Atrasada {
+	if vg.Status == dto.StatusViagem.RealizadaPlanejada || vg.Status == dto.StatusViagem.Atrasada || vg.Status == dto.StatusViagem.Extra {
 		t.Realizadas <- 1
 	} else {
 		wg.Done()
@@ -342,6 +343,12 @@ func totalizar(vg *dto.ViagemDTO, t *totalizacao, wg *sync.WaitGroup) {
 
 	if vg.Status == dto.StatusViagem.NaoRealizada {
 		t.NaoRealizadas <- 1
+	} else {
+		wg.Done()
+	}
+
+	if vg.Status == dto.StatusViagem.Extra {
+		t.Extra <- 1
 	} else {
 		wg.Done()
 	}

@@ -153,14 +153,14 @@ type ViagemDTO struct {
 type TotalizadoresDTO struct {
 	Planejadas           int32   `json:"planejadas"`
 	PlanejadasAteMomento int32   `json:"planejadasAteMomento"`
-	Realizadas           int32   `json:"realizadas"`
+	Realizadas           int32   `json:"realizadasAteMomento"`
 	RealizadasPlanejadas int32   `json:"realizadasPlanejadas"`
 	EmAndamento          int32   `json:"emAndamento"`
 	Canceladas           int32   `json:"canceladas"`
 	Passageiros          int32   `json:"passageiros"`
 	NaoIniciadas         int32   `json:"naoIniciadas"`
 	NaoRealizadas        int32   `json:"naoRealizadas"`
-	Reforco              int32   `json:"reforco"`
+	Extra                int32   `json:"reforco"`
 	Atrasada             int32   `json:"atrasada"`
 	IndiceExecucao       []int32 `json:"indiceExecucao"`
 	IndicePartida        []int32 `json:"indicePartida"`
