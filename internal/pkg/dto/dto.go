@@ -143,7 +143,7 @@ type ViagemDTO struct {
 	Editada             bool          `json:"editada"`
 	Headway             int64         `json:"headway"`
 	HeadwayStr          string        `json:"headwayStr"`
-	Data                string        `json:"data"`
+	Data                time.Time     `json:"data"`
 	DataAbertura        string        `json:"dataAbertura"`
 	DataFechamento      string        `json:"dataFechamento"`
 	Ipk                 float64       `json:"ipk"`

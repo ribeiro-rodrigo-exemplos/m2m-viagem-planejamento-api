@@ -484,6 +484,7 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 		IDHorario:          ples.IDHorario,
 		IDEmpresaPlanejada: ples.IDEmpresaPlan,
 		NmTabela:           ples.NmTabela,
+		Data:               ples.Partida,
 		PartidaOrdenacao:   ples.Partida,
 		PartidaPlanTime:    ples.Partida,
 		PartidaPlan:        util.FormatarHMS(ples.Partida),
@@ -590,8 +591,8 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 	vg.PartidaRealTime = vgex.Executada.DataInicio
 	vg.PartidaReal = util.FormatarHMS(vgex.Executada.DataInicio)
 
-	vg.Data = util.FormatarAMDHMS(vgex.Executada.DataInicio)
-	vg.DataAbertura = vg.Data
+	vg.Data = vgex.Executada.DataInicio
+	vg.DataAbertura = util.FormatarAMDHMS(vgex.Executada.DataInicio)
 
 	if vg.IDHorario > 0 { //Se planejamento encontrado
 		diffPartida, diffPartidaFormatada := util.DuracaoEFormatacaoMinutos(vg.PartidaPlanTime, vgex.Executada.DataInicio)
