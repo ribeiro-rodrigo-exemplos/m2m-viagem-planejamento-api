@@ -132,6 +132,7 @@ type ViagemDTO struct {
 	DiffPartida         int64         `json:"diffPartida"`
 	DiffPartidaStr      string        `json:"diffPartidaStr"`
 	EntrouEmPlaca       string        `json:"entrouEmPlaca"`
+	PartidaRealTime     time.Time     `json:"-"`
 	PartidaReal         string        `json:"partidaReal"`
 	ChegadaReal         string        `json:"chegadaReal"`
 	DiffChegada         int64         `json:"diffChegada"`

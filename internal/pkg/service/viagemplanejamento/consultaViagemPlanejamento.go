@@ -7,6 +7,8 @@ import (
 	"sync"
 	"time"
 
+	"gopkg.in/mgo.v2/bson"
+
 	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/cache"
 	cfg "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/config"
@@ -164,6 +166,8 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	calcularTotalizadores(vps.consultaViagemPlanejamento)
 
+	complementarInformacoes(vps.consultaViagemPlanejamento)
+
 	// for _, vg := range vps.consultaViagemPlanejamento.Viagens {
 	// 	fmt.Printf("%v - %v\n", vg.DataAbertura, vg.IDViagemExecutada.Hex())
 	// }
@@ -177,6 +181,24 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	logger.Debugf("QTD Total de Viagens: %d\t em %v\n", len(vps.consultaViagemPlanejamento.Viagens), duracao)
 
 	return vps.consultaViagemPlanejamento, vps.err
+}
+
+//complementarInformacoes calcula Headway
+func complementarInformacoes(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
+
+	ultimaPartida := make(map[bson.ObjectId]*dto.ViagemDTO)
+	for _, vg := range consultaViagemPlanejamento.Viagens {
+
+		//Calcular Headway
+		if vg.Status != dto.StatusViagem.NaoRealizada && vg.Status != dto.StatusViagem.NaoIniciada && vg.Status != dto.StatusViagem.Cancelada {
+			if vgAnterior, existe := ultimaPartida[vg.Trajeto.ID]; existe {
+				diffPartida, diffPartidaFormatada := util.DuracaoEFormatacaoMinutos(vgAnterior.PartidaRealTime, vg.PartidaRealTime)
+				vg.HeadwayStr = diffPartidaFormatada
+				vg.Headway = diferencaMinutos(diffPartida)
+			}
+			ultimaPartida[vg.Trajeto.ID] = vg
+		}
+	}
 }
 
 func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
@@ -560,6 +582,7 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 	}
 	vg.VeiculoReal = vgex.Executada.Veiculo.Prefixo
 
+	vg.PartidaRealTime = vgex.Executada.DataInicio
 	vg.PartidaReal = util.FormatarHMS(vgex.Executada.DataInicio)
 
 	vg.Data = util.FormatarAMDHMS(vgex.Executada.DataInicio)
