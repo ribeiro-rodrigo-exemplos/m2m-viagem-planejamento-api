@@ -2,6 +2,7 @@ package viagemplanejamento
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"sync"
@@ -265,6 +266,10 @@ func calcularTotalizadores(consultaViagemPlanejamento *dto.ConsultaViagemPlaneja
 	consultaViagemPlanejamento.Totalizadores.NaoIniciadas = (consultaViagemPlanejamento.Totalizadores.Planejadas - consultaViagemPlanejamento.Totalizadores.PlanejadasAteMomento)
 
 	indiceExecucao := (float64(consultaViagemPlanejamento.Totalizadores.Realizadas) / float64(consultaViagemPlanejamento.Totalizadores.PlanejadasAteMomento) * 100)
+	if math.IsNaN(indiceExecucao) {
+		//TODO - Remover Marreta para Dashboard. Mover lógica para tela
+		indiceExecucao = 100
+	}
 	consultaViagemPlanejamento.Totalizadores.IndiceExecucao = []int32{int32(indiceExecucao)}
 
 	defer tot.close()
