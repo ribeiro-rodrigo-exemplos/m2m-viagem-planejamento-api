@@ -43,6 +43,34 @@ func (c *Cliente) AtualizarLocation() {
 
 }
 
+//Motorista -
+type Motorista struct {
+	IDMotorista   int32  `json:""`
+	Nome          string `json:""`
+	Matricula     string `json:""`
+	Identificacao string `json:""`
+}
+
+// NewMotorista -
+func NewMotorista(id int32, nome, matricula string) *Motorista {
+	m := new(Motorista)
+	m.IDMotorista = id
+	m.Nome = nome
+	m.Matricula = matricula
+	m.Identificacao = m.nomeOuMatricula()
+	return m
+}
+
+// NomeOuMatricula - retorna identificação do motorista, sendo nome prioridade
+func (m *Motorista) nomeOuMatricula() (identificacao string) {
+	if m.Nome != "" {
+		identificacao = m.Nome
+	} else {
+		identificacao = m.Matricula
+	}
+	return
+}
+
 //Modelo - MongoDB
 
 //MensagemObs -

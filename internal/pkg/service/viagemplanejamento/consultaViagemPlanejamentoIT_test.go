@@ -28,6 +28,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	cacheCliente, _ := cache.GetCliente(nil)
 	cliente := cacheCliente.Cache[209]
 
+	cacheMotorista, _ := cache.GetMotorista(nil)
+
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
 			dto.TrajetoDTO{ID: bson.ObjectIdHex("555b6e830850536438063762")},
@@ -56,7 +58,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	}
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -144,7 +146,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
 	cacheCliente, _ := cache.GetCliente(nil)
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente)
+	cacheMotorista, _ := cache.GetMotorista(nil)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -207,7 +210,8 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
 	cacheCliente, _ := cache.GetCliente(nil)
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente)
+	cacheMotorista, _ := cache.GetMotorista(nil)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -272,7 +276,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
 	cacheCliente, _ := cache.GetCliente(nil)
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente)
+	cacheMotorista, _ := cache.GetMotorista(nil)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 

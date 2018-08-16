@@ -25,4 +25,16 @@ func InitConfig() {
 	if err != nil {
 		logger.Errorf("Obter Cache de Cliente - %s\n", err)
 	}
+
+	//TODO - Receber dependência conexão como parâmetro
+	con, err = database.GetSQLConnection()
+	if err != nil {
+		logger.Errorf("Obter conexão - %s\n", err)
+	}
+	motoristaRepository := repository.NewMotoristaRepository(con)
+
+	_, err = GetMotorista(motoristaRepository)
+	if err != nil {
+		logger.Errorf("Obter Cache de Cliente - %s\n", err)
+	}
 }

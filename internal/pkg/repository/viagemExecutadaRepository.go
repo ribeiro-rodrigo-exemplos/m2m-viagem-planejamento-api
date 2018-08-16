@@ -46,6 +46,7 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 		"qntPassageiros":           1,
 		"mensagemObs":              1,
 		"partida.trajetoExecutado": 1,
+		"codigoMotorista":          1,
 
 		// "transmissoesRecebidas.transmissao.dataTransmissao": 1,
 		// "transmissoesRecebidas.eventoTransmissao":           1,
@@ -59,7 +60,6 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 		// "arrastoAutomatico":                                 1,
 		// "dataFimAtraso":                                     1,
 		// "kmPercurso":                                        1,
-		// "codigoMotorista":                                   1,
 		// "codigoCobrador":                                    1,
 		// "velocidadeMedia":                                   1,
 		// "ipk":                                               1,

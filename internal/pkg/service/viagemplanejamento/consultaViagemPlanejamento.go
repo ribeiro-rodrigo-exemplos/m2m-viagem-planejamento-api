@@ -34,9 +34,10 @@ func InitConfig() {
 
 //Service -
 type Service struct {
-	planEscRep   *repository.PlanejamentoEscalaRepository
-	vigExecRep   *repository.ViagemExecutadaRepository
-	cacheCliente *cache.Cliente
+	planEscRep     *repository.PlanejamentoEscalaRepository
+	vigExecRep     *repository.ViagemExecutadaRepository
+	cacheCliente   *cache.Cliente
+	cacheMotorista *cache.Motorista
 
 	err                        error
 	chTotal                    chan int
@@ -51,11 +52,12 @@ type Service struct {
 }
 
 //NewViagemPlanejamentoService -
-func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente) *Service {
+func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente, cacheMotorista *cache.Motorista) *Service {
 	vps := &Service{}
 	vps.planEscRep = planEscRep
 	vps.vigExecRep = vigExecRep
 	vps.cacheCliente = cacheCliente
+	vps.cacheMotorista = cacheMotorista
 
 	vps.filaTrabalho = make(chan dto.FilterDTO, 50)
 	vps.resultado = make(chan *dto.ConsultaViagemPlanejamentoDTO, 5)
@@ -167,7 +169,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	calcularTotalizadores(vps.consultaViagemPlanejamento)
 
-	complementarInformacoes(vps.consultaViagemPlanejamento)
+	vps.complementarInformacoes(vps.consultaViagemPlanejamento)
 
 	// for _, vg := range vps.consultaViagemPlanejamento.Viagens {
 	// 	fmt.Printf("%v - %v\n", vg.DataAbertura, vg.IDViagemExecutada.Hex())
@@ -185,7 +187,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 }
 
 //complementarInformacoes calcula Headway
-func complementarInformacoes(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
+func (vps *Service) complementarInformacoes(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
 
 	ultimaPartida := make(map[bson.ObjectId]*dto.ViagemDTO)
 	for _, vg := range consultaViagemPlanejamento.Viagens {
@@ -198,6 +200,9 @@ func complementarInformacoes(consultaViagemPlanejamento *dto.ConsultaViagemPlane
 				vg.Headway = diferencaMinutos(diffPartida)
 			}
 			ultimaPartida[vg.Trajeto.ID] = vg
+		}
+		if m, existe := vps.cacheMotorista.Cache[vg.CdMotorista]; existe {
+			vg.CdMotorista = m.Identificacao
 		}
 	}
 }
@@ -617,6 +622,8 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 		Sentido:     vgex.Partida.TrajetoExecutado.Sentido,
 		NumeroLinha: Cache.TrajetoLinha[vgex.Partida.TrajetoExecutado.IDObject].Numero,
 	}
+
+	vg.CdMotorista = vgex.CodigoMotorista
 
 }
 
