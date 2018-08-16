@@ -7,8 +7,8 @@ import (
 )
 
 func TestTipoDiaNaoNulo(t *testing.T) {
-
-	tiposDeDia := TiposDia.FromDate(time.Now(), []string{"O", "F"})
+	dt := time.Now()
+	tiposDeDia := TiposDia.FromDate(&dt, []string{"O", "F"})
 
 	fmt.Println(tiposDeDia)
 

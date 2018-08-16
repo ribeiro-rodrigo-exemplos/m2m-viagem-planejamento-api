@@ -30,9 +30,10 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 
 	cacheMotorista, _ := cache.GetMotorista(nil)
 
+	id := bson.ObjectIdHex("555b6e830850536438063762")
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
-			dto.TrajetoDTO{ID: bson.ObjectIdHex("555b6e830850536438063762")},
+			dto.TrajetoDTO{ID: &id},
 			// bson.ObjectIdHex("555b6e830850536438063761"),
 		},
 		IDCliente:  209,
@@ -118,11 +119,12 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 	cache.InitConfig()
 	t.Log("TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite")
 
+	id := bson.ObjectIdHex("555b6e830850536438063762")
 	var err error
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
 			dto.TrajetoDTO{
-				ID:    bson.ObjectIdHex("555b6e830850536438063762"),
+				ID:    &id,
 				Linha: dto.LinhaDTO{Numero: "5702A1"},
 			},
 		},
@@ -185,10 +187,13 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 
 	var err error
 
+	id1 := bson.ObjectIdHex("555b6e830850536438063762")
+	id2 := bson.ObjectIdHex("555b6e830850536438063761")
+
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
-			dto.TrajetoDTO{ID: bson.ObjectIdHex("555b6e830850536438063762")},
-			dto.TrajetoDTO{ID: bson.ObjectIdHex("555b6e830850536438063761")},
+			dto.TrajetoDTO{ID: &id1},
+			dto.TrajetoDTO{ID: &id2},
 		},
 		IDCliente:  209,
 		IDVeiculo:  150,
@@ -249,9 +254,10 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 
 	var err error
 
+	id := bson.ObjectIdHex("555b6e830850536438063762")
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
-			dto.TrajetoDTO{ID: bson.ObjectIdHex("555b6e830850536438063762")},
+			dto.TrajetoDTO{ID: &id},
 			// bson.ObjectIdHex("555b6e830850536438063761"),
 		},
 		IDCliente:  209,

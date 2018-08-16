@@ -18,7 +18,7 @@ func TestDuracaoEFormatacaoSemDiferenca(t *testing.T) {
 	duracaoEsperada := 0
 	formatacaoEsperada := "00:00:00"
 
-	d, f := DuracaoEFormatacao(inicio, fim)
+	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
@@ -42,7 +42,7 @@ func TestDuracaoEFormatacao5Minutos(t *testing.T) {
 	duracaoEsperada := 300
 	formatacaoEsperada := "00:05:00"
 
-	d, f := DuracaoEFormatacao(inicio, fim)
+	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
@@ -66,7 +66,7 @@ func TestDuracaoEFormatacao02h00m15s(t *testing.T) {
 	duracaoEsperada := 7215
 	formatacaoEsperada := "02:00:15"
 
-	d, f := DuracaoEFormatacao(inicio, fim)
+	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
@@ -90,7 +90,7 @@ func TestDuracaoEArredondamentoMinutos02h00m15s(t *testing.T) {
 	duracaoEsperada := 120
 	formatacaoEsperada := "02:00:15"
 
-	d, f := DuracaoEFormatacao(inicio, fim)
+	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
@@ -114,7 +114,7 @@ func TestDuracaoEFormatacao3horas(t *testing.T) {
 	duracaoEsperada := 10800
 	formatacaoEsperada := "03:00:00"
 
-	d, f := DuracaoEFormatacao(inicio, fim)
+	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
@@ -138,7 +138,7 @@ func TestDuracaoEFormatacao72h04m28s(t *testing.T) {
 	duracaoEsperada := 259468
 	formatacaoEsperada := "72:04:28"
 
-	d, f := DuracaoEFormatacao(inicio, fim)
+	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
@@ -162,7 +162,7 @@ func TestDuracaoEFormatacaoNegativo00h05m27s(t *testing.T) {
 	duracaoEsperada := -327
 	formatacaoEsperada := "-00:05:27"
 
-	d, f := DuracaoEFormatacao(inicio, fim)
+	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
@@ -186,7 +186,7 @@ func TestDuracaoEFormatacaoNegativo24h00m10s(t *testing.T) {
 	duracaoEsperada := -86410
 	formatacaoEsperada := "-24:00:10"
 
-	d, f := DuracaoEFormatacao(inicio, fim)
+	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
@@ -208,8 +208,8 @@ func TestSplitPeriodoPorHoraMesmoDia(t *testing.T) {
 		t.Error(err)
 	}
 	periodo := Periodo{
-		Inicio: inicio,
-		Fim:    fim,
+		Inicio: &inicio,
+		Fim:    &fim,
 	}
 
 	periodos := SplitDiasPeriodo(periodo)
@@ -241,8 +241,8 @@ func TestSplitPeriodoPorHoraDiaSeguinte(t *testing.T) {
 		t.Error(err)
 	}
 	periodo := Periodo{
-		Inicio: inicio,
-		Fim:    fim,
+		Inicio: &inicio,
+		Fim:    &fim,
 	}
 
 	periodos := SplitDiasPeriodo(periodo)
@@ -276,8 +276,8 @@ func TestSplitPeriodoPorHoraDiaSeguinteMenosDe24Horas(t *testing.T) {
 		t.Error(err)
 	}
 	periodo := Periodo{
-		Inicio: inicio,
-		Fim:    fim,
+		Inicio: &inicio,
+		Fim:    &fim,
 	}
 
 	periodos := SplitDiasPeriodo(periodo)
@@ -309,8 +309,8 @@ func TestSplitPeriodoPorHora30Dias(t *testing.T) {
 		t.Error(err)
 	}
 	periodo := Periodo{
-		Inicio: inicio,
-		Fim:    fim,
+		Inicio: &inicio,
+		Fim:    &fim,
 	}
 
 	periodos := SplitDiasPeriodo(periodo)
@@ -343,8 +343,8 @@ func TestSplitPeriodoPorHora28Dias(t *testing.T) {
 		t.Error(err)
 	}
 	periodo := Periodo{
-		Inicio: inicio,
-		Fim:    fim,
+		Inicio: &inicio,
+		Fim:    &fim,
 	}
 
 	periodos := SplitDiasPeriodo(periodo)
@@ -377,8 +377,8 @@ func TestSplitPeriodoPorHora31DiasMesSeguinte(t *testing.T) {
 		t.Error(err)
 	}
 	periodo := Periodo{
-		Inicio: inicio,
-		Fim:    fim,
+		Inicio: &inicio,
+		Fim:    &fim,
 	}
 
 	periodos := SplitDiasPeriodo(periodo)

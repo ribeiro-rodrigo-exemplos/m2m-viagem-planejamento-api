@@ -22,9 +22,10 @@ func TestListarPlanejamentosEscalas(t *testing.T) {
 	cli := &model.Cliente{Timezone: "America/Sao_Paulo"}
 	cli.AtualizarLocation()
 
+	id := bson.ObjectIdHex("555b6e830850536438063762")
 	filter := &dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
-			dto.TrajetoDTO{ID: bson.ObjectIdHex("555b6e830850536438063762")},
+			dto.TrajetoDTO{ID: &id},
 			// bson.ObjectIdHex("555b6e830850536438063761"),
 		},
 		IDCliente:  209,

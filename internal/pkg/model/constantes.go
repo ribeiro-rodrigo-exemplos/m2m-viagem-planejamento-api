@@ -34,7 +34,7 @@ type TiposDiaConst struct {
 }
 
 //FromDate -
-func (td *TiposDiaConst) FromDate(date time.Time, others []string) []string {
+func (td *TiposDiaConst) FromDate(date *time.Time, others []string) []string {
 	dias := []string{}
 	if others != nil {
 		dias = append(dias, others...)

@@ -76,7 +76,7 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 	situacoes := [...]int{1, 2, 3, 4, 5, 7}
 	// situacoes := [...]int{4}
 
-	trajetos := make([]bson.ObjectId, len(filtro.ListaTrajetos))
+	trajetos := make([]*bson.ObjectId, len(filtro.ListaTrajetos))
 	for i, t := range filtro.ListaTrajetos {
 		trajetos[i] = t.ID
 	}

@@ -8,15 +8,15 @@ import (
 )
 
 //ObterTimezoneTime - obtem time UTC
-func ObterTimezoneTime(l *time.Location, dataHora string) (time.Time, error) {
+func ObterTimezoneTime(l *time.Location, dataHora string) (*time.Time, error) {
 
 	timeParse, err := time.ParseInLocation("2006-01-02 15:04:05", dataHora, l)
 
 	if err != nil {
-		return timeParse, err
+		return &timeParse, err
 	}
 
-	return timeParse, err
+	return &timeParse, err
 }
 
 //ObterMes - obtem o mês do ano
@@ -54,20 +54,20 @@ func FormatarHM(t time.Time) string {
 }
 
 //FormatarHMS retornar hh:mm:ss
-func FormatarHMS(t time.Time) string {
+func FormatarHMS(t *time.Time) string {
 	timeFormat := t.Format("15:04:05")
 	return timeFormat
 }
 
 //FormatarAMDHMS retornar aaa-mm-dd hh:mm:ss
-func FormatarAMDHMS(t time.Time) string {
+func FormatarAMDHMS(t *time.Time) string {
 	timeFormat := t.Format("2006-01-02 15:04:05")
 	return timeFormat
 }
 
 //DuracaoEFormatacao -
-func DuracaoEFormatacao(inicio time.Time, fim time.Time) (duration time.Duration, formatacao string) {
-	duration = fim.Sub(inicio)
+func DuracaoEFormatacao(inicio *time.Time, fim *time.Time) (duration time.Duration, formatacao string) {
+	duration = fim.Sub(*inicio)
 	durationRounded := duration.Round(time.Second)
 	var neg bool
 	if durationRounded < 0 {
@@ -89,8 +89,8 @@ func DuracaoEFormatacao(inicio time.Time, fim time.Time) (duration time.Duration
 }
 
 //DuracaoEFormatacaoMinutos -
-func DuracaoEFormatacaoMinutos(inicio time.Time, fim time.Time) (duration time.Duration, formatacao string) {
-	duration = fim.Sub(inicio)
+func DuracaoEFormatacaoMinutos(inicio *time.Time, fim *time.Time) (duration time.Duration, formatacao string) {
+	duration = fim.Sub(*inicio)
 	durationRounded := duration.Round(time.Minute)
 	var neg bool
 	if durationRounded < 0 {
@@ -134,22 +134,22 @@ func DuracaoEFormatacaoMinutosTrunc(inicio time.Time, fim time.Time) (duration t
 func SplitDiasPeriodo(periodoInicial Periodo) []Periodo {
 	inicio := periodoInicial.Inicio
 	fim := periodoInicial.Fim
-	diff := fim.Sub(inicio)
+	diff := fim.Sub(*inicio)
 	//fmt.Printf("DURATION: %v", diff)
 	if diff.Hours() < 24 && inicio.Day() == fim.Day() {
 		periodos := []Periodo{periodoInicial}
 		return periodos
 	}
 
-	dataAtual := &inicio
+	dataAtual := inicio
 	var novaData *time.Time
 	periodos := make([]Periodo, 0, 10)
 
 	for i := 0; true; i++ {
 		novaData = ArredondarFimDia(dataAtual)
 		periodo := &Periodo{
-			Inicio: *dataAtual,
-			Fim:    *novaData,
+			Inicio: dataAtual,
+			Fim:    novaData,
 		}
 		periodos = append(periodos, *periodo)
 		dataAtualAux := novaData.Add(1 * time.Second)
@@ -157,7 +157,7 @@ func SplitDiasPeriodo(periodoInicial Periodo) []Periodo {
 
 		if fim.Sub(*dataAtual).Hours() < 24 && dataAtual.Day() == fim.Day() {
 			periodo := Periodo{
-				Inicio: *dataAtual,
+				Inicio: dataAtual,
 				Fim:    fim,
 			}
 			periodos = append(periodos, periodo)
@@ -190,6 +190,6 @@ func Concatenar(data time.Time, hora time.Time, loc *time.Location) (novaDataHor
 
 //Periodo -
 type Periodo struct {
-	Inicio time.Time
-	Fim    time.Time
+	Inicio *time.Time
+	Fim    *time.Time
 }

@@ -7,10 +7,10 @@ import (
 
 //Cache -
 var Cache = CacheViagemplanejamento{
-	TrajetoLinha: make(map[bson.ObjectId]dto.LinhaDTO),
+	TrajetoLinha: make(map[*bson.ObjectId]dto.LinhaDTO),
 }
 
 //CacheViagemplanejamento -
 type CacheViagemplanejamento struct {
-	TrajetoLinha map[bson.ObjectId]dto.LinhaDTO
+	TrajetoLinha map[*bson.ObjectId]dto.LinhaDTO
 }

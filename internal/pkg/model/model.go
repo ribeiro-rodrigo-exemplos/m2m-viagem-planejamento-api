@@ -12,16 +12,16 @@ import (
 
 //ProcPlanejamentoEscala - Mapeamento de Stored Procedure
 type ProcPlanejamentoEscala struct {
-	IDPlanejamento          int32     `json:"id_planejamento"`
-	IDTrajeto               string    `json:"id_trajeto"`
-	IDHorario               int32     `json:"id_horario"`
-	IDTabela                int32     `json:"id_tabela"`
-	NmTabela                string    `json:"nm_tabela"`
-	IDEmpresaPlan           *int32    `json:"id_empresa_plan"`
-	Partida                 time.Time `json:"partida"`
-	Chegada                 time.Time `json:"chegada"`
-	CodVeiculoPlan          int32     `json:"cod_veiculo_plan"`
-	ToleranciaAtrasoPartida int32     `json:"tolerancia_atraso_partida"`
+	IDPlanejamento          *int32     `json:"id_planejamento"`
+	IDTrajeto               string     `json:"id_trajeto"`
+	IDHorario               *int32     `json:"id_horario"`
+	IDTabela                *int32     `json:"id_tabela"`
+	NmTabela                string     `json:"nm_tabela"`
+	IDEmpresaPlan           *int32     `json:"id_empresa_plan"`
+	Partida                 *time.Time `json:"partida"`
+	Chegada                 *time.Time `json:"chegada"`
+	CodVeiculoPlan          *int32     `json:"cod_veiculo_plan"`
+	ToleranciaAtrasoPartida *int32     `json:"tolerancia_atraso_partida"`
 }
 
 //Modelo - MySQL
@@ -125,7 +125,7 @@ type VeiculoViagem struct {
 //Executada -
 type Executada struct {
 	DataFim    *time.Time    `bson:"dataFim"`
-	DataInicio time.Time     `bson:"dataInicio"`
+	DataInicio *time.Time    `bson:"dataInicio"`
 	Veiculo    VeiculoViagem `bson:"veiculo"`
 }
 
@@ -139,7 +139,7 @@ type Alocacao struct {
 //ViagemExecutada -
 type ViagemExecutada struct {
 	Alocacao              Alocacao                `bson:"alocacao"`
-	ID                    bson.ObjectId           `bson:"_id"`
+	ID                    *bson.ObjectId          `bson:"_id"`
 	ClienteID             int32                   `bson:"clienteId"`
 	SituacaoAtual         int32                   `bson:"situacaoAtual"`
 	Executada             Executada               `bson:"executada"`
@@ -156,11 +156,11 @@ type ViagemExecutada struct {
 	KmPercurso            float64                 `bson:"kmPercurso"`
 	CodigoMotorista       string                  `bson:"codigoMotorista"`
 	CodigoCobrador        string                  `bson:"codigoCobrador"`
-	VelocidadeMedia       float64                 `bson:"velocidadeMedia"`
-	Ipk                   float64                 `bson:"ipk"`
+	VelocidadeMedia       *float64                `bson:"velocidadeMedia"`
+	Ipk                   *float64                `bson:"ipk"`
 	TempoViagem           int64                   `bson:"tempoViagem"`
 	DiferencaPlanejado    int32                   `bson:"diferencaPlanejado"`
-	QntPassageiros        int32                   `bson:"qntPassageiros"`
+	QntPassageiros        *int32                  `bson:"qntPassageiros"`
 	Passageiros           []time.Time             `bson:"passageiros"`
 	DescrIDRota           string                  `bson:"descrIdRota"`
 	Excluido              bool                    `bson:"excluido"`
@@ -178,9 +178,9 @@ type Partida struct {
 
 //TrajetoExecutado -
 type TrajetoExecutado struct {
-	IDObject  bson.ObjectId `bson:"_id"`
-	Descricao string        `bson:"descricao"`
-	Sentido   string        `bson:"sentido"`
+	IDObject  *bson.ObjectId `bson:"_id"`
+	Descricao string         `bson:"descricao"`
+	Sentido   string         `bson:"sentido"`
 }
 
 //Modelo - API Planejamento

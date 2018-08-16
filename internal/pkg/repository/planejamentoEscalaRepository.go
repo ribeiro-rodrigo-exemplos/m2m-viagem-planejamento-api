@@ -32,17 +32,17 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	var err error
 
 	var (
-		dataPlan                time.Time
-		idPlanejamento          int32
+		dataPlan                *time.Time
+		idPlanejamento          *int32
 		idTrajeto               string
-		idHorario               int32
-		idTabela                int32
+		idHorario               *int32
+		idTabela                *int32
 		nmTabela                string
 		idEmpresaPlan           *int32
-		partida                 types.RawTime
-		chegada                 types.RawTime
-		codVeiculoPlan          sql.NullInt64
-		toleranciaAtrasoPartida int32
+		partida                 *types.RawTime
+		chegada                 *types.RawTime
+		codVeiculoPlan          *sql.NullInt64
+		toleranciaAtrasoPartida *int32
 	)
 
 	var sql string
@@ -110,10 +110,14 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		if err != nil {
 			return nil, fmt.Errorf("ListarPlanejamentosEscala - Recuperação Chegada: %s\n ", err)
 		}
-		var veiculo int32
-		if codVeiculoPlan.Valid {
-			veiculo = int32(codVeiculoPlan.Int64)
+		var veiculo *int32
+		if codVeiculoPlan != nil && codVeiculoPlan.Valid {
+			veiculoAUX := int32(codVeiculoPlan.Int64)
+			veiculo = &veiculoAUX
 		}
+
+		partida := util.Concatenar(*dataPlan, timePartida, loc)
+		chegada := util.Concatenar(*dataPlan, timeChegada, loc)
 
 		planejamentoEscala := &model.ProcPlanejamentoEscala{
 			IDPlanejamento:          idPlanejamento,
@@ -122,8 +126,8 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 			IDTabela:                idTabela,
 			NmTabela:                nmTabela,
 			IDEmpresaPlan:           idEmpresaPlan,
-			Partida:                 util.Concatenar(dataPlan, timePartida, loc),
-			Chegada:                 util.Concatenar(dataPlan, timeChegada, loc),
+			Partida:                 &partida,
+			Chegada:                 &chegada,
 			CodVeiculoPlan:          veiculo,
 			ToleranciaAtrasoPartida: toleranciaAtrasoPartida,
 		}

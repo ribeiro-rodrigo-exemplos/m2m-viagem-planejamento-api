@@ -193,13 +193,13 @@ func (vps *Service) complementarInformacoes(consultaViagemPlanejamento *dto.Cons
 	for _, vg := range consultaViagemPlanejamento.Viagens {
 
 		//Calcular Headway
-		if vg.Status != dto.StatusViagem.NaoRealizada && vg.Status != dto.StatusViagem.NaoIniciada && vg.Status != dto.StatusViagem.Cancelada {
-			if vgAnterior, existe := ultimaPartida[vg.Trajeto.ID]; existe {
+		if *vg.Status != dto.StatusViagem.NaoRealizada && *vg.Status != dto.StatusViagem.NaoIniciada && *vg.Status != dto.StatusViagem.Cancelada {
+			if vgAnterior, existe := ultimaPartida[*vg.Trajeto.ID]; existe {
 				diffPartida, diffPartidaFormatada := util.DuracaoEFormatacaoMinutos(vgAnterior.PartidaRealTime, vg.PartidaRealTime)
 				vg.HeadwayStr = diffPartidaFormatada
 				vg.Headway = diferencaMinutos(diffPartida)
 			}
-			ultimaPartida[vg.Trajeto.ID] = vg
+			ultimaPartida[*vg.Trajeto.ID] = vg
 		}
 		if m, existe := vps.cacheMotorista.Cache[vg.CdMotorista]; existe {
 			vg.CdMotorista = m.Identificacao
@@ -220,17 +220,17 @@ func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamen
 			j := pos + 1
 
 			vg := consultaViagemPlanejamento.Viagens[pos]
-			if j < size && vgex.Executada.DataInicio.After(consultaViagemPlanejamento.Viagens[j].PartidaOrdenacao) {
+			if j < size && vgex.Executada.DataInicio.After(*consultaViagemPlanejamento.Viagens[j].PartidaOrdenacao) {
 				continue
 			}
 
-			if vgex.Executada.DataInicio.After(vg.PartidaOrdenacao) {
-				if vg.Status == dto.StatusViagem.NaoRealizada && vg.IDViagemExecutada == "" {
-					vg.Status = dto.StatusViagem.Atrasada
+			if vgex.Executada.DataInicio.After(*vg.PartidaOrdenacao) {
+				if *vg.Status == dto.StatusViagem.NaoRealizada && vg.IDViagemExecutada == nil {
+					vg.Status = &dto.StatusViagem.Atrasada
 					populaDadosViagem(vgex, vg)
 				} else {
 					novaVG := &dto.ViagemDTO{}
-					novaVG.Status = dto.StatusViagem.Extra
+					novaVG.Status = &dto.StatusViagem.Extra
 					populaDadosViagem(vgex, novaVG)
 					vgRealizadasNaoPlanejadas = append(vgRealizadasNaoPlanejadas, novaVG)
 				}
@@ -346,6 +346,7 @@ func newTotalizacao(t *dto.TotalizadoresDTO, wg *sync.WaitGroup) (tot *totalizac
 }
 
 func totalizar(vg *dto.ViagemDTO, t *totalizacao, wg *sync.WaitGroup) {
+	vgStatus := *vg.Status
 
 	if vg.Planejada {
 		t.Planejadas <- 1
@@ -353,49 +354,49 @@ func totalizar(vg *dto.ViagemDTO, t *totalizacao, wg *sync.WaitGroup) {
 		wg.Done()
 	}
 
-	if vg.Status == dto.StatusViagem.RealizadaPlanejada || vg.Status == dto.StatusViagem.Atrasada || vg.Status == dto.StatusViagem.Extra {
+	if vgStatus == dto.StatusViagem.RealizadaPlanejada || vgStatus == dto.StatusViagem.Atrasada || vgStatus == dto.StatusViagem.Extra {
 		t.Realizadas <- 1
 	} else {
 		wg.Done()
 	}
 
-	if vg.Status == dto.StatusViagem.RealizadaPlanejada {
+	if vgStatus == dto.StatusViagem.RealizadaPlanejada {
 		t.RealizadasPlanejadas <- 1
 	} else {
 		wg.Done()
 	}
 
-	if vg.Status == dto.StatusViagem.NaoIniciada {
+	if vgStatus == dto.StatusViagem.NaoIniciada {
 		t.NaoIniciadas <- 1
 	} else {
 		wg.Done()
 	}
 
-	if vg.Status == dto.StatusViagem.EmAndamento {
+	if vgStatus == dto.StatusViagem.EmAndamento {
 		t.EmAndamento <- 1
 	} else {
 		wg.Done()
 	}
 
-	if vg.Status == dto.StatusViagem.Cancelada {
+	if vgStatus == dto.StatusViagem.Cancelada {
 		t.Canceladas <- 1
 	} else {
 		wg.Done()
 	}
 
-	if vg.Status == dto.StatusViagem.NaoRealizada {
+	if vgStatus == dto.StatusViagem.NaoRealizada {
 		t.NaoRealizadas <- 1
 	} else {
 		wg.Done()
 	}
 
-	if vg.Status == dto.StatusViagem.Extra {
+	if vgStatus == dto.StatusViagem.Extra {
 		t.Extra <- 1
 	} else {
 		wg.Done()
 	}
 
-	if vg.Status == dto.StatusViagem.Atrasada {
+	if vgStatus == dto.StatusViagem.Atrasada {
 		t.Atrasada <- 1
 	} else {
 		wg.Done()
@@ -432,7 +433,7 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 		for _, ples := range planejamentosEscala {
 			vg, _ := converterPlanejamentosEscala(ples, filtro)
 			viagensDTO = append(viagensDTO, vg)
-			mapaHorarioViagemAUX[vg.IDHorario] = vg
+			mapaHorarioViagemAUX[*vg.IDHorario] = vg
 		}
 		retornoMapaHorarioViagem <- mapaHorarioViagemAUX
 	}()
@@ -501,7 +502,6 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 		PartidaPlan:        util.FormatarHMS(ples.Partida),
 		ChegadaPlanTime:    ples.Chegada,
 		ChegadaPlan:        util.FormatarHMS(ples.Chegada),
-		VeiculoPlan:        strconv.Itoa(int(ples.CodVeiculoPlan)),
 		Planejada:          true,
 		Trajeto: dto.TrajetoDTO{
 			ID:          filtro.ListaTrajetos[0].ID,
@@ -509,14 +509,19 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 			Sentido:     filtro.ListaTrajetos[0].Sentido,
 			NumeroLinha: Cache.TrajetoLinha[filtro.ListaTrajetos[0].ID].Numero,
 		},
-		Tolerancia: dto.ToleranciaDTO{AtrasoPartida: ples.ToleranciaAtrasoPartida},
+		Tolerancia: dto.ToleranciaDTO{AtrasoPartida: *ples.ToleranciaAtrasoPartida},
+	}
+
+	if ples.CodVeiculoPlan != nil {
+		vg.VeiculoPlan = strconv.Itoa(int(*ples.CodVeiculoPlan))
+
 	}
 
 	if ples.Partida.Before(filtro.Complemento.DataHora) {
-		vg.Status = dto.StatusViagem.NaoRealizada
+		vg.Status = &dto.StatusViagem.NaoRealizada
 		vg.PlanejadaAteMomento = true
 	} else {
-		vg.Status = dto.StatusViagem.NaoIniciada
+		vg.Status = &dto.StatusViagem.NaoIniciada
 	}
 
 	return vg, err
@@ -538,10 +543,10 @@ func converterViagemExecutada(vgex *model.ViagemExecutada, mapaHorarioViagem map
 
 	if vgex.SituacaoAtual == model.ViagemEstado.ViagemCancelada {
 		vg = &dto.ViagemDTO{}
-		vg.Status = dto.StatusViagem.Cancelada
+		vg.Status = &dto.StatusViagem.Cancelada
 		processada = vg
-	} else if vg != nil && vg.IDViagemExecutada == "" {
-		vg.Status = dto.StatusViagem.RealizadaPlanejada
+	} else if vg != nil && vg.IDViagemExecutada == nil {
+		vg.Status = &dto.StatusViagem.RealizadaPlanejada
 	} else {
 		vg = nil
 		naoEncontrada = &(*vgex)
@@ -555,13 +560,13 @@ func converterViagemExecutada(vgex *model.ViagemExecutada, mapaHorarioViagem map
 
 func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 
-	var vgexDataFim time.Time
+	var vgexDataFim *time.Time
 	if vgex.Executada.DataFim == nil || vgex.SituacaoAtual == model.ViagemEstado.NovaViagem || vgex.SituacaoAtual == model.ViagemEstado.EmPreparacao || vgex.SituacaoAtual == model.ViagemEstado.ViagemAberta || vgex.SituacaoAtual == model.ViagemEstado.DeslocamentoEmCerca {
 		vg.EmExecucao = true
-		vg.Status = dto.StatusViagem.EmAndamento
-		vgexDataFim = time.Time{}
+		vg.Status = &dto.StatusViagem.EmAndamento
+		vgexDataFim = &time.Time{}
 	} else {
-		vgexDataFim = *vgex.Executada.DataFim
+		vgexDataFim = vgex.Executada.DataFim
 		vg.ChegadaReal = util.FormatarHMS(vgexDataFim)
 		vg.DataFechamento = util.FormatarAMDHMS(vgexDataFim)
 		duracao, duracaoFormatada := util.DuracaoEFormatacao(vgex.Executada.DataInicio, vgexDataFim)
@@ -605,7 +610,7 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 	vg.Data = vgex.Executada.DataInicio
 	vg.DataAbertura = util.FormatarAMDHMS(vgex.Executada.DataInicio)
 
-	if vg.IDHorario > 0 { //Se planejamento encontrado
+	if vg.IDHorario != nil { //Se planejamento encontrado
 		diffPartida, diffPartidaFormatada := util.DuracaoEFormatacaoMinutos(vg.PartidaPlanTime, vgex.Executada.DataInicio)
 		vg.DiffPartidaStr = diffPartidaFormatada
 		vg.DiffPartida = diferencaMinutos(diffPartida)
@@ -633,10 +638,11 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 
 }
 
-func diferencaMinutos(d time.Duration) (duracao int64) {
+func diferencaMinutos(d time.Duration) (duracao *int64) {
 	diff := d.Minutes()
 	if diff >= 1 || diff <= -1 {
-		duracao = int64(diff)
+		duracaoAUX := int64(diff)
+		duracao = &duracaoAUX
 	}
 	return
 }
