@@ -275,7 +275,13 @@ func calcularTotalizadores(consultaViagemPlanejamento *dto.ConsultaViagemPlaneja
 		//TODO - Remover Marreta para Dashboard. Mover lógica para tela
 		indiceExecucao = 100
 	}
+	indicePartida := (float64(consultaViagemPlanejamento.Totalizadores.Realizadas+consultaViagemPlanejamento.Totalizadores.EmAndamento) / float64(consultaViagemPlanejamento.Totalizadores.PlanejadasAteMomento) * 100)
+	if math.IsNaN(indicePartida) {
+		//TODO - Remover Marreta para Dashboard. Mover lógica para tela
+		indicePartida = 100
+	}
 	consultaViagemPlanejamento.Totalizadores.IndiceExecucao = []int32{int32(indiceExecucao)}
+	consultaViagemPlanejamento.Totalizadores.IndicePartida = []int32{int32(indicePartida)}
 
 	defer tot.close()
 	close(chTotVG)
