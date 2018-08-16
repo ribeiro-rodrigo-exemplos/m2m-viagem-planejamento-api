@@ -34,10 +34,10 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	var (
 		dataPlan                *time.Time
 		idPlanejamento          *int32
-		idTrajeto               string
+		idTrajeto               *string
 		idHorario               *int32
 		idTabela                *int32
-		nmTabela                string
+		nmTabela                *string
 		idEmpresaPlan           *int32
 		partida                 *types.RawTime
 		chegada                 *types.RawTime

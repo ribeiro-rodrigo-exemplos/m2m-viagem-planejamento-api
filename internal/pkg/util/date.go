@@ -54,20 +54,21 @@ func FormatarHM(t time.Time) string {
 }
 
 //FormatarHMS retornar hh:mm:ss
-func FormatarHMS(t *time.Time) string {
+func FormatarHMS(t *time.Time) *string {
 	timeFormat := t.Format("15:04:05")
-	return timeFormat
+	return &timeFormat
 }
 
 //FormatarAMDHMS retornar aaa-mm-dd hh:mm:ss
-func FormatarAMDHMS(t *time.Time) string {
+func FormatarAMDHMS(t *time.Time) *string {
 	timeFormat := t.Format("2006-01-02 15:04:05")
-	return timeFormat
+	return &timeFormat
 }
 
 //DuracaoEFormatacao -
-func DuracaoEFormatacao(inicio *time.Time, fim *time.Time) (duration time.Duration, formatacao string) {
-	duration = fim.Sub(*inicio)
+func DuracaoEFormatacao(inicio *time.Time, fim *time.Time) (time.Duration, *string) {
+	var formatacao string
+	duration := fim.Sub(*inicio)
 	durationRounded := duration.Round(time.Second)
 	var neg bool
 	if durationRounded < 0 {
@@ -85,12 +86,13 @@ func DuracaoEFormatacao(inicio *time.Time, fim *time.Time) (duration time.Durati
 		formatacao = fmt.Sprintf("-%02d:%02d:%02d", h, m, s)
 	}
 
-	return
+	return duration, &formatacao
 }
 
 //DuracaoEFormatacaoMinutos -
-func DuracaoEFormatacaoMinutos(inicio *time.Time, fim *time.Time) (duration time.Duration, formatacao string) {
-	duration = fim.Sub(*inicio)
+func DuracaoEFormatacaoMinutos(inicio *time.Time, fim *time.Time) (time.Duration, *string) {
+	var formatacao string
+	duration := fim.Sub(*inicio)
 	durationRounded := duration.Round(time.Minute)
 	var neg bool
 	if durationRounded < 0 {
@@ -106,7 +108,7 @@ func DuracaoEFormatacaoMinutos(inicio *time.Time, fim *time.Time) (duration time
 		formatacao = fmt.Sprintf("-%02d:%02d", h, m)
 	}
 
-	return
+	return duration, &formatacao
 }
 
 //DuracaoEFormatacaoMinutosTrunc -

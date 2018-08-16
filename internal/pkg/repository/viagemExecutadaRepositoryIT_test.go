@@ -27,6 +27,8 @@ func TestListarViagensPorTrajetoUmDia(t *testing.T) {
 	cliente.AtualizarLocation()
 
 	id := bson.ObjectIdHex("555b6e830850536438063762")
+	dataInicio := "2018-07-24 18:00:00"
+	dataFim := "2018-07-24 23:59:59"
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
 			dto.TrajetoDTO{ID: &id},
@@ -35,8 +37,8 @@ func TestListarViagensPorTrajetoUmDia(t *testing.T) {
 		IDCliente:  209,
 		IDVeiculo:  150,
 		Ordenacao:  []string{"veiculo", "data"},
-		DataInicio: "2018-07-24 18:00:00",
-		DataFim:    "2018-07-24 23:59:59",
+		DataInicio: &dataInicio,
+		DataFim:    &dataFim,
 		TipoDia:    []string{"O", "E", "3", "U"},
 		Complemento: dto.DadosComplementares{
 			Cliente: cliente,

@@ -33,8 +33,8 @@ type FilterDTO struct {
 	IDCliente     int32        `json:"id_cliente"`
 	IDVeiculo     int          `json:"id_veiculo"`
 	Ordenacao     []string     `json:"ordenacao"`
-	DataInicio    string       `json:"data_inicio"`
-	DataFim       string       `json:"data_fim"`
+	DataInicio    *string      `json:"data_inicio"`
+	DataFim       *string      `json:"data_fim"`
 	TipoDia       []string
 	Complemento   DadosComplementares
 }
@@ -65,18 +65,18 @@ func (f *FilterDTO) GetDataInicio() *time.Time {
 	var dt *time.Time
 	//TODO - Rever esta trilha de dependências.
 	// Validação deve ser garantida pelo criador(NewFilterDTO()...) da instância,
-	dt, _ = util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataInicio)
+	dt, _ = util.ObterTimezoneTime(f.Complemento.Cliente.Location, *f.DataInicio)
 	return dt
 }
 
-//GetDataInicioString -
-func (f *FilterDTO) GetDataInicioString() string {
+//GetDataInicioString - TODO retornar err(error)
+func (f *FilterDTO) GetDataInicioString() *string {
 	var dt *time.Time
 	//TODO - Rever esta trilha de dependências.
 	// Validação deve ser garantida pelo criador(NewFilterDTO()...) da instância,
-	dt, err := util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataInicio)
+	dt, err := util.ObterTimezoneTime(f.Complemento.Cliente.Location, *f.DataInicio)
 	if err != nil {
-		return ""
+		return nil
 	}
 	str := util.FormatarAMDHMS(dt)
 	return str
@@ -93,18 +93,18 @@ func (f *FilterDTO) GetDataFim() *time.Time {
 	var dt *time.Time
 	//TODO - Rever esta trilha de dependências.
 	// Validação deve ser garantida pelo criador(NewFilterDTO()...) da instância,
-	dt, _ = util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataFim)
+	dt, _ = util.ObterTimezoneTime(f.Complemento.Cliente.Location, *f.DataFim)
 	return dt
 }
 
-//GetDataFimString -
-func (f *FilterDTO) GetDataFimString() string {
+//GetDataFimString - TODO retornar err(error)
+func (f *FilterDTO) GetDataFimString() *string {
 	var dt *time.Time
 	//TODO - Rever esta trilha de dependências.
 	// Validação deve ser garantida pelo criador(NewFilterDTO()...) da instância,
-	dt, err := util.ObterTimezoneTime(f.Complemento.Cliente.Location, f.DataFim)
+	dt, err := util.ObterTimezoneTime(f.Complemento.Cliente.Location, *f.DataFim)
 	if err != nil {
-		return ""
+		return nil
 	}
 	str := util.FormatarAMDHMS(dt)
 	return str
@@ -121,44 +121,44 @@ type ViagemDTO struct {
 	IDEmpresaPlanejada  *int32         `json:"idEmpresaPlanejada"`
 	Status              *int           `json:"status"`
 	EmExecucao          bool           `json:"emExecucao"`
-	VeiculoPlan         string         `json:"veiculoPlan"`
-	VeiculoReal         string         `json:"veiculoReal"`
-	NmTabela            string         `json:"nmTabela"`
+	VeiculoPlan         *string        `json:"veiculoPlan"`
+	VeiculoReal         *string        `json:"veiculoReal"`
+	NmTabela            *string        `json:"nmTabela"`
 	PartidaOrdenacao    *time.Time     `json:"-"`
 	PartidaPlanTime     *time.Time     `json:"-"`
-	PartidaPlan         string         `json:"partidaPlan"`
+	PartidaPlan         *string        `json:"partidaPlan"`
 	ChegadaPlanTime     *time.Time     `json:"-"`
-	ChegadaPlan         string         `json:"chegadaPlan"`
+	ChegadaPlan         *string        `json:"chegadaPlan"`
 	DiffPartida         *int64         `json:"diffPartida"`
-	DiffPartidaStr      string         `json:"diffPartidaStr"`
-	EntrouEmPlaca       string         `json:"entrouEmPlaca"`
+	DiffPartidaStr      *string        `json:"diffPartidaStr"`
+	EntrouEmPlaca       *string        `json:"entrouEmPlaca"`
 	PartidaRealTime     *time.Time     `json:"-"`
-	PartidaReal         string         `json:"partidaReal"`
-	ChegadaReal         string         `json:"chegadaReal"`
+	PartidaReal         *string        `json:"partidaReal"`
+	ChegadaReal         *string        `json:"chegadaReal"`
 	DiffChegada         *int64         `json:"diffChegada"`
-	DiffChegadaStr      string         `json:"diffChegadaStr"`
+	DiffChegadaStr      *string        `json:"diffChegadaStr"`
 	QtdePassageiros     *int32         `json:"qtdePassageiros"`
-	Proxima             string         `json:"proxima"`
-	PercentualConclusao string         `json:"percentualConclusao"`
+	Proxima             *string        `json:"proxima"`
+	PercentualConclusao *string        `json:"percentualConclusao"`
 	Editada             bool           `json:"editada"`
 	Headway             *int64         `json:"headway"`
-	HeadwayStr          string         `json:"headwayStr"`
+	HeadwayStr          *string        `json:"headwayStr"`
 	Data                *time.Time     `json:"data"`
-	DataAbertura        string         `json:"dataAbertura"`
-	DataFechamento      string         `json:"dataFechamento"`
+	DataAbertura        *string        `json:"dataAbertura"`
+	DataFechamento      *string        `json:"dataFechamento"`
 	Ipk                 *float64       `json:"ipk"`
-	CdMotorista         string         `json:"cdMotorista"`
-	NmMotorista         string         `json:"nmMotorista"`
-	Duracao             string         `json:"duracao"`
+	CdMotorista         *string        `json:"cdMotorista"`
+	NmMotorista         *string        `json:"nmMotorista"`
+	Duracao             *string        `json:"duracao"`
 	DuracaoSeg          *int64         `json:"duracaoSeg"`
-	IDVeiculo           string         `json:"idVeiculo"`
-	Motivo              string         `json:"motivo"`
+	IDVeiculo           *string        `json:"idVeiculo"`
+	Motivo              *string        `json:"motivo"`
 	VelocidadeMedia     *float64       `json:"velocidadeMedia"`
 	CodTransportadora   *int           `json:"codTransportadora"`
 	TipoFrota           *int           `json:"tipoFrota"`
 	Cobrador            *int           `json:"cobrador"`
 	DistanciaPercorrida *float32       `json:"distanciaPercorrida"`
-	Placa               string         `json:"placa"`
+	Placa               *string        `json:"placa"`
 	Planejada           bool           `json:"-"`
 	PlanejadaAteMomento bool           `json:"-"`
 	Trajeto             TrajetoDTO     `json:"trajeto"`

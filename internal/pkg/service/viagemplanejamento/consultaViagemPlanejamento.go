@@ -201,8 +201,10 @@ func (vps *Service) complementarInformacoes(consultaViagemPlanejamento *dto.Cons
 			}
 			ultimaPartida[*vg.Trajeto.ID] = vg
 		}
-		if m, existe := vps.cacheMotorista.Cache[vg.CdMotorista]; existe {
-			vg.CdMotorista = m.Identificacao
+		if vg.CdMotorista != nil {
+			if m, existe := vps.cacheMotorista.Cache[*vg.CdMotorista]; existe {
+				vg.CdMotorista = &m.Identificacao
+			}
 		}
 	}
 }
@@ -513,7 +515,8 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 	}
 
 	if ples.CodVeiculoPlan != nil {
-		vg.VeiculoPlan = strconv.Itoa(int(*ples.CodVeiculoPlan))
+		veiculoPlan := strconv.Itoa(int(*ples.CodVeiculoPlan))
+		vg.VeiculoPlan = &veiculoPlan
 
 	}
 
@@ -596,13 +599,14 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 		if len(strings.Split(fmtPorcentagemConclusao, ".")) == 1 {
 			fmtPorcentagemConclusao += ".00"
 		}
-		vg.PercentualConclusao = fmtPorcentagemConclusao
+		vg.PercentualConclusao = &fmtPorcentagemConclusao
 	}
 
 	if vgex.Executada.Veiculo.ID > 0 {
-		vg.IDVeiculo = strconv.Itoa(int(vgex.Executada.Veiculo.ID))
+		idVeiculo := strconv.Itoa(int(vgex.Executada.Veiculo.ID))
+		vg.IDVeiculo = &idVeiculo
 	}
-	vg.VeiculoReal = vgex.Executada.Veiculo.Prefixo
+	vg.VeiculoReal = &vgex.Executada.Veiculo.Prefixo
 
 	vg.PartidaRealTime = vgex.Executada.DataInicio
 	vg.PartidaReal = util.FormatarHMS(vgex.Executada.DataInicio)
@@ -634,7 +638,7 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 		NumeroLinha: Cache.TrajetoLinha[vgex.Partida.TrajetoExecutado.IDObject].Numero,
 	}
 
-	vg.CdMotorista = vgex.CodigoMotorista
+	vg.CdMotorista = &vgex.CodigoMotorista
 
 }
 

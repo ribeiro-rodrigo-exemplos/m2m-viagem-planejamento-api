@@ -13,10 +13,10 @@ import (
 //ProcPlanejamentoEscala - Mapeamento de Stored Procedure
 type ProcPlanejamentoEscala struct {
 	IDPlanejamento          *int32     `json:"id_planejamento"`
-	IDTrajeto               string     `json:"id_trajeto"`
+	IDTrajeto               *string    `json:"id_trajeto"`
 	IDHorario               *int32     `json:"id_horario"`
 	IDTabela                *int32     `json:"id_tabela"`
-	NmTabela                string     `json:"nm_tabela"`
+	NmTabela                *string    `json:"nm_tabela"`
 	IDEmpresaPlan           *int32     `json:"id_empresa_plan"`
 	Partida                 *time.Time `json:"partida"`
 	Chegada                 *time.Time `json:"chegada"`

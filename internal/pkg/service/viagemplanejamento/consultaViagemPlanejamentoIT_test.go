@@ -31,6 +31,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	cacheMotorista, _ := cache.GetMotorista(nil)
 
 	id := bson.ObjectIdHex("555b6e830850536438063762")
+	dataInicio := "2018-07-24 18:00:00"
+	dataFim := "2018-07-24 23:59:59"
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
 			dto.TrajetoDTO{ID: &id},
@@ -39,8 +41,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 		IDCliente:  209,
 		IDVeiculo:  150,
 		Ordenacao:  []string{"veiculo", "data"},
-		DataInicio: "2018-07-24 18:00:00",
-		DataFim:    "2018-07-24 23:59:59",
+		DataInicio: &dataInicio,
+		DataFim:    &dataFim,
 		Complemento: dto.DadosComplementares{
 			Cliente: cliente,
 		},
@@ -120,6 +122,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 	t.Log("TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite")
 
 	id := bson.ObjectIdHex("555b6e830850536438063762")
+	dataInicio := "2018-07-24 18:00:00"
+	dataFim := "2018-07-24 23:59:59"
 	var err error
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
@@ -131,8 +135,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 		IDCliente:  209,
 		IDVeiculo:  150,
 		Ordenacao:  []string{"veiculo", "data"},
-		DataInicio: "2018-07-24 18:00:00",
-		DataFim:    "2018-07-24 23:59:59",
+		DataInicio: &dataInicio,
+		DataFim:    &dataFim,
 	}
 
 	con, err := database.GetSQLConnection()
@@ -189,7 +193,8 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 
 	id1 := bson.ObjectIdHex("555b6e830850536438063762")
 	id2 := bson.ObjectIdHex("555b6e830850536438063761")
-
+	dataInicio := "2018-08-02 00:00:00"
+	dataFim := "2018-08-02 23:59:59"
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
 			dto.TrajetoDTO{ID: &id1},
@@ -198,8 +203,8 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 		IDCliente:  209,
 		IDVeiculo:  150,
 		Ordenacao:  []string{"veiculo", "data"},
-		DataInicio: "2018-08-02 00:00:00",
-		DataFim:    "2018-08-02 23:59:59",
+		DataInicio: &dataInicio,
+		DataFim:    &dataFim,
 	}
 
 	con, err := database.GetSQLConnection()
@@ -255,6 +260,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 	var err error
 
 	id := bson.ObjectIdHex("555b6e830850536438063762")
+	dataInicio := "2018-07-24 18:00:00"
+	dataFim := "2018-08-02 20:00:00"
 	filter := dto.FilterDTO{
 		ListaTrajetos: []dto.TrajetoDTO{
 			dto.TrajetoDTO{ID: &id},
@@ -263,10 +270,10 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 		IDCliente:  209,
 		IDVeiculo:  150,
 		Ordenacao:  []string{"veiculo", "data"},
-		DataInicio: "2018-07-24 18:00:00",
+		DataInicio: &dataInicio,
+		DataFim:    &dataFim,
 		// DataFim:    "2018-07-24 23:59:59",
 		// DataFim: "2018-07-25 17:59:59",
-		DataFim: "2018-08-02 20:00:00",
 	}
 
 	con, err := database.GetSQLConnection()

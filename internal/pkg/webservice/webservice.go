@@ -171,12 +171,15 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 		listaTrajetos[i] = dto.TrajetoDTO{ID: t.ID, Descricao: t.Descricao, Sentido: t.Sentido, Linha: dto.LinhaDTO{Numero: t.NumeroLinha}}
 	}
 
+	dataInicio := filter.DataInicio + " " + strings.Replace(filter.HoraInicio, " ", "", -1)
+	dataFim := filter.DataFim + " " + strings.Replace(filter.HoraFim, " ", "", -1)
+
 	filterAdaptado := dto.FilterDTO{
 		ListaTrajetos: listaTrajetos,
 		IDCliente:     filter.IDCliente,
 		Ordenacao:     filter.Ordenacao,
-		DataInicio:    filter.DataInicio + " " + strings.Replace(filter.HoraInicio, " ", "", -1),
-		DataFim:       filter.DataFim + " " + strings.Replace(filter.HoraFim, " ", "", -1),
+		DataInicio:    &dataInicio,
+		DataFim:       &dataFim,
 	}
 
 	vps := <-viagemplanejamentoService

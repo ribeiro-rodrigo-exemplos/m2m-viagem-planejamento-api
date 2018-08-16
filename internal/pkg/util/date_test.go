@@ -20,7 +20,7 @@ func TestDuracaoEFormatacaoSemDiferenca(t *testing.T) {
 
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
-	if formatacaoEsperada != f {
+	if formatacaoEsperada != *f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
 	}
 
@@ -44,7 +44,7 @@ func TestDuracaoEFormatacao5Minutos(t *testing.T) {
 
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
-	if formatacaoEsperada != f {
+	if formatacaoEsperada != *f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
 	}
 
@@ -68,7 +68,7 @@ func TestDuracaoEFormatacao02h00m15s(t *testing.T) {
 
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
-	if formatacaoEsperada != f {
+	if formatacaoEsperada != *f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
 	}
 
@@ -92,7 +92,7 @@ func TestDuracaoEArredondamentoMinutos02h00m15s(t *testing.T) {
 
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
-	if formatacaoEsperada != f {
+	if formatacaoEsperada != *f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
 	}
 
@@ -116,7 +116,7 @@ func TestDuracaoEFormatacao3horas(t *testing.T) {
 
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
-	if formatacaoEsperada != f {
+	if formatacaoEsperada != *f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
 	}
 
@@ -140,7 +140,7 @@ func TestDuracaoEFormatacao72h04m28s(t *testing.T) {
 
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
-	if formatacaoEsperada != f {
+	if formatacaoEsperada != *f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
 	}
 
@@ -164,7 +164,7 @@ func TestDuracaoEFormatacaoNegativo00h05m27s(t *testing.T) {
 
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
-	if formatacaoEsperada != f {
+	if formatacaoEsperada != *f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
 	}
 
@@ -188,7 +188,7 @@ func TestDuracaoEFormatacaoNegativo24h00m10s(t *testing.T) {
 
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
-	if formatacaoEsperada != f {
+	if formatacaoEsperada != *f {
 		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
 	}
 
