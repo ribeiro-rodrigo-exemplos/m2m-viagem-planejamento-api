@@ -109,6 +109,17 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 	logger.Tracef("%#v\n", listarViagens)
 	/**/
 
+	for _, vg := range listarViagens {
+		var vgIniTZ time.Time
+		vgIniTZ = ((*vg.Executada.DataInicio).In(filtro.Complemento.Cliente.Location))
+		vg.Executada.DataInicio = &vgIniTZ
+		if vg.Executada.DataFim != nil {
+			var vgFimTZ time.Time
+			vgFimTZ = ((*vg.Executada.DataFim).In(filtro.Complemento.Cliente.Location))
+			vg.Executada.DataFim = &vgFimTZ
+		}
+	}
+
 	if err != nil {
 		logger.Errorf("Erro ao Listar Viagens no mongodb %s\n", err)
 	}
