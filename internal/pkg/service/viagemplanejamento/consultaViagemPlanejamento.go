@@ -226,8 +226,7 @@ func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamen
 				continue
 			}
 
-			if vgex.Executada.DataInicio.After(*vg.PartidaOrdenacao) {
-				if *vg.Status == dto.StatusViagem.NaoRealizada && vg.IDViagemExecutada == nil {
+			if vgex.Executada.DataInicio.After(*vg.PartidaOrdenacao) && *vg.Status == dto.StatusViagem.NaoRealizada && vg.IDViagemExecutada == nil {
 					vg.Status = &dto.StatusViagem.Atrasada
 					populaDadosViagem(vgex, vg)
 				} else {
@@ -239,7 +238,6 @@ func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamen
 				break
 			}
 		}
-	}
 
 	consultaViagemPlanejamento.Viagens = append(consultaViagemPlanejamento.Viagens, vgRealizadasNaoPlanejadas...)
 	dto.OrdenarViagemPorData(consultaViagemPlanejamento.Viagens)
