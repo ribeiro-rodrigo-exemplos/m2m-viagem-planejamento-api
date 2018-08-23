@@ -111,6 +111,10 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 	logger.Tracef("%#v\n", listarViagens)
 	/**/
 
+	// for _, vg := range listarViagens {
+	// 	fmt.Printf("%s - %v\n", *vg.Executada.DataInicio, vg.ID.Hex())
+	// }
+
 	for _, vg := range listarViagens {
 		var vgIniTZ time.Time
 		vgIniTZ = ((*vg.Executada.DataInicio).In(filtro.Complemento.Cliente.Location))

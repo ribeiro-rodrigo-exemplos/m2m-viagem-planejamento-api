@@ -172,7 +172,9 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	vps.complementarInformacoes(vps.consultaViagemPlanejamento)
 
 	// for _, vg := range vps.consultaViagemPlanejamento.Viagens {
-	// 	fmt.Printf("%v - %v\n", vg.DataAbertura, vg.IDViagemExecutada.Hex())
+	// 	if vg.IDViagemExecutada != nil {
+	// 		fmt.Printf("%s - %v\n", *vg.DataAbertura, vg.IDViagemExecutada.Hex())
+	// 	}
 	// }
 
 	duracao := time.Since(start)
@@ -227,17 +229,17 @@ func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamen
 			}
 
 			if vgex.Executada.DataInicio.After(*vg.PartidaOrdenacao) && *vg.Status == dto.StatusViagem.NaoRealizada && vg.IDViagemExecutada == nil {
-					vg.Status = &dto.StatusViagem.Atrasada
-					populaDadosViagem(vgex, vg)
-				} else {
-					novaVG := &dto.ViagemDTO{}
-					novaVG.Status = &dto.StatusViagem.Extra
-					populaDadosViagem(vgex, novaVG)
-					vgRealizadasNaoPlanejadas = append(vgRealizadasNaoPlanejadas, novaVG)
-				}
-				break
+				vg.Status = &dto.StatusViagem.Atrasada
+				populaDadosViagem(vgex, vg)
+			} else {
+				novaVG := &dto.ViagemDTO{}
+				novaVG.Status = &dto.StatusViagem.Extra
+				populaDadosViagem(vgex, novaVG)
+				vgRealizadasNaoPlanejadas = append(vgRealizadasNaoPlanejadas, novaVG)
 			}
+			break
 		}
+	}
 
 	consultaViagemPlanejamento.Viagens = append(consultaViagemPlanejamento.Viagens, vgRealizadasNaoPlanejadas...)
 	dto.OrdenarViagemPorData(consultaViagemPlanejamento.Viagens)
