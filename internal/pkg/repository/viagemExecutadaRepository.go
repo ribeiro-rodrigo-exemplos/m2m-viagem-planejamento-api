@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	cfg "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/config"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/database"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/dto"
@@ -108,6 +110,21 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 	/** /
 	logger.Tracef("%#v\n", listarViagens)
 	/**/
+
+	// for _, vg := range listarViagens {
+	// 	fmt.Printf("%s - %v\n", *vg.Executada.DataInicio, vg.ID.Hex())
+	// }
+
+	for _, vg := range listarViagens {
+		var vgIniTZ time.Time
+		vgIniTZ = ((*vg.Executada.DataInicio).In(filtro.Complemento.Cliente.Location))
+		vg.Executada.DataInicio = &vgIniTZ
+		if vg.Executada.DataFim != nil {
+			var vgFimTZ time.Time
+			vgFimTZ = ((*vg.Executada.DataFim).In(filtro.Complemento.Cliente.Location))
+			vg.Executada.DataFim = &vgFimTZ
+		}
+	}
 
 	if err != nil {
 		logger.Errorf("Erro ao Listar Viagens no mongodb %s\n", err)
