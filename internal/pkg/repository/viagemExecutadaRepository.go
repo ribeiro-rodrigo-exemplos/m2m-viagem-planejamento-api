@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	cfg "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/config"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/database"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/dto"
