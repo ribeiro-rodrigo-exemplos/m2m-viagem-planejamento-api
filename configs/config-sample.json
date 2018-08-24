@@ -51,6 +51,7 @@
             "cache": "DEBUG",
             "database": "DEBUG",
             "intercept": "DEBUG",
+            "intercept.REQUEST_BODY": "DEBUG",
             "menssageria": "DEBUG",
             "repository": "DEBUG",
             "service.viagemplanejamento": "DEBUG",
