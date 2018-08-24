@@ -75,6 +75,7 @@ func InitServer() {
 
 	intercept.ConfigRateLimit()
 	mid.Use(intercept.RateLimit)
+	mid.Use(intercept.BodyLogger)
 
 	router.POST("/v1/viagemPlanejamento/filtrar", mid.Wrap(ConsultaViagemPlanejamento))
 	router.POST("/api/v1/planejamentoviagem/dashboard", mid.Wrap(ConsultaViagemPlanejamento))

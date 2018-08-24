@@ -6,6 +6,7 @@ import (
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/cache"
 	cfg "git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/config"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/database"
+	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/intercept"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/repository"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/service/viagemplanejamento"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/webservice"
@@ -24,6 +25,7 @@ func Bootstrap() {
 	repository.InitConfig()
 	cache.InitConfig()
 	viagemplanejamento.InitConfig()
+	intercept.InitConfig()
 	webservice.InitConfig()
 	webservice.InitServer()
 }

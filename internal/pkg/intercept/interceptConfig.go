@@ -6,8 +6,10 @@ import (
 )
 
 var logger logging.Logger
+var loggerRequestBody logging.Logger
 
 //InitConfig - é responsável por iniciar configuração da package
 func InitConfig() {
 	logger = logging.NewLogger("intercept", cfg.Config.Logging.Level)
+	loggerRequestBody = logging.NewLogger("intercept.REQUEST_BODY", cfg.Config.Logging.Level)
 }
