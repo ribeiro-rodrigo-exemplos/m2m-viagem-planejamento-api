@@ -514,11 +514,7 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 		Tolerancia: dto.ToleranciaDTO{AtrasoPartida: *ples.ToleranciaAtrasoPartida},
 	}
 
-	if ples.CodVeiculoPlan != nil {
-		veiculoPlan := strconv.Itoa(int(*ples.CodVeiculoPlan))
-		vg.VeiculoPlan = &veiculoPlan
-
-	}
+	vg.VeiculoPlan = ples.CodVeiculoPlan
 
 	if ples.Partida.Before(filtro.Complemento.DataHora) {
 		vg.Status = &dto.StatusViagem.NaoRealizada

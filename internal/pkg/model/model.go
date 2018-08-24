@@ -20,7 +20,7 @@ type ProcPlanejamentoEscala struct {
 	IDEmpresaPlan           *int32     `json:"id_empresa_plan"`
 	Partida                 *time.Time `json:"partida"`
 	Chegada                 *time.Time `json:"chegada"`
-	CodVeiculoPlan          *int32     `json:"cod_veiculo_plan"`
+	CodVeiculoPlan          *string    `json:"cod_veiculo_plan"`
 	ToleranciaAtrasoPartida *int32     `json:"tolerancia_atraso_partida"`
 }
 

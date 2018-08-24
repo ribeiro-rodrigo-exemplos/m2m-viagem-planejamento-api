@@ -41,14 +41,13 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		idEmpresaPlan           *int32
 		partida                 *types.RawTime
 		chegada                 *types.RawTime
-		codVeiculoPlan          *sql.NullInt64
+		codVeiculoPlan          *string
 		toleranciaAtrasoPartida *int32
 	)
 
 	var sql string
 	// sql = "call sp_planejamento_vigente ('2018-07-24 00:00:00', '2018-07-24 23:59:59', '209', '\"O\",\"E\",\"3\",\"U\"', '\"555b6e830850536438063762\"') "
 	sql = "call sp_planejamento_vigente (?, ?, ?, ?, ?) "
-	logger.Tracef("{%s}\n", sql)
 
 	dtInicio := filtro.GetDataInicioString()
 	dtFim := filtro.GetDataFimString()
@@ -62,6 +61,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		listaTrajetos[i] = "\"" + trajeto.ID.Hex() + "\""
 	}
 
+	//logger.Debugf("call sp_planejamento_vigente ('%s', '%s', '%s', '%s', '%s')\n", *dtInicio, *dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
 	rows, err := c.connection.Query(sql, dtInicio, dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
 	if err != nil {
 		logger.Errorf("%s\n", err)
@@ -110,11 +110,6 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		if err != nil {
 			return nil, fmt.Errorf("ListarPlanejamentosEscala - Recuperação Chegada: %s\n ", err)
 		}
-		var veiculo *int32
-		if codVeiculoPlan != nil && codVeiculoPlan.Valid {
-			veiculoAUX := int32(codVeiculoPlan.Int64)
-			veiculo = &veiculoAUX
-		}
 
 		partida := util.Concatenar(*dataPlan, timePartida, loc)
 		chegada := util.Concatenar(*dataPlan, timeChegada, loc)
@@ -128,7 +123,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 			IDEmpresaPlan:           idEmpresaPlan,
 			Partida:                 &partida,
 			Chegada:                 &chegada,
-			CodVeiculoPlan:          veiculo,
+			CodVeiculoPlan:          codVeiculoPlan,
 			ToleranciaAtrasoPartida: toleranciaAtrasoPartida,
 		}
 		logger.Tracef("%#v\n", planejamentoEscala)
