@@ -21,7 +21,7 @@ func TestDuracaoEFormatacaoSemDiferenca(t *testing.T) {
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != *f {
-		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
+		t.Errorf("Formatação esperada %s é diferente de %v\n", formatacaoEsperada, f)
 	}
 
 	if d.Seconds() != float64(duracaoEsperada) {
@@ -45,7 +45,7 @@ func TestDuracaoEFormatacao5Minutos(t *testing.T) {
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != *f {
-		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
+		t.Errorf("Formatação esperada %s é diferente de %v\n", formatacaoEsperada, f)
 	}
 
 	if d.Seconds() != float64(duracaoEsperada) {
@@ -69,7 +69,7 @@ func TestDuracaoEFormatacao02h00m15s(t *testing.T) {
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != *f {
-		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
+		t.Errorf("Formatação esperada %s é diferente de %v\n", formatacaoEsperada, f)
 	}
 
 	if d.Seconds() != float64(duracaoEsperada) {
@@ -93,7 +93,7 @@ func TestDuracaoEArredondamentoMinutos02h00m15s(t *testing.T) {
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != *f {
-		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
+		t.Errorf("Formatação esperada %s é diferente de %v\n", formatacaoEsperada, f)
 	}
 
 	if d.Round(time.Minute).Minutes() != float64(duracaoEsperada) {
@@ -117,7 +117,7 @@ func TestDuracaoEFormatacao3horas(t *testing.T) {
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != *f {
-		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
+		t.Errorf("Formatação esperada %s é diferente de %v\n", formatacaoEsperada, f)
 	}
 
 	if d.Seconds() != float64(duracaoEsperada) {
@@ -141,7 +141,7 @@ func TestDuracaoEFormatacao72h04m28s(t *testing.T) {
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != *f {
-		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
+		t.Errorf("Formatação esperada %s é diferente de %v\n", formatacaoEsperada, f)
 	}
 
 	if d.Seconds() != float64(duracaoEsperada) {
@@ -165,7 +165,7 @@ func TestDuracaoEFormatacaoNegativo00h05m27s(t *testing.T) {
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != *f {
-		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
+		t.Errorf("Formatação esperada %s é diferente de %v\n", formatacaoEsperada, f)
 	}
 
 	if d.Seconds() != float64(duracaoEsperada) {
@@ -189,7 +189,7 @@ func TestDuracaoEFormatacaoNegativo24h00m10s(t *testing.T) {
 	d, f := DuracaoEFormatacao(&inicio, &fim)
 
 	if formatacaoEsperada != *f {
-		t.Errorf("Formatação esperada %s é diferente de %q\n", formatacaoEsperada, f)
+		t.Errorf("Formatação esperada %s é diferente de %v\n", formatacaoEsperada, f)
 	}
 
 	if d.Seconds() != float64(duracaoEsperada) {
