@@ -41,7 +41,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		idEmpresaPlan           *int32
 		partida                 *types.RawTime
 		chegada                 *types.RawTime
-		codVeiculoPlan          *sql.NullInt64
+		codVeiculoPlan          *string
 		toleranciaAtrasoPartida *int32
 	)
 
@@ -110,11 +110,6 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		if err != nil {
 			return nil, fmt.Errorf("ListarPlanejamentosEscala - Recuperação Chegada: %s\n ", err)
 		}
-		var veiculo *int32
-		if codVeiculoPlan != nil && codVeiculoPlan.Valid {
-			veiculoAUX := int32(codVeiculoPlan.Int64)
-			veiculo = &veiculoAUX
-		}
 
 		partida := util.Concatenar(*dataPlan, timePartida, loc)
 		chegada := util.Concatenar(*dataPlan, timeChegada, loc)
@@ -128,7 +123,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 			IDEmpresaPlan:           idEmpresaPlan,
 			Partida:                 &partida,
 			Chegada:                 &chegada,
-			CodVeiculoPlan:          veiculo,
+			CodVeiculoPlan:          codVeiculoPlan,
 			ToleranciaAtrasoPartida: toleranciaAtrasoPartida,
 		}
 		logger.Tracef("%#v\n", planejamentoEscala)
