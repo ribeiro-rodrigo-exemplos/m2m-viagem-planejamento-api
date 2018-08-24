@@ -62,6 +62,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		listaTrajetos[i] = "\"" + trajeto.ID.Hex() + "\""
 	}
 
+	//logger.Debugf("call sp_planejamento_vigente ('%s', '%s', '%s', '%s', '%s')\n", *dtInicio, *dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
 	rows, err := c.connection.Query(sql, dtInicio, dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
 	if err != nil {
 		logger.Errorf("%s\n", err)
