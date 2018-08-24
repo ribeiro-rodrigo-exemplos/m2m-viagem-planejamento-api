@@ -48,7 +48,6 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	var sql string
 	// sql = "call sp_planejamento_vigente ('2018-07-24 00:00:00', '2018-07-24 23:59:59', '209', '\"O\",\"E\",\"3\",\"U\"', '\"555b6e830850536438063762\"') "
 	sql = "call sp_planejamento_vigente (?, ?, ?, ?, ?) "
-	logger.Tracef("{%s}\n", sql)
 
 	dtInicio := filtro.GetDataInicioString()
 	dtFim := filtro.GetDataFimString()
