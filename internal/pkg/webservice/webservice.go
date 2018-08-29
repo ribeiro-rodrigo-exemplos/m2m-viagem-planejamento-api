@@ -184,7 +184,7 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 	}
 
 	vps := <-viagemplanejamentoService
-	consultaViagemPlanejamentoDTO, err := vps.Consultar(filterAdaptado)
+	consultaViagemPlanejamentoDTO, err := vps.ConsultarDashboard(filterAdaptado)
 
 	if err != nil {
 		logger.Errorf("ConsultarViagemPlanejamento %s - %+v\n", err, filter)
