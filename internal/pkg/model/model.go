@@ -27,8 +27,7 @@ type ProcPlanejamentoEscala struct {
 
 //MensagemObservacaoProc -
 type MensagemObservacaoProc struct {
-	ID              int32       `json:"id"`
-	IDPlanejamento  int32       `json:"idPlanejamento"`
+	ID              int         `json:"id"`
 	Mensagem        string      `json:"mensagem"`
 	DataAtualizacao time.Time   `json:"dataAtualizacao"`
 	UsuarioCriacao  UsuarioProc `json:"usuarioCriacao"`

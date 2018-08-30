@@ -25,3 +25,15 @@ type StatusViagemConst struct {
 	Atrasada              int
 	Extra                 int
 }
+
+//OrigemMensagem -
+var OrigemMensagem = OrigemMensagemConst{
+	Planejada: 0,
+	Executada: 1,
+}
+
+//OrigemMensagemConst -
+type OrigemMensagemConst struct {
+	Planejada int
+	Executada int
+}

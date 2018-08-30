@@ -169,7 +169,6 @@ func obterObservacoes(mensagnesObservacao *string) ([]model.MensagemObservacaoPr
 		if len(campos) == 6 {
 			var id int
 			var dataAtualizacao time.Time
-			var idPlanejamento int
 			var mensagem string
 			var idUsuario int
 			var nomeUsuario string
@@ -185,11 +184,6 @@ func obterObservacoes(mensagnesObservacao *string) ([]model.MensagemObservacaoPr
 				break
 			}
 
-			idPlanejamento, err = strconv.Atoi(campos[2])
-			if err != nil {
-				break
-			}
-
 			mensagem = campos[3]
 
 			idUsuario, err = strconv.Atoi(campos[4])
@@ -200,8 +194,7 @@ func obterObservacoes(mensagnesObservacao *string) ([]model.MensagemObservacaoPr
 			nomeUsuario = campos[5]
 
 			msg := model.MensagemObservacaoProc{
-				ID:              int32(id),
-				IDPlanejamento:  int32(idPlanejamento),
+				ID:              id,
 				Mensagem:        mensagem,
 				DataAtualizacao: dataAtualizacao,
 				UsuarioCriacao: model.UsuarioProc{

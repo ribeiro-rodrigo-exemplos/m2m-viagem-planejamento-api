@@ -496,7 +496,8 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 
 	for _, m := range ples.MensagensObservacao {
 		msg := dto.MensagemObservacaoDTO{
-			IDPlanejamento:  m.IDPlanejamento,
+			Origem:          dto.OrigemMensagem.Planejada,
+			ID:              strconv.Itoa(m.ID),
 			Mensagem:        m.Mensagem,
 			DataAtualizacao: m.DataAtualizacao,
 			UsuarioCriacao: dto.UsuarioDTO{
@@ -658,9 +659,10 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 		}
 		for _, m := range vgex.MensagensObservacao {
 			msg := dto.MensagemObservacaoDTO{
-				IDViagemExecutada: m.ID.Hex(),
-				Mensagem:          m.Mensagem,
-				DataAtualizacao:   m.DataAtualizacao,
+				Origem:          dto.OrigemMensagem.Executada,
+				ID:              m.ID.Hex(),
+				Mensagem:        m.Mensagem,
+				DataAtualizacao: m.DataAtualizacao,
 				UsuarioCriacao: dto.UsuarioDTO{
 					Nome: m.UsuarioCriacao,
 				},

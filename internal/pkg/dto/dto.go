@@ -178,12 +178,11 @@ type ApresentacaoDTO struct {
 
 //MensagemObservacaoDTO -
 type MensagemObservacaoDTO struct {
-	IDPlanejamento    int32      `json:"idPlanejamento"`
-	IDViagemExecutada string     `json:"idViagemExecutada"`
-	Mensagem          string     `json:"mensagem"`
-	DataAtualizacao   time.Time  `json:"dataAtualizacao"`
-	UsuarioCriacao    UsuarioDTO `json:"usuarioCriacao"`
-	Excluido          bool       `json:"excluido"`
+	ID              string     `json:"id"`
+	Origem          int        `json:"origem"`
+	Mensagem        string     `json:"mensagem"`
+	DataAtualizacao time.Time  `json:"dataAtualizacao"`
+	UsuarioCriacao  UsuarioDTO `json:"usuarioCriacao"`
 }
 
 //UsuarioDTO -
