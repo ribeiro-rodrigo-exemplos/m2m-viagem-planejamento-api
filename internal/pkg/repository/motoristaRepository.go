@@ -8,13 +8,18 @@ import (
 
 const sqlCarregarMapaMotoristas = "" +
 	"SELECT " +
-	"	id_funcionario, nm_nomeFuncionario, nm_matricula " +
+	"	f.id_funcionario, f.nm_nomeFuncionario, f.nm_matricula " +
 	"FROM " +
-	"	funcionario " +
-	"WHERE 1=1 " +
-	"	AND id_tipoFuncionario = 1 AND fl_situacao = true " +
-	"GROUP BY " +
-	"	nm_matricula"
+	"	funcionario f " +
+	"WHERE  " +
+	"	f.id_funcionario IN ( " +
+	"		SELECT " +
+	"			MIN(f2.id_funcionario) " +
+	"		FROM " +
+	"			funcionario f2 " +
+	"		WHERE " +
+	"			f2.id_tipoFuncionario = 1 AND f2.fl_situacao = true AND f2.nm_matricula = f.nm_matricula " +
+	") "
 
 //MotoristaRepository -
 type MotoristaRepository struct {
