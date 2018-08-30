@@ -43,6 +43,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		chegada                 *types.RawTime
 		codVeiculoPlan          *string
 		toleranciaAtrasoPartida *int32
+		mensagensObservacao     *string
 	)
 
 	var sql string
@@ -91,6 +92,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 			&chegada,
 			&codVeiculoPlan,
 			&toleranciaAtrasoPartida,
+			&mensagensObservacao,
 		)
 
 		if err != nil {
@@ -109,13 +111,18 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		if err != nil {
 			return nil, fmt.Errorf("ListarPlanejamentosEscala - Recuperação Partida: %s\n ", err)
 		}
-		timeChegada, _ := chegada.Time()
+		timeChegada, err := chegada.Time()
 		if err != nil {
 			return nil, fmt.Errorf("ListarPlanejamentosEscala - Recuperação Chegada: %s\n ", err)
 		}
 
 		partida := util.Concatenar(*dataPlan, timePartida, loc)
 		chegada := util.Concatenar(*dataPlan, timeChegada, loc)
+
+		observacoes, err := obterObservacoes(mensagensObservacao)
+		if err != nil {
+			return nil, fmt.Errorf("ListarPlanejamentosEscala - Recuperação Observações: %s\n ", err)
+		}
 
 		planejamentoEscala := &model.ProcPlanejamentoEscala{
 			IDPlanejamento:          idPlanejamento,
@@ -128,6 +135,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 			Chegada:                 &chegada,
 			CodVeiculoPlan:          codVeiculoPlan,
 			ToleranciaAtrasoPartida: toleranciaAtrasoPartida,
+			MensagensObservacao:     observacoes,
 		}
 		logger.Tracef("%#v\n", planejamentoEscala)
 		planejamentosEscala = append(planejamentosEscala, planejamentoEscala)
@@ -142,4 +150,69 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	/**/
 
 	return planejamentosEscala, err
+}
+
+func obterObservacoes(mensagnesObservacao *string) ([]model.MensagemObservacaoProc, error) {
+	mensagensObservacaoProc := []model.MensagemObservacaoProc{}
+	var err error
+
+	// mensagnesObservacaoAUX := "1|2018-08-28|3194235|Teste Vitor|1234|vitor.coelho"
+	// mensagnesObservacao = &mensagnesObservacaoAUX
+
+	if mensagnesObservacao == nil {
+		return mensagensObservacaoProc, err
+	}
+
+	for _, mensagem := range strings.Split(*mensagnesObservacao, ";") {
+
+		campos := strings.Split(mensagem, "|")
+		if len(campos) == 6 {
+			var id int
+			var dataAtualizacao time.Time
+			var idPlanejamento int
+			var mensagem string
+			var idUsuario int
+			var nomeUsuario string
+			// var excluido bool
+
+			id, err = strconv.Atoi(campos[0])
+			if err != nil {
+				break
+			}
+
+			dataAtualizacao, err = util.ObterTimeDeAMD(campos[1])
+			if err != nil {
+				break
+			}
+
+			idPlanejamento, err = strconv.Atoi(campos[2])
+			if err != nil {
+				break
+			}
+
+			mensagem = campos[3]
+
+			idUsuario, err = strconv.Atoi(campos[4])
+			if err != nil {
+				break
+			}
+
+			nomeUsuario = campos[5]
+
+			msg := model.MensagemObservacaoProc{
+				ID:              int32(id),
+				IDPlanejamento:  int32(idPlanejamento),
+				Mensagem:        mensagem,
+				DataAtualizacao: dataAtualizacao,
+				UsuarioCriacao: model.UsuarioProc{
+					ID:   int32(idUsuario),
+					Nome: nomeUsuario,
+				},
+			}
+			mensagensObservacaoProc = append(mensagensObservacaoProc, msg)
+		}
+	}
+
+	return mensagensObservacaoProc, err
+
 }

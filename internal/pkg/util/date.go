@@ -65,6 +65,18 @@ func FormatarAMDHMS(t *time.Time) *string {
 	return &timeFormat
 }
 
+//ObterTimeDeAMD  obtém time a partir de string aaaa-mm-dd
+func ObterTimeDeAMD(dataHora string) (time.Time, error) {
+
+	timeParse, err := time.Parse("2006-01-02 ", dataHora)
+
+	if err != nil {
+		return timeParse, err
+	}
+
+	return timeParse, err
+}
+
 //DuracaoEFormatacao -
 func DuracaoEFormatacao(inicio *time.Time, fim *time.Time) (time.Duration, *string) {
 	var formatacao string

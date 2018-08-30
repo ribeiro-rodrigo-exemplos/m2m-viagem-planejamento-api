@@ -12,16 +12,33 @@ import (
 
 //ProcPlanejamentoEscala - Mapeamento de Stored Procedure
 type ProcPlanejamentoEscala struct {
-	IDPlanejamento          *int32     `json:"id_planejamento"`
-	IDTrajeto               *string    `json:"id_trajeto"`
-	IDHorario               *int32     `json:"id_horario"`
-	IDTabela                *int32     `json:"id_tabela"`
-	NmTabela                *string    `json:"nm_tabela"`
-	IDEmpresaPlan           *int32     `json:"id_empresa_plan"`
-	Partida                 *time.Time `json:"partida"`
-	Chegada                 *time.Time `json:"chegada"`
-	CodVeiculoPlan          *string    `json:"cod_veiculo_plan"`
-	ToleranciaAtrasoPartida *int32     `json:"tolerancia_atraso_partida"`
+	IDPlanejamento          *int32                   `json:"id_planejamento"`
+	IDTrajeto               *string                  `json:"id_trajeto"`
+	IDHorario               *int32                   `json:"id_horario"`
+	IDTabela                *int32                   `json:"id_tabela"`
+	NmTabela                *string                  `json:"nm_tabela"`
+	IDEmpresaPlan           *int32                   `json:"id_empresa_plan"`
+	Partida                 *time.Time               `json:"partida"`
+	Chegada                 *time.Time               `json:"chegada"`
+	CodVeiculoPlan          *string                  `json:"cod_veiculo_plan"`
+	ToleranciaAtrasoPartida *int32                   `json:"tolerancia_atraso_partida"`
+	MensagensObservacao     []MensagemObservacaoProc `json:"mensagensObservacao"`
+}
+
+//MensagemObservacaoProc -
+type MensagemObservacaoProc struct {
+	ID              int32       `json:"id"`
+	IDPlanejamento  int32       `json:"idPlanejamento"`
+	Mensagem        string      `json:"mensagem"`
+	DataAtualizacao time.Time   `json:"dataAtualizacao"`
+	UsuarioCriacao  UsuarioProc `json:"usuarioCriacao"`
+	Excluido        bool        `json:"excluido"`
+}
+
+//UsuarioProc -
+type UsuarioProc struct {
+	ID   int32  `json:"id"`
+	Nome string `json:"nome"`
 }
 
 //Modelo - MySQL
@@ -73,12 +90,13 @@ func (m *Motorista) nomeOuMatricula() (identificacao string) {
 
 //Modelo - MongoDB
 
-//MensagemObs -
-type MensagemObs struct {
-	Mensagem        string    `bson:"mensagem"`
-	DataAtualizacao time.Time `bson:"dataAtualizacao"`
-	UsuarioCriacao  string    `bson:"usuarioCriacao"`
-	Excluido        bool      `bson:"excluido"`
+//MensagemObservacaoMongoDB -
+type MensagemObservacaoMongoDB struct {
+	ID              *bson.ObjectId `bson:"_id"`
+	Mensagem        string         `bson:"mensagem"`
+	DataAtualizacao time.Time      `bson:"dataAtualizacao"`
+	UsuarioCriacao  string         `bson:"usuarioCriacao"`
+	Excluido        bool           `bson:"excluido"`
 }
 
 //GpsLinha -
@@ -138,37 +156,37 @@ type Alocacao struct {
 
 //ViagemExecutada -
 type ViagemExecutada struct {
-	Alocacao              Alocacao                `bson:"alocacao"`
-	ID                    *bson.ObjectId          `bson:"_id"`
-	ClienteID             int32                   `bson:"clienteId"`
-	SituacaoAtual         int32                   `bson:"situacaoAtual"`
-	Executada             Executada               `bson:"executada"`
-	PorcentagemConclusao  string                  `bson:"porcentagemConclusao"`
-	Planejada             Planejada               `bson:"planejada"`
-	Contador              Contador                `bson:"contador"`
-	TransmissoesRecebidas []TransmissoesRecebidas `bson:"transmissoesRecebidas"`
-	LineString            GpsLinha                `bson:"lineString"`
-	IDRotaAberturaViagem  string                  `bson:"idRotaAberturaViagem"`
-	NumeroLinhaArrastado  string                  `bson:"numeroLinhaArrastado"`
-	ArrastoAutomatico     bool                    `bson:"arrastoAutomatico"`
-	TipoViagem            int32                   `bson:"tipoViagem"`
-	DataFimAtraso         time.Time               `bson:"dataFimAtraso"`
-	KmPercurso            float64                 `bson:"kmPercurso"`
-	CodigoMotorista       string                  `bson:"codigoMotorista"`
-	CodigoCobrador        string                  `bson:"codigoCobrador"`
-	VelocidadeMedia       *float64                `bson:"velocidadeMedia"`
-	Ipk                   *float64                `bson:"ipk"`
-	TempoViagem           int64                   `bson:"tempoViagem"`
-	DiferencaPlanejado    int32                   `bson:"diferencaPlanejado"`
-	QntPassageiros        *int32                  `bson:"qntPassageiros"`
-	Passageiros           []time.Time             `bson:"passageiros"`
-	DescrIDRota           string                  `bson:"descrIdRota"`
-	Excluido              bool                    `bson:"excluido"`
-	DataCriacao           time.Time               `bson:"dataCriacao"`
-	DataCriacaoRegistro   time.Time               `bson:"dataCriacaoRegistro"`
-	DtUltimaViagemAberta  time.Time               `bson:"dtUltimaViagemAberta"`
-	MensagemObservacao    MensagemObs             `bson:"mensagemObs"`
-	Partida               Partida                 `bson:"partida"`
+	Alocacao              Alocacao                    `bson:"alocacao"`
+	ID                    *bson.ObjectId              `bson:"_id"`
+	ClienteID             int32                       `bson:"clienteId"`
+	SituacaoAtual         int32                       `bson:"situacaoAtual"`
+	Executada             Executada                   `bson:"executada"`
+	PorcentagemConclusao  string                      `bson:"porcentagemConclusao"`
+	Planejada             Planejada                   `bson:"planejada"`
+	Contador              Contador                    `bson:"contador"`
+	TransmissoesRecebidas []TransmissoesRecebidas     `bson:"transmissoesRecebidas"`
+	LineString            GpsLinha                    `bson:"lineString"`
+	IDRotaAberturaViagem  string                      `bson:"idRotaAberturaViagem"`
+	NumeroLinhaArrastado  string                      `bson:"numeroLinhaArrastado"`
+	ArrastoAutomatico     bool                        `bson:"arrastoAutomatico"`
+	TipoViagem            int32                       `bson:"tipoViagem"`
+	DataFimAtraso         time.Time                   `bson:"dataFimAtraso"`
+	KmPercurso            float64                     `bson:"kmPercurso"`
+	CodigoMotorista       string                      `bson:"codigoMotorista"`
+	CodigoCobrador        string                      `bson:"codigoCobrador"`
+	VelocidadeMedia       *float64                    `bson:"velocidadeMedia"`
+	Ipk                   *float64                    `bson:"ipk"`
+	TempoViagem           int64                       `bson:"tempoViagem"`
+	DiferencaPlanejado    int32                       `bson:"diferencaPlanejado"`
+	QntPassageiros        *int32                      `bson:"qntPassageiros"`
+	Passageiros           []time.Time                 `bson:"passageiros"`
+	DescrIDRota           string                      `bson:"descrIdRota"`
+	Excluido              bool                        `bson:"excluido"`
+	DataCriacao           time.Time                   `bson:"dataCriacao"`
+	DataCriacaoRegistro   time.Time                   `bson:"dataCriacaoRegistro"`
+	DtUltimaViagemAberta  time.Time                   `bson:"dtUltimaViagemAberta"`
+	MensagensObservacao   []MensagemObservacaoMongoDB `bson:"mensagemObs"`
+	Partida               Partida                     `bson:"partida"`
 }
 
 //Partida -

@@ -492,6 +492,21 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 	logger.Tracef("%+v\n", ples)
 	// logger.Tracef("%#v\n", ples)
 
+	obs := []dto.MensagemObservacaoDTO{}
+
+	for _, m := range ples.MensagensObservacao {
+		msg := dto.MensagemObservacaoDTO{
+			IDPlanejamento:  m.IDPlanejamento,
+			Mensagem:        m.Mensagem,
+			DataAtualizacao: m.DataAtualizacao,
+			UsuarioCriacao: dto.UsuarioDTO{
+				ID:   m.UsuarioCriacao.ID,
+				Nome: m.UsuarioCriacao.Nome,
+			},
+		}
+		obs = append(obs, msg)
+	}
+
 	vg = &dto.ViagemDTO{
 		IDPlanejamento:     ples.IDPlanejamento,
 		IDTabela:           ples.IDTabela,
@@ -511,7 +526,8 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 			Sentido:     filtro.ListaTrajetos[0].Sentido,
 			NumeroLinha: Cache.TrajetoLinha[filtro.ListaTrajetos[0].ID].Numero,
 		},
-		Tolerancia: dto.ToleranciaDTO{AtrasoPartida: *ples.ToleranciaAtrasoPartida},
+		Tolerancia:          dto.ToleranciaDTO{AtrasoPartida: *ples.ToleranciaAtrasoPartida},
+		MensagensObservacao: obs,
 	}
 
 	vg.VeiculoPlan = ples.CodVeiculoPlan
@@ -635,6 +651,23 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 	}
 
 	vg.CdMotorista = &vgex.CodigoMotorista
+
+	if vgex.MensagensObservacao != nil {
+		if vg.MensagensObservacao == nil {
+			vg.MensagensObservacao = []dto.MensagemObservacaoDTO{}
+		}
+		for _, m := range vgex.MensagensObservacao {
+			msg := dto.MensagemObservacaoDTO{
+				IDViagemExecutada: m.ID.Hex(),
+				Mensagem:          m.Mensagem,
+				DataAtualizacao:   m.DataAtualizacao,
+				UsuarioCriacao: dto.UsuarioDTO{
+					Nome: m.UsuarioCriacao,
+				},
+			}
+			vg.MensagensObservacao = append(vg.MensagensObservacao, msg)
+		}
+	}
 
 }
 

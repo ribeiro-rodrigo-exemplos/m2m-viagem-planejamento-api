@@ -112,58 +112,59 @@ func (f *FilterDTO) GetDataFimString() *string {
 
 //ViagemDTO estrutura usada para mapear dados enviados para a tela
 type ViagemDTO struct {
-	Apresentacao        ApresentacaoDTO `json:"apresentacao"`
-	ID                  *bson.ObjectId  `json:"id"`
-	IDViagemExecutada   *bson.ObjectId  `json:"idViagemExecutada"`
-	IDPlanejamento      *int32          `json:"idPlanejamento"`
-	IDTabela            *int32          `json:"idTabela"`
-	IDHorario           *int32          `json:"idHorario"`
-	IDEmpresa           *int32          `json:"idEmpresa"`
-	IDEmpresaPlanejada  *int32          `json:"idEmpresaPlanejada"`
-	Status              *int            `json:"status"`
-	EmExecucao          bool            `json:"emExecucao"`
-	VeiculoPlan         *string         `json:"veiculoPlan"`
-	VeiculoReal         *string         `json:"veiculoReal"`
-	NmTabela            *string         `json:"nmTabela"`
-	PartidaOrdenacao    *time.Time      `json:"-"`
-	PartidaPlanTime     *time.Time      `json:"-"`
-	PartidaPlan         *string         `json:"partidaPlan"`
-	ChegadaPlanTime     *time.Time      `json:"-"`
-	ChegadaPlan         *string         `json:"chegadaPlan"`
-	DiffPartida         *int64          `json:"diffPartida"`
-	DiffPartidaStr      *string         `json:"diffPartidaStr"`
-	EntrouEmPlaca       *string         `json:"entrouEmPlaca"`
-	PartidaRealTime     *time.Time      `json:"-"`
-	PartidaReal         *string         `json:"partidaReal"`
-	ChegadaReal         *string         `json:"chegadaReal"`
-	DiffChegada         *int64          `json:"diffChegada"`
-	DiffChegadaStr      *string         `json:"diffChegadaStr"`
-	QtdePassageiros     *int32          `json:"qtdePassageiros"`
-	Proxima             *string         `json:"proxima"`
-	PercentualConclusao *string         `json:"percentualConclusao"`
-	Editada             bool            `json:"editada"`
-	Headway             *int64          `json:"headway"`
-	HeadwayStr          *string         `json:"headwayStr"`
-	Data                *time.Time      `json:"data"`
-	DataAbertura        *string         `json:"dataAbertura"`
-	DataFechamento      *string         `json:"dataFechamento"`
-	Ipk                 *float64        `json:"ipk"`
-	CdMotorista         *string         `json:"cdMotorista"`
-	NmMotorista         *string         `json:"nmMotorista"`
-	Duracao             *string         `json:"duracao"`
-	DuracaoSeg          *int64          `json:"duracaoSeg"`
-	IDVeiculo           *string         `json:"idVeiculo"`
-	Motivo              *string         `json:"motivo"`
-	VelocidadeMedia     *float64        `json:"velocidadeMedia"`
-	CodTransportadora   *int            `json:"codTransportadora"`
-	TipoFrota           *int            `json:"tipoFrota"`
-	Cobrador            *int            `json:"cobrador"`
-	DistanciaPercorrida *float32        `json:"distanciaPercorrida"`
-	Placa               *string         `json:"placa"`
-	Planejada           bool            `json:"-"`
-	PlanejadaAteMomento bool            `json:"-"`
-	Trajeto             TrajetoDTO      `json:"trajeto"`
-	Tolerancia          ToleranciaDTO   `json:"tolerancia"`
+	Apresentacao        ApresentacaoDTO         `json:"apresentacao"`
+	ID                  *bson.ObjectId          `json:"id"`
+	IDViagemExecutada   *bson.ObjectId          `json:"idViagemExecutada"`
+	IDPlanejamento      *int32                  `json:"idPlanejamento"`
+	IDTabela            *int32                  `json:"idTabela"`
+	IDHorario           *int32                  `json:"idHorario"`
+	IDEmpresa           *int32                  `json:"idEmpresa"`
+	IDEmpresaPlanejada  *int32                  `json:"idEmpresaPlanejada"`
+	Status              *int                    `json:"status"`
+	EmExecucao          bool                    `json:"emExecucao"`
+	VeiculoPlan         *string                 `json:"veiculoPlan"`
+	VeiculoReal         *string                 `json:"veiculoReal"`
+	NmTabela            *string                 `json:"nmTabela"`
+	PartidaOrdenacao    *time.Time              `json:"-"`
+	PartidaPlanTime     *time.Time              `json:"-"`
+	PartidaPlan         *string                 `json:"partidaPlan"`
+	ChegadaPlanTime     *time.Time              `json:"-"`
+	ChegadaPlan         *string                 `json:"chegadaPlan"`
+	DiffPartida         *int64                  `json:"diffPartida"`
+	DiffPartidaStr      *string                 `json:"diffPartidaStr"`
+	EntrouEmPlaca       *string                 `json:"entrouEmPlaca"`
+	PartidaRealTime     *time.Time              `json:"-"`
+	PartidaReal         *string                 `json:"partidaReal"`
+	ChegadaReal         *string                 `json:"chegadaReal"`
+	DiffChegada         *int64                  `json:"diffChegada"`
+	DiffChegadaStr      *string                 `json:"diffChegadaStr"`
+	QtdePassageiros     *int32                  `json:"qtdePassageiros"`
+	Proxima             *string                 `json:"proxima"`
+	PercentualConclusao *string                 `json:"percentualConclusao"`
+	Editada             bool                    `json:"editada"`
+	Headway             *int64                  `json:"headway"`
+	HeadwayStr          *string                 `json:"headwayStr"`
+	Data                *time.Time              `json:"data"`
+	DataAbertura        *string                 `json:"dataAbertura"`
+	DataFechamento      *string                 `json:"dataFechamento"`
+	Ipk                 *float64                `json:"ipk"`
+	CdMotorista         *string                 `json:"cdMotorista"`
+	NmMotorista         *string                 `json:"nmMotorista"`
+	Duracao             *string                 `json:"duracao"`
+	DuracaoSeg          *int64                  `json:"duracaoSeg"`
+	IDVeiculo           *string                 `json:"idVeiculo"`
+	Motivo              *string                 `json:"motivo"`
+	VelocidadeMedia     *float64                `json:"velocidadeMedia"`
+	CodTransportadora   *int                    `json:"codTransportadora"`
+	TipoFrota           *int                    `json:"tipoFrota"`
+	Cobrador            *int                    `json:"cobrador"`
+	DistanciaPercorrida *float32                `json:"distanciaPercorrida"`
+	Placa               *string                 `json:"placa"`
+	Planejada           bool                    `json:"-"`
+	PlanejadaAteMomento bool                    `json:"-"`
+	Trajeto             TrajetoDTO              `json:"trajeto"`
+	Tolerancia          ToleranciaDTO           `json:"tolerancia"`
+	MensagensObservacao []MensagemObservacaoDTO `json:"mensagemObs"`
 }
 
 //ApresentacaoDTO define atributos de apresentação para usuário
@@ -173,6 +174,22 @@ type ApresentacaoDTO struct {
 	ClasseExecucaoViagem        string  `json:"classeExecucaoViagem"`
 	ClasseExecucaoViagemToolTip string  `json:"classeExecucaoViagemToolTip"`
 	ClasseStatusViagem          string  `json:"classeStatusViagem"`
+}
+
+//MensagemObservacaoDTO -
+type MensagemObservacaoDTO struct {
+	IDPlanejamento    int32      `json:"idPlanejamento"`
+	IDViagemExecutada string     `json:"idViagemExecutada"`
+	Mensagem          string     `json:"mensagem"`
+	DataAtualizacao   time.Time  `json:"dataAtualizacao"`
+	UsuarioCriacao    UsuarioDTO `json:"usuarioCriacao"`
+	Excluido          bool       `json:"excluido"`
+}
+
+//UsuarioDTO -
+type UsuarioDTO struct {
+	ID   int32  `json:"id"`
+	Nome string `json:"nome"`
 }
 
 //TotalizadoresDTO -
