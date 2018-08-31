@@ -132,8 +132,8 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 				TipoDia:     model.TiposDia.FromDate(p.Inicio, []string{"O", "F"}),
 				Complemento: filtro.Complemento,
 			}
-			if _, existe := Cache.TrajetoLinha[t.ID]; !existe {
-				Cache.TrajetoLinha[t.ID] = t.Linha
+			if _, existe := Cache.TrajetoLinha[t.ID.Hex()]; !existe {
+				Cache.TrajetoLinha[t.ID.Hex()] = t.Linha
 			}
 
 			filtrosConsulta = append(filtrosConsulta, f)
@@ -166,6 +166,11 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	dto.OrdenarViagemPorData(vps.consultaViagemPlanejamento.Viagens)
 
 	processarAtrasadas(vps.consultaViagemPlanejamento)
+
+	//TODO - Habilitar mediante definição por filtro
+	if false {
+		dto.OrdenarViagemPorLinha(vps.consultaViagemPlanejamento.Viagens)
+	}
 
 	calcularTotalizadores(vps.consultaViagemPlanejamento)
 
@@ -508,6 +513,7 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 		obs = append(obs, msg)
 	}
 
+	linha := Cache.TrajetoLinha[filtro.ListaTrajetos[0].ID.Hex()]
 	vg = &dto.ViagemDTO{
 		IDPlanejamento:     ples.IDPlanejamento,
 		IDTabela:           ples.IDTabela,
@@ -525,7 +531,8 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 			ID:          filtro.ListaTrajetos[0].ID,
 			Descricao:   filtro.ListaTrajetos[0].Descricao,
 			Sentido:     filtro.ListaTrajetos[0].Sentido,
-			NumeroLinha: Cache.TrajetoLinha[filtro.ListaTrajetos[0].ID].Numero,
+			NumeroLinha: linha.Numero,
+			Linha:       linha,
 		},
 		Tolerancia:          dto.ToleranciaDTO{AtrasoPartida: *ples.ToleranciaAtrasoPartida},
 		MensagensObservacao: obs,
@@ -644,11 +651,16 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 	vg.VelocidadeMedia = vgex.VelocidadeMedia
 
 	vg.QtdePassageiros = vgex.QntPassageiros
-	vg.Trajeto = dto.TrajetoDTO{
-		ID:          vgex.Partida.TrajetoExecutado.IDObject,
-		Descricao:   vgex.Partida.TrajetoExecutado.Descricao,
-		Sentido:     vgex.Partida.TrajetoExecutado.Sentido,
-		NumeroLinha: Cache.TrajetoLinha[vgex.Partida.TrajetoExecutado.IDObject].Numero,
+
+	if vg.Trajeto.ID == nil {
+		linha := Cache.TrajetoLinha[vgex.Partida.TrajetoExecutado.IDObject.Hex()]
+		vg.Trajeto = dto.TrajetoDTO{
+			ID:          vgex.Partida.TrajetoExecutado.IDObject,
+			Descricao:   vgex.Partida.TrajetoExecutado.Descricao,
+			Sentido:     vgex.Partida.TrajetoExecutado.Sentido,
+			NumeroLinha: linha.Numero,
+			Linha:       linha,
+		}
 	}
 
 	vg.CdMotorista = &vgex.CodigoMotorista
