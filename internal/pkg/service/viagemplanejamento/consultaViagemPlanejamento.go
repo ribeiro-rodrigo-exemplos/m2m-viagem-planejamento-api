@@ -165,8 +165,6 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	dto.OrdenarViagemPorData(vps.consultaViagemPlanejamento.Viagens)
 
-	processarAtrasadas(vps.consultaViagemPlanejamento)
-
 	//TODO - Habilitar mediante definição por filtro
 	if false {
 		dto.OrdenarViagemPorLinha(vps.consultaViagemPlanejamento.Viagens)
@@ -217,7 +215,10 @@ func (vps *Service) complementarInformacoes(consultaViagemPlanejamento *dto.Cons
 }
 
 func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
+	//TODO - Verificar possibilidade das listas chegarem neste ponto ordenadas. Possível
+	//	Ordenação via banco de dados
 	model.OrdenarViagemExecutadaPorData(consultaViagemPlanejamento.ViagensExecutadaPendentes)
+	dto.OrdenarViagemPorData(consultaViagemPlanejamento.Viagens)
 
 	vgRealizadasNaoPlanejadas := []*dto.ViagemDTO{}
 
@@ -247,7 +248,6 @@ func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamen
 	}
 
 	consultaViagemPlanejamento.Viagens = append(consultaViagemPlanejamento.Viagens, vgRealizadasNaoPlanejadas...)
-	dto.OrdenarViagemPorData(consultaViagemPlanejamento.Viagens)
 }
 
 func calcularTotalizadores(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
@@ -484,6 +484,8 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 	// consultaViagemPlanejamentoDTO.ViagensExecutada = viagensExecutada
 	consultaViagemPlanejamentoDTO.Viagens = viagensDTO
 	consultaViagemPlanejamentoDTO.ViagensExecutadaPendentes = viagensExecutadaPendentes
+
+	processarAtrasadas(consultaViagemPlanejamentoDTO)
 
 	logger.Tracef("%+v\n", consultaViagemPlanejamentoDTO)
 
