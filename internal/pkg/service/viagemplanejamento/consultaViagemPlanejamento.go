@@ -163,11 +163,13 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 
 	vps.wg.Wait()
 
-	dto.OrdenarViagemPorData(vps.consultaViagemPlanejamento.Viagens)
-
-	//TODO - Habilitar mediante definição por filtro
-	if false {
+	switch filtro.Ordenacao {
+	case "horario":
+		dto.OrdenarViagemPorData(vps.consultaViagemPlanejamento.Viagens)
+	case "trajeto":
 		dto.OrdenarViagemPorLinha(vps.consultaViagemPlanejamento.Viagens)
+	default:
+		dto.OrdenarViagemPorData(vps.consultaViagemPlanejamento.Viagens)
 	}
 
 	calcularTotalizadores(vps.consultaViagemPlanejamento)

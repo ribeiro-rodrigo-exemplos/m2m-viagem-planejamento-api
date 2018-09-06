@@ -32,7 +32,7 @@ type FilterDTO struct {
 	ListaTrajetos []TrajetoDTO `json:"lista_trajetos"`
 	IDCliente     int32        `json:"id_cliente"`
 	IDVeiculo     int          `json:"id_veiculo"`
-	Ordenacao     []string     `json:"ordenacao"`
+	Ordenacao     string       `json:"ordenacao"`
 	DataInicio    *string      `json:"data_inicio"`
 	DataFim       *string      `json:"data_fim"`
 	TipoDia       []string
@@ -44,7 +44,7 @@ type FilterDashboardDTO struct {
 	ListaTrajetos []TrajetoDashboardDTO `json:"trajetos"`
 	IDCliente     int32                 `json:"idCliente"`
 	Status        []string              `json:"status"`
-	Ordenacao     []string              `json:"ordenacao"`
+	Ordenacao     string                `json:"ordenacao"`
 	DataInicio    string                `json:"dataInicio"`
 	HoraInicio    string                `json:"horaInicio"`
 	DataFim       string                `json:"dataFim"`
