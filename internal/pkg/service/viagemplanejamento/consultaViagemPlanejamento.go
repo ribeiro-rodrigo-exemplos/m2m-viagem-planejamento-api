@@ -283,9 +283,15 @@ func calcularTotalizadores(consultaViagemPlanejamento *dto.ConsultaViagemPlaneja
 	if math.IsNaN(indiceExecucao) {
 		//TODO - Remover Marreta para Dashboard. Mover lógica para tela
 		indiceExecucao = 100
+	} else if math.IsInf(indiceExecucao, 1) {
+		//TODO - Remover Marreta para Dashboard. Mover lógica para tela
+		indiceExecucao = 100
 	}
 	indicePartida := (float64(consultaViagemPlanejamento.Totalizadores.Realizadas+consultaViagemPlanejamento.Totalizadores.EmAndamento) / float64(consultaViagemPlanejamento.Totalizadores.PlanejadasAteMomento) * 100)
 	if math.IsNaN(indicePartida) {
+		//TODO - Remover Marreta para Dashboard. Mover lógica para tela
+		indicePartida = 100
+	} else if math.IsInf(indicePartida, 1) {
 		//TODO - Remover Marreta para Dashboard. Mover lógica para tela
 		indicePartida = 100
 	}
