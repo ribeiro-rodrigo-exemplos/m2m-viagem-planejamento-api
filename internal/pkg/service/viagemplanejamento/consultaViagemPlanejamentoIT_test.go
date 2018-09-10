@@ -40,7 +40,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 		},
 		IDCliente:  209,
 		IDVeiculo:  150,
-		Ordenacao:  []string{"veiculo", "data"},
+		Ordenacao:  "horario",
 		DataInicio: &dataInicio,
 		DataFim:    &dataFim,
 		Complemento: dto.DadosComplementares{
@@ -134,7 +134,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 		},
 		IDCliente:  209,
 		IDVeiculo:  150,
-		Ordenacao:  []string{"veiculo", "data"},
+		Ordenacao:  "horario",
 		DataInicio: &dataInicio,
 		DataFim:    &dataFim,
 	}
@@ -202,7 +202,7 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 		},
 		IDCliente:  209,
 		IDVeiculo:  150,
-		Ordenacao:  []string{"veiculo", "data"},
+		Ordenacao:  "horario",
 		DataInicio: &dataInicio,
 		DataFim:    &dataFim,
 	}
@@ -269,7 +269,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 		},
 		IDCliente:  209,
 		IDVeiculo:  150,
-		Ordenacao:  []string{"veiculo", "data"},
+		Ordenacao:  "horario",
 		DataInicio: &dataInicio,
 		DataFim:    &dataFim,
 		// DataFim:    "2018-07-24 23:59:59",
