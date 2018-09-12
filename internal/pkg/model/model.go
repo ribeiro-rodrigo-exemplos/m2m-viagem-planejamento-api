@@ -89,6 +89,20 @@ func (m *Motorista) nomeOuMatricula() (identificacao string) {
 
 //Modelo - MongoDB
 
+//PontoInteresse -
+type PontoInteresse struct {
+	ID   *bson.ObjectId `bson:"_id"`
+	Nome string         `bson:"nome"`
+}
+
+// NewPontoInteresse -
+func NewPontoInteresse(id *bson.ObjectId, nome string) *PontoInteresse {
+	m := new(PontoInteresse)
+	m.ID = id
+	m.Nome = nome
+	return m
+}
+
 //MensagemObservacaoMongoDB -
 type MensagemObservacaoMongoDB struct {
 	ID              *bson.ObjectId `bson:"_id"`
