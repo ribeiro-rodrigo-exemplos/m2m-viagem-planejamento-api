@@ -15,7 +15,7 @@ var cachePontoInteresse *PontoInteresse
 type PontoInteresse struct {
 	iniciado                 bool
 	pontoInteresseRepository *repository.PontoInteresseRepository
-	Cache                    map[*bson.ObjectId]*model.PontoInteresse
+	cache                    map[bson.ObjectId]*model.PontoInteresse
 }
 
 func newPontoInteresse(pontoInteresseRepository *repository.PontoInteresseRepository) (*PontoInteresse, error) {
@@ -65,7 +65,7 @@ func (p *PontoInteresse) atualizar() error {
 	if err != nil {
 		logger.Errorf("PontoInteresses: %v\n", err)
 	} else {
-		logger.Debugf("PontoInteresses Atualizado: %v\n", len(p.Cache))
+		logger.Debugf("PontoInteresses Atualizado: %v\n", len(p.cache))
 	}
 	return err
 }
@@ -76,18 +76,23 @@ func (p *PontoInteresse) criar() error {
 	//Montar cache
 	cache, err := p.pontoInteresseRepository.CarregarMapaPontoInteresses(p.keys())
 	if err == nil {
-		p.Cache = cache
+		p.cache = cache
 		p.iniciado = true
 	}
 	return err
 }
 
-func (p *PontoInteresse) keys() []*bson.ObjectId {
-	keys := make([]*bson.ObjectId, len(p.Cache))
+func (p *PontoInteresse) keys() []bson.ObjectId {
+	keys := make([]bson.ObjectId, len(p.cache))
 	i := 0
-	for k := range p.Cache {
+	for k := range p.cache {
 		keys[i] = k
 		i++
 	}
 	return keys
+}
+
+//Get -
+func (p *PontoInteresse) Get(*bson.ObjectId) error {
+	return nil
 }

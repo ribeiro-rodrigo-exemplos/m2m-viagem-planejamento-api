@@ -52,8 +52,8 @@ func (p *PontoInteresseRepository) ConsultarPorID(id bson.ObjectId) (*model.Pont
 }
 
 //CarregarMapaPontoInteresses -
-func (p *PontoInteresseRepository) CarregarMapaPontoInteresses(ids []*bson.ObjectId) (map[*bson.ObjectId]*model.PontoInteresse, error) {
-	pontoInteresse := make(map[*bson.ObjectId]*model.PontoInteresse)
+func (p *PontoInteresseRepository) CarregarMapaPontoInteresses(ids []bson.ObjectId) (map[bson.ObjectId]*model.PontoInteresse, error) {
+	pontoInteresse := make(map[bson.ObjectId]*model.PontoInteresse)
 	var err error
 
 	session, err := p.mongoDB.GetSession()
@@ -80,8 +80,8 @@ func (p *PontoInteresseRepository) CarregarMapaPontoInteresses(ids []*bson.Objec
 	iter := q.Iter()
 
 	var pontoInteresseRetorno struct {
-		ID   *bson.ObjectId `bson:"_id"`
-		Nome string         `bson:"nome"`
+		ID   bson.ObjectId `bson:"_id"`
+		Nome string        `bson:"nome"`
 	}
 	for iter.Next(&pontoInteresseRetorno) {
 		pontoInteresse[pontoInteresseRetorno.ID] = &model.PontoInteresse{
@@ -100,8 +100,8 @@ func (p *PontoInteresseRepository) CarregarMapaPontoInteresses(ids []*bson.Objec
 }
 
 //ListarIdentificacaoPontosFinal -
-func (p *PontoInteresseRepository) ListarIdentificacaoPontosFinal() ([]*bson.ObjectId, error) {
-	var ids []*bson.ObjectId
+func (p *PontoInteresseRepository) ListarIdentificacaoPontosFinal() ([]bson.ObjectId, error) {
+	var ids []bson.ObjectId
 	var err error
 
 	session, err := p.mongoDB.GetSession()
@@ -132,12 +132,10 @@ func (p *PontoInteresseRepository) ListarIdentificacaoPontosFinal() ([]*bson.Obj
 
 	for iter.Next(&linha) {
 		for _, t := range linha.Trajetos {
-			if t.EndPoint.ID != nil {
-				id := t.EndPoint.ID.Hex()
-				if _, k := idsUnicos[id]; !k {
-					idsUnicos[id] = nil
-					ids = append(ids, t.EndPoint.ID)
-				}
+			id := t.EndPoint.ID.Hex()
+			if _, k := idsUnicos[id]; !k {
+				idsUnicos[id] = nil
+				ids = append(ids, t.EndPoint.ID)
 			}
 		}
 	}
@@ -153,7 +151,7 @@ func (p *PontoInteresseRepository) ListarIdentificacaoPontosFinal() ([]*bson.Obj
 
 //Ponto -
 type Ponto struct {
-	ID *bson.ObjectId `bson:"_id"`
+	ID bson.ObjectId `bson:"_id"`
 }
 
 //Trajeto -

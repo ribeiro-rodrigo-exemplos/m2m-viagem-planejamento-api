@@ -91,12 +91,12 @@ func (m *Motorista) nomeOuMatricula() (identificacao string) {
 
 //PontoInteresse -
 type PontoInteresse struct {
-	ID   *bson.ObjectId `bson:"_id"`
-	Nome string         `bson:"nome"`
+	ID   bson.ObjectId `bson:"_id"`
+	Nome string        `bson:"nome"`
 }
 
 // NewPontoInteresse -
-func NewPontoInteresse(id *bson.ObjectId, nome string) *PontoInteresse {
+func NewPontoInteresse(id bson.ObjectId, nome string) *PontoInteresse {
 	m := new(PontoInteresse)
 	m.ID = id
 	m.Nome = nome

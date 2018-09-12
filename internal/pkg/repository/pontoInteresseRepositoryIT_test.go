@@ -85,10 +85,10 @@ func TestCarregarMapaPontoInteresses(t *testing.T) {
 	id1 := bson.ObjectIdHex("5579d6b2f50beb13664c9cdc")
 	id2 := bson.ObjectIdHex("555b32f8085053643806365f")
 	id3 := bson.ObjectIdHex("555b32f8085053643806365b")
-	listaIDs := []*bson.ObjectId{
-		&id1,
-		&id2,
-		&id3,
+	listaIDs := []bson.ObjectId{
+		id1,
+		id2,
+		id3,
 	}
 	c := NewPontoInteresseRepository(session)
 	identificacaoPontosFinal, err := c.CarregarMapaPontoInteresses(listaIDs)
