@@ -61,7 +61,6 @@ func TestConsultarCacheVazioECheio(t *testing.T) {
 
 	id = bson.ObjectIdHex("555b32f8085053643806365f")
 	pontoInteresse, err = pontoInteresseCache.Get(id)
-	fmt.Printf("%+v\n", pontoInteresse)
 	if err != nil {
 		t.Errorf("Obter entrada de chace - %s\n", err)
 	}
@@ -71,7 +70,6 @@ func TestConsultarCacheVazioECheio(t *testing.T) {
 
 	id = bson.ObjectIdHex("555b32f8085053643806365f")
 	pontoInteresse, err = pontoInteresseCache.Get(id)
-	fmt.Printf("%+v\n", pontoInteresse)
 	if err != nil {
 		t.Errorf("Obter entrada de chace - %s\n", err)
 	}
@@ -81,7 +79,6 @@ func TestConsultarCacheVazioECheio(t *testing.T) {
 
 	id = bson.ObjectIdHex("5579d6b2f50beb13664c9cdc")
 	pontoInteresse, err = pontoInteresseCache.Get(id)
-	fmt.Printf("%+v\n", pontoInteresse)
 	if err != nil {
 		t.Errorf("Obter entrada de chace - %s\n", err)
 	}
@@ -91,7 +88,6 @@ func TestConsultarCacheVazioECheio(t *testing.T) {
 
 	id = bson.ObjectIdHex("5579d6b2f50beb13664c9cdc")
 	pontoInteresse, err = pontoInteresseCache.Get(id)
-	fmt.Printf("%+v\n", pontoInteresse)
 	if err != nil {
 		t.Errorf("Obter entrada de chace - %s\n", err)
 	}
