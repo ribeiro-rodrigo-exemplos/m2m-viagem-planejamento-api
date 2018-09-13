@@ -16,10 +16,17 @@ type PontoInteresse struct {
 	iniciado                 bool
 	pontoInteresseRepository *repository.PontoInteresseRepository
 	cache                    map[bson.ObjectId]*model.PontoInteresse
+	lock                     chan interface{}
 }
 
 func newPontoInteresse(pontoInteresseRepository *repository.PontoInteresseRepository) (*PontoInteresse, error) {
 	m := new(PontoInteresse)
+	lockSize := 1
+	m.lock = make(chan interface{}, lockSize*2)
+	for i := 0; i < lockSize; i++ {
+		v := new(interface{})
+		m.lock <- v
+	}
 	m.pontoInteresseRepository = pontoInteresseRepository
 	err := m.criar()
 	m.manterCacheAtualizado()
@@ -93,6 +100,24 @@ func (p *PontoInteresse) keys() []bson.ObjectId {
 }
 
 //Get -
-func (p *PontoInteresse) Get(*bson.ObjectId) error {
-	return nil
+func (p *PontoInteresse) Get(id bson.ObjectId) (*model.PontoInteresse, error) {
+	if v, k := p.cache[id]; k {
+		return v, nil
+	}
+	return p.find(id)
+}
+
+//find -
+func (p *PontoInteresse) find(id bson.ObjectId) (*model.PontoInteresse, error) {
+	l := <-p.lock
+	defer p.lockRelease(l)
+	if v, k := p.cache[id]; k {
+		return v, nil
+	}
+	pontoInteresse, err := p.pontoInteresseRepository.ConsultarPorID(id)
+	return pontoInteresse, err
+}
+
+func (p *PontoInteresse) lockRelease(l interface{}) {
+	p.lock <- l
 }
