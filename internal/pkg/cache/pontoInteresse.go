@@ -115,6 +115,9 @@ func (p *PontoInteresse) find(id bson.ObjectId) (*model.PontoInteresse, error) {
 		return v, nil
 	}
 	pontoInteresse, err := p.pontoInteresseRepository.ConsultarPorID(id)
+	if pontoInteresse != nil {
+		p.cache[id] = pontoInteresse
+	}
 	return pontoInteresse, err
 }
 
