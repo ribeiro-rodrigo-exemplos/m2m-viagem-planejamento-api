@@ -91,8 +91,9 @@ func (m *Motorista) nomeOuMatricula() (identificacao string) {
 
 //PontoInteresse -
 type PontoInteresse struct {
-	ID   bson.ObjectId `bson:"_id"`
-	Nome string        `bson:"nome"`
+	ID    bson.ObjectId `bson:"_id"`
+	Nome  string        `bson:"nome"`
+	Ativo bool          `bson:"fl_ativo"`
 }
 
 // NewPontoInteresse -

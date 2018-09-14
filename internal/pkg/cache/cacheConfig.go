@@ -37,4 +37,16 @@ func InitConfig() {
 	if err != nil {
 		logger.Errorf("Obter Cache de Cliente - %s\n", err)
 	}
+
+	//TODO - Receber dependência conexão como parâmetro
+	session, err := database.GetMongoDB()
+	if err != nil {
+		logger.Errorf("Obter conexão - %s\n", err)
+	}
+	pontoInteresseRepository := repository.NewPontoInteresseRepository(session)
+
+	_, err = GetPontoInteresse(pontoInteresseRepository)
+	if err != nil {
+		logger.Errorf("Obter Cache de Ponto de Interesse - %s\n", err)
+	}
 }

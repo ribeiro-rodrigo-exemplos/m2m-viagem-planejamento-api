@@ -29,6 +29,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	cliente := cacheCliente.Cache[209]
 
 	cacheMotorista, _ := cache.GetMotorista(nil)
+	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
 
 	id := bson.ObjectIdHex("555b6e830850536438063762")
 	dataInicio := "2018-07-24 18:00:00"
@@ -61,7 +62,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	}
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cachePontoInteresse)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -153,7 +154,9 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 
 	cacheCliente, _ := cache.GetCliente(nil)
 	cacheMotorista, _ := cache.GetMotorista(nil)
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista)
+	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
+
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cachePontoInteresse)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -221,7 +224,8 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 
 	cacheCliente, _ := cache.GetCliente(nil)
 	cacheMotorista, _ := cache.GetMotorista(nil)
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista)
+	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cachePontoInteresse)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -290,7 +294,8 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 
 	cacheCliente, _ := cache.GetCliente(nil)
 	cacheMotorista, _ := cache.GetMotorista(nil)
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista)
+	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cachePontoInteresse)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 

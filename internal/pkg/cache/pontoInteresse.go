@@ -68,20 +68,31 @@ func (p *PontoInteresse) manterCacheAtualizado() {
 
 func (p *PontoInteresse) atualizar() error {
 	//Atualiza nome dos Pontos de Interesse
-	err := p.criar()
+	mapaPontoInteresses, err := p.pontoInteresseRepository.CarregarMapaPontoInteresses(p.keys())
 	if err != nil {
 		logger.Errorf("PontoInteresses: %v\n", err)
-	} else {
-		logger.Debugf("PontoInteresses Atualizado: %v\n", len(p.cache))
+		return err
 	}
+
+	l := <-p.lock
+	defer p.lockRelease(l)
+
+	for k, v := range mapaPontoInteresses {
+		p.cache[k] = v
+	}
+
+	logger.Debugf("PontoInteresses Atualizado: %v\n", len(p.cache))
 	return err
 }
 
 func (p *PontoInteresse) criar() error {
-	//Consultar IDs de Ponto Final de Trajetos de Linhas
-	//Consultar Pontos de Intersse Ativos dos IDs recuperados
-	//Montar cache
-	cache, err := p.pontoInteresseRepository.CarregarMapaPontoInteresses(p.keys())
+	var err error
+
+	l := <-p.lock
+	defer p.lockRelease(l)
+
+	listaIDsPontosFinal, err := p.pontoInteresseRepository.ListarIdentificacaoPontosFinal()
+	cache, err := p.pontoInteresseRepository.CarregarMapaPontoInteresses(listaIDsPontosFinal)
 	if err == nil {
 		p.cache = cache
 		p.iniciado = true
@@ -102,6 +113,7 @@ func (p *PontoInteresse) keys() []bson.ObjectId {
 //Get -
 func (p *PontoInteresse) Get(id bson.ObjectId) (*model.PontoInteresse, error) {
 	if v, k := p.cache[id]; k {
+		logger.Tracef("Valor recuperado em memória %v\n", v)
 		return v, nil
 	}
 	return p.find(id)
