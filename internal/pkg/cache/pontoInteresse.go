@@ -113,7 +113,6 @@ func (p *PontoInteresse) keys() []bson.ObjectId {
 //Get -
 func (p *PontoInteresse) Get(id bson.ObjectId) (*model.PontoInteresse, error) {
 	if v, k := p.cache[id]; k {
-		logger.Tracef("Valor recuperado em memória %v\n", v)
 		return v, nil
 	}
 	return p.find(id)

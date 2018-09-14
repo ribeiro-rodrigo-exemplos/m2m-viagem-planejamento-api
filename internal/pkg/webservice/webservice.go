@@ -112,6 +112,10 @@ func carragarDependencias() error {
 	if err != nil {
 		return err
 	}
+	cacheTrajeto, err := cache.GetTrajeto(nil)
+	if err != nil {
+		return err
+	}
 	cachePontoInteresse, err := cache.GetPontoInteresse(nil)
 	if err != nil {
 		return err
@@ -121,7 +125,7 @@ func carragarDependencias() error {
 
 	viagemplanejamentoService = make(chan *viagemplanejamento.Service, cfg.Config.Service.ViagemPlanejamento.MaxConcurrent*2)
 	for i := 0; i < cfg.Config.Service.ViagemPlanejamento.MaxConcurrent; i++ {
-		viagemplanejamentoService <- viagemplanejamento.NewViagemPlanejamentoService(planEscRep, vigExecRep, cacheCliente, cacheMotorista, cachePontoInteresse)
+		viagemplanejamentoService <- viagemplanejamento.NewViagemPlanejamentoService(planEscRep, vigExecRep, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse)
 	}
 	return err
 }

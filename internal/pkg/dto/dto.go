@@ -52,12 +52,18 @@ type FilterDashboardDTO struct {
 	Timezone      string                `json:"timezone"`
 }
 
+//EndPointDashboardDTO -
+type EndPointDashboardDTO struct {
+	ID *bson.ObjectId `json:"_id"`
+}
+
 //TrajetoDashboardDTO -
 type TrajetoDashboardDTO struct {
-	ID          *bson.ObjectId `json:"_id"`
-	Descricao   string         `json:"nome"`
-	Sentido     string         `json:"sentido"`
-	NumeroLinha string         `json:"numeroLinha"`
+	ID          *bson.ObjectId       `json:"_id"`
+	Descricao   string               `json:"nome"`
+	Sentido     string               `json:"sentido"`
+	NumeroLinha string               `json:"numeroLinha"`
+	EndPoint    EndPointDashboardDTO `json:"endPoint"`
 }
 
 //GetDataInicio -

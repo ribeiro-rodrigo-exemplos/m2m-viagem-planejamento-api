@@ -215,6 +215,20 @@ type TrajetoExecutado struct {
 	Sentido   string         `bson:"sentido"`
 }
 
+//Trajeto -
+type Trajeto struct {
+	ID       bson.ObjectId  `bson:"_id"`
+	Nome     string         `bson:"nome"`
+	Sentido  string         `bson:"sentido"`
+	Ativo    bool           `bson:"ativo"`
+	EndPoint PontoInteresse `bson:"endPoint"`
+}
+
+//Linha -
+type Linha struct {
+	Trajetos []Trajeto `bson:"trajetos"`
+}
+
 //Modelo - API Planejamento
 
 //Empresa -

@@ -38,6 +38,7 @@ type Service struct {
 	vigExecRep          *repository.ViagemExecutadaRepository
 	cacheCliente        *cache.Cliente
 	cacheMotorista      *cache.Motorista
+	cacheTrajeto        *cache.Trajeto
 	cachePontoInteresse *cache.PontoInteresse
 
 	err                        error
@@ -53,12 +54,13 @@ type Service struct {
 }
 
 //NewViagemPlanejamentoService -
-func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente, cacheMotorista *cache.Motorista, cachePontoInteresse *cache.PontoInteresse) *Service {
+func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente, cacheMotorista *cache.Motorista, cacheTrajeto *cache.Trajeto, cachePontoInteresse *cache.PontoInteresse) *Service {
 	vps := &Service{}
 	vps.planEscRep = planEscRep
 	vps.vigExecRep = vigExecRep
 	vps.cacheCliente = cacheCliente
 	vps.cacheMotorista = cacheMotorista
+	vps.cacheTrajeto = cacheTrajeto
 	vps.cachePontoInteresse = cachePontoInteresse
 
 	vps.filaTrabalho = make(chan dto.FilterDTO, 50)
@@ -215,8 +217,22 @@ func (vps *Service) complementarInformacoes(consultaViagemPlanejamento *dto.Cons
 				vg.CdMotorista = &m.Identificacao
 			}
 		}
-		// vps.cachePontoInteresse.Get(vg.Trajeto.ID)
-		// if
+		if vg.Trajeto.ID != nil {
+			t, err := vps.cacheTrajeto.Get(*vg.Trajeto.ID)
+			if err != nil {
+				logger.Errorf("%s\n", err)
+			}
+			if t.EndPoint.ID.Valid() {
+				p, err := vps.cachePontoInteresse.Get(t.EndPoint.ID)
+				if err != nil {
+					logger.Errorf("%s\n", err)
+				}
+				if p != nil {
+					vg.Trajeto.Sentido = p.Nome
+				}
+			}
+
+		}
 	}
 }
 

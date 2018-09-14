@@ -43,6 +43,13 @@ func InitConfig() {
 	if err != nil {
 		logger.Errorf("Obter conexão - %s\n", err)
 	}
+	trajetoRepository := repository.NewTrajetoRepository(session)
+
+	_, err = GetTrajeto(trajetoRepository)
+	if err != nil {
+		logger.Errorf("Obter Cache de Trajeto - %s\n", err)
+	}
+
 	pontoInteresseRepository := repository.NewPontoInteresseRepository(session)
 
 	_, err = GetPontoInteresse(pontoInteresseRepository)
