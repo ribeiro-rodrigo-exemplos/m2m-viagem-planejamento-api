@@ -113,7 +113,7 @@ func (p *PontoInteresseRepository) ListarIdentificacaoPontosFinal() ([]bson.Obje
 	defer session.Close()
 
 	projecao := bson.M{
-		"_id": 1,
+		"_id":                   1,
 		"trajetos.endPoint._id": 1,
 	}
 
