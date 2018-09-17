@@ -133,7 +133,6 @@ func (p *PontoInteresseRepository) ListarIdentificacaoPontosFinal() ([]bson.Obje
 	for iter.Next(&linha) {
 		for _, t := range linha.Trajetos {
 			if !t.EndPoint.ID.Valid() {
-				logger.Warnf("Id invalido %s", t.EndPoint.ID.Hex())
 				continue
 			}
 			id := t.EndPoint.ID.Hex()
