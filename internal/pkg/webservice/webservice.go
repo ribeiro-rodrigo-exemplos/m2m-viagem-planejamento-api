@@ -15,6 +15,7 @@ import (
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/repository"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/service/viagemplanejamento"
 
+	"github.com/NYTimes/gziphandler"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rileyr/middleware"
 )
@@ -29,10 +30,7 @@ func InitConfig() {
 var viagemplanejamentoService chan *viagemplanejamento.Service
 var router *httprouter.Router
 
-type myWeb struct {
-}
-
-func (c myWeb) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+func serveHTTP(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Access-Control-Allow-Origin", "*")
 	res.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
 	res.Header().Set("Access-Control-Allow-Methods", "GET, PUT, POST, PUT, DELETE, OPTIONS, HEAD, PATCH")
@@ -67,6 +65,8 @@ func InitServer() {
 
 	logger.Infof("HTTP.Request.MaxConcurrent %v", cfg.Config.HTTP.Request.MaxConcurrent)
 
+	logger.Infof("HTTP.Response.Gzip.Enable %v", cfg.Config.HTTP.Response.Gzip.Enable)
+
 	router = httprouter.New()
 
 	mid := middleware.NewStack()
@@ -81,8 +81,17 @@ func InitServer() {
 	router.POST("/api/v1/planejamentoviagem/dashboard", mid.Wrap(ConsultaViagemPlanejamento))
 	router.PUT("/api/v1/planejamentoviagem/dashboard", mid.Wrap(ConsultaViagemPlanejamentoDashboard))
 
+	var defaultHandler http.Handler
+
+	defaultHandler = http.HandlerFunc(serveHTTP)
+	if cfg.Config.HTTP.Response.Gzip.Enable {
+		defaultHandler = gziphandler.GzipHandler(defaultHandler)
+	}
+
+	http.Handle("/", defaultHandler)
+
 	logger.Infof("Servidor rodando na porta %v\n", cfg.Config.Server.Port)
-	err := http.ListenAndServe(":"+cfg.Config.Server.Port, myWeb{})
+	err := http.ListenAndServe(":"+cfg.Config.Server.Port, nil)
 
 	if err != nil {
 		logger.Errorf("Erro ao subir o servidor na porta %v - %s\n", cfg.Config.Server.Port, err)
