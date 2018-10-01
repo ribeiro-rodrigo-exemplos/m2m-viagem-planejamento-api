@@ -226,7 +226,16 @@ type Trajeto struct {
 
 //Linha -
 type Linha struct {
-	Trajetos []Trajeto `bson:"trajetos"`
+	ID        bson.ObjectId `bson:"_id"`
+	Nome      string        `bson:"descr"`
+	Numero    string        `bson:"numero"`
+	Trajetos  []Trajeto     `bson:"trajetos"`
+	Consorcio Consorcio     `bson:"consorcio"`
+}
+
+//Consorcio -
+type Consorcio struct {
+	ConsorcioID int32 `bson:"consorcioId"`
 }
 
 //Modelo - API Planejamento
