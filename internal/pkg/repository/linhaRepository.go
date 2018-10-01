@@ -8,12 +8,15 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-var projecaos = bson.M{
+var projecaoLinha = bson.M{
 	"_id":                   1,
+	"descr":                 1,
+	"numero":                1,
 	"trajetos._id":          1,
 	"trajetos.nome":         1,
 	"trajetos.ativo":        1,
 	"trajetos.endPoint._id": 1,
+	"consorcio.consorcioId": 1,
 }
 
 //LinhaRepository -
@@ -39,8 +42,6 @@ func (p *LinhaRepository) Listar() (linhas []model.Linha, err error) {
 
 	defer session.Close()
 
-	projecao := bson.M{}
-
 	query := bson.M{
 		//"excluido" : false,
 	}
@@ -48,7 +49,7 @@ func (p *LinhaRepository) Listar() (linhas []model.Linha, err error) {
 	collection := session.DB(cfg.Config.MongoDB.Database).C("Linha")
 	var q *mgo.Query
 	q = collection.Find(query)
-	q.Select(projecao)
+	q.Select(projecaoLinha)
 
 	iter := q.Iter()
 	defer iter.Close()

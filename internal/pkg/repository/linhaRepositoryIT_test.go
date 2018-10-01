@@ -32,10 +32,10 @@ func TestListar(t *testing.T) {
 	if len(linhas) < 1 {
 		t.Errorf("Lista de Linhas %v não pode ser vazia\n", linhas)
 	}
-	// for _, vgex := range linhas {
-	// 	t.Logf("%+v", vgex)
-	// 	fmt.Printf("%s\n", vgex)
+	// for _, l := range linhas {
+	// 	t.Logf("%+v", l)
+	// 	fmt.Printf("%v - %v\n", l.ID, l.Nome)
 	// }
 
-	t.Logf("Linhas Ponto Final %d\n", len(linhas))
+	t.Logf("Linhas  %d\n", len(linhas))
 }

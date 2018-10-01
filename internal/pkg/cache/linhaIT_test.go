@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"gopkg.in/mgo.v2/bson"
+
 	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/database"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/repository"
@@ -22,24 +24,27 @@ func TestCarregarCacheLinhas(t *testing.T) {
 	if err != nil {
 		t.Errorf("Conexão banco de dados - %s\n", err)
 	}
-	motoristaRepository := repository.NewLinhaRepository(session)
+	linhaRepository := repository.NewLinhaRepository(session)
 
-	motoristaCache, err := GetLinha(motoristaRepository)
+	linhaCache, err := GetLinha(linhaRepository)
 	if err != nil {
 		t.Errorf("Obter Cache de Linha - %s\n", err)
 	}
 
-	motoristas := motoristaCache.Cache
-	if err != nil {
-		t.Errorf("Erro ao consultar CarregarMapaLinhas - %s\n", err)
+	linhas := linhaCache.cache
+	if linhas == nil {
+		t.Errorf("Cache de linhas %v não pode ser nulo\n", linhas)
 	}
-	if motoristas == nil {
-		t.Errorf("Cache de motoristas %v não pode ser nulo\n", motoristas)
+	if len(linhas) < 1 {
+		t.Errorf("Cache de linhas %v não pode ser vazio\n", linhas)
 	}
-	if len(motoristas) < 1 {
-		t.Errorf("Cache de motoristas %v não pode ser vazio\n", motoristas)
+	if l, _ := linhaCache.Get(bson.ObjectIdHex("555b6e830850536438063763")); l == nil {
+		t.Errorf("Linhas 555b6e830850536438063763 não encontrada\n")
 	}
-	for _, motorista := range motoristas {
-		t.Logf("%+v", motorista)
-	}
+
+	// for _, linha := range linhas {
+	// 	t.Logf("%+v", linha)
+	// }
+
+	t.Logf("Linhas %d\n", len(linhas))
 }
