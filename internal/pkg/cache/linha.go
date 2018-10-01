@@ -15,7 +15,7 @@ var cacheLinha *Linha
 type Linha struct {
 	iniciado        bool
 	linhaRepository *repository.LinhaRepository
-	cache           map[bson.ObjectId]*model.Linha
+	cache           map[string]model.Linha
 }
 
 func newLinha(linhaRepository *repository.LinhaRepository) (*Linha, error) {
@@ -72,9 +72,9 @@ func (m *Linha) atualizar() error {
 func (m *Linha) criar() (err error) {
 	linhas, err := m.linhaRepository.Listar()
 	if err == nil && linhas != nil {
-		var mapaLinhas = make(map[bson.ObjectId]*model.Linha)
+		var mapaLinhas = make(map[string]model.Linha)
 		for _, l := range linhas {
-			mapaLinhas[l.ID] = &l
+			mapaLinhas[l.ID.Hex()] = l
 		}
 		m.cache = mapaLinhas
 		m.iniciado = true
@@ -83,19 +83,18 @@ func (m *Linha) criar() (err error) {
 }
 
 //Get -
-func (m *Linha) Get(id bson.ObjectId) (linha *model.Linha, err error) {
-	if v, k := m.cache[id]; k {
-		value := *v
-		linha = &value
+func (m *Linha) Get(id bson.ObjectId) (linha model.Linha, err error) {
+	if v, k := m.cache[id.Hex()]; k {
+		linha = v
 	}
 	return
 }
 
 //ListAll -
 func (m *Linha) ListAll() (linhas []model.Linha, err error) {
-	linhas = make([]model.Linha, len(m.cache))
+	linhas = []model.Linha{}
 	for _, v := range m.cache {
-		linhas = append(linhas, *v)
+		linhas = append(linhas, v)
 	}
 	return
 }
