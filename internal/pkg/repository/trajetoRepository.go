@@ -9,6 +9,9 @@ import (
 )
 
 var projecao = bson.M{
+	"_id":                   1,
+	"descr":                 1,
+	"numero":                1,
 	"trajetos._id":          1,
 	"trajetos.nome":         1,
 	"trajetos.ativo":        1,
@@ -69,8 +72,8 @@ func (p *TrajetoRepository) ConsultarPorID(id bson.ObjectId) (model.Trajeto, err
 }
 
 //CarregarMapaTrajetos -
-func (p *TrajetoRepository) CarregarMapaTrajetos() (map[bson.ObjectId]model.Trajeto, error) {
-	mapaTrajetos := make(map[bson.ObjectId]model.Trajeto)
+func (p *TrajetoRepository) CarregarMapaTrajetos() (map[string]model.Trajeto, error) {
+	mapaTrajetos := make(map[string]model.Trajeto)
 	var err error
 
 	session, err := p.mongoDB.GetSession()
@@ -94,7 +97,8 @@ func (p *TrajetoRepository) CarregarMapaTrajetos() (map[bson.ObjectId]model.Traj
 	for iter.Next(&linha) {
 		for _, t := range linha.Trajetos {
 			if t.Ativo {
-				mapaTrajetos[t.ID] = t
+				t.Linha = model.Linha{Numero: linha.Numero}
+				mapaTrajetos[t.ID.Hex()] = t
 			}
 		}
 	}

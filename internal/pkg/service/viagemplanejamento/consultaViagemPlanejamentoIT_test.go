@@ -188,7 +188,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 	}
 }
 
-func TestConsultarViagemPlanejamentoPorUmAgrupamento(t *testing.T) {
+func TestConsultarViagemPlanejamentoPorUmAgrupamentoComEmpresa(t *testing.T) {
 	cfg.InitConfig("../../../../configs/config.json")
 	InitConfig()
 	database.InitConfig()
@@ -214,6 +214,11 @@ func TestConsultarViagemPlanejamentoPorUmAgrupamento(t *testing.T) {
 			dto.TrajetoDTO{
 				ID:    &id,
 				Linha: dto.LinhaDTO{Numero: "5702A1"}, // seleção de agrupamento deve olhar p cache de linha
+			},
+		},
+		ListaEmpresas: []dto.EmpresaDTO{
+			dto.EmpresaDTO{
+				ID: 1851,
 			},
 		},
 		IDCliente:  209,

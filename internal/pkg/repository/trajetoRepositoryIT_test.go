@@ -101,14 +101,14 @@ func TestCarregarMapaTrajetos(t *testing.T) {
 
 	nomeEsperado = "35 - ALVORADA  X  MADUREIRA ( PARADOR ) - Volta"
 	id = bson.ObjectIdHex("555b6e830850536438063762")
-	trajeto = mapaTrajetos[id]
+	trajeto = mapaTrajetos[id.Hex()]
 	if nomeEsperado != trajeto.Nome {
 		t.Errorf("Nome do Trajeto esperado %q, mas obtido %q - %+v\n", nomeEsperado, trajeto.Nome, trajeto)
 	}
 
 	nomeEsperado = "35 - MADUREIRA X ALVORADA ( PARADOR ) - ida"
 	id = bson.ObjectIdHex("555b6e830850536438063761")
-	trajeto = mapaTrajetos[id]
+	trajeto = mapaTrajetos[id.Hex()]
 	if nomeEsperado != trajeto.Nome {
 		t.Errorf("Nome do Trajeto esperado %q, mas obtido %q - %+v\n", nomeEsperado, trajeto.Nome, trajeto)
 	}

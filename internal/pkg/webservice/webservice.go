@@ -199,12 +199,19 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 		listaTrajetos[i] = dto.TrajetoDTO{ID: t.ID, Descricao: t.Descricao, Sentido: t.Sentido, Linha: dto.LinhaDTO{Numero: t.NumeroLinha}}
 	}
 
+	listaEmpresas := make([]dto.EmpresaDTO, len(filter.ListaEmpresas))
+	for i := 0; i < len(filter.ListaEmpresas); i++ {
+		t := filter.ListaEmpresas[i]
+		listaEmpresas[i] = dto.EmpresaDTO{ID: t.ID}
+	}
+
 	dataInicio := filter.DataInicio + " " + strings.Replace(filter.HoraInicio, " ", "", -1)
 	dataFim := filter.DataFim + " " + strings.Replace(filter.HoraFim, " ", "", -1)
 
 	filterAdaptado := dto.FilterDTO{
 		ListaAgrupamentos: listaAgrupamentos,
 		ListaTrajetos:     listaTrajetos,
+		ListaEmpresas:     listaEmpresas,
 		IDCliente:         filter.IDCliente,
 		Ordenacao:         filter.Ordenacao,
 		DataInicio:        &dataInicio,

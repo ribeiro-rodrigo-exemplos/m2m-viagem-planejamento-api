@@ -15,7 +15,7 @@ var cacheTrajeto *Trajeto
 type Trajeto struct {
 	iniciado          bool
 	trajetoRepository *repository.TrajetoRepository
-	cache             map[bson.ObjectId]model.Trajeto
+	cache             map[string]model.Trajeto
 	lock              chan interface{}
 }
 
@@ -77,7 +77,7 @@ func (p *Trajeto) atualizar() error {
 	defer p.lockRelease(l)
 
 	for _, t := range listaTrajetos {
-		p.cache[t.ID] = t
+		p.cache[t.ID.Hex()] = t
 	}
 
 	logger.Debugf("Trajetos Atualizado: %v\n", len(p.cache))
@@ -99,7 +99,7 @@ func (p *Trajeto) criar() error {
 }
 
 //Get -
-func (p *Trajeto) Get(id bson.ObjectId) (model.Trajeto, error) {
+func (p *Trajeto) Get(id string) (model.Trajeto, error) {
 	if v, k := p.cache[id]; k {
 		return v, nil
 	}
@@ -107,13 +107,13 @@ func (p *Trajeto) Get(id bson.ObjectId) (model.Trajeto, error) {
 }
 
 //find -
-func (p *Trajeto) find(id bson.ObjectId) (model.Trajeto, error) {
+func (p *Trajeto) find(id string) (model.Trajeto, error) {
 	l := <-p.lock
 	defer p.lockRelease(l)
 	if v, k := p.cache[id]; k {
 		return v, nil
 	}
-	trajeto, err := p.trajetoRepository.ConsultarPorID(id)
+	trajeto, err := p.trajetoRepository.ConsultarPorID(bson.ObjectIdHex(id))
 	if trajeto.ID.Valid() {
 		p.cache[id] = trajeto
 	}

@@ -99,6 +99,10 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 		// },
 	}
 
+	if len(filtro.Complemento.ListaEmpresas) > 0 {
+		query["executada.veiculo.idEmpresa"] = bson.M{"$in": filtro.Complemento.ListaEmpresas}
+	}
+
 	collection := session.DB(cfg.Config.MongoDB.Database).C("ViagemExecutada")
 	var q *mgo.Query
 	q = collection.Find(query)

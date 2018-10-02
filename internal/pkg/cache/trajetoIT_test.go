@@ -34,7 +34,7 @@ func TestConsultarCacheTrajetoVazioECheio(t *testing.T) {
 	var trajeto model.Trajeto
 
 	id = bson.ObjectIdHex("555b6e830850536438063762")
-	trajeto, err = trajetoCache.Get(id)
+	trajeto, err = trajetoCache.Get(id.Hex())
 	if err != nil {
 		t.Errorf("Obter entrada de cache - %s\n", err)
 	}
@@ -43,7 +43,7 @@ func TestConsultarCacheTrajetoVazioECheio(t *testing.T) {
 	}
 
 	id = bson.ObjectIdHex("555b6e830850536438063762")
-	trajeto, err = trajetoCache.Get(id)
+	trajeto, err = trajetoCache.Get(id.Hex())
 	if err != nil {
 		t.Errorf("Obter entrada de cache - %s\n", err)
 	}
@@ -52,7 +52,7 @@ func TestConsultarCacheTrajetoVazioECheio(t *testing.T) {
 	}
 
 	id = bson.ObjectIdHex("555b6e830850536438063761")
-	trajeto, err = trajetoCache.Get(id)
+	trajeto, err = trajetoCache.Get(id.Hex())
 	if err != nil {
 		t.Errorf("Obter entrada de cache - %s\n", err)
 	}
@@ -61,7 +61,7 @@ func TestConsultarCacheTrajetoVazioECheio(t *testing.T) {
 	}
 
 	id = bson.ObjectIdHex("555b6e830850536438063761")
-	trajeto, err = trajetoCache.Get(id)
+	trajeto, err = trajetoCache.Get(id.Hex())
 	if err != nil {
 		t.Errorf("Obter entrada de cache - %s\n", err)
 	}
@@ -95,7 +95,7 @@ func TestConsultarCacheEPontoFinal(t *testing.T) {
 
 	id = bson.ObjectIdHex("555b6e830850536438063762")
 	idEndPoint = bson.ObjectIdHex("555b32f8085053643806365b")
-	trajeto, err = trajetoCache.Get(id)
+	trajeto, err = trajetoCache.Get(id.Hex())
 	t.Logf("%v\n", trajeto)
 	if err != nil {
 		t.Errorf("Obter entrada de cache - %s\n", err)
@@ -114,7 +114,7 @@ func TestConsultarCacheEPontoFinal(t *testing.T) {
 
 	id = bson.ObjectIdHex("555b6e830850536438063761")
 	idEndPoint = bson.ObjectIdHex("555b32f8085053643806365f")
-	trajeto, err = trajetoCache.Get(id)
+	trajeto, err = trajetoCache.Get(id.Hex())
 	t.Logf("%v\n", trajeto)
 	if err != nil {
 		t.Errorf("Obter entrada de cache - %s\n", err)

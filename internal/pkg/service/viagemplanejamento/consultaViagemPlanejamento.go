@@ -114,10 +114,20 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejamentoDTO, error) {
 	start := time.Now()
 
+	var mapaEmpresas = make(map[int32]struct{})
+	var listaEmpresas = []int32{}
+
+	for _, e := range filtro.ListaEmpresas {
+		mapaEmpresas[e.ID] = struct{}{}
+		listaEmpresas = append(listaEmpresas, e.ID)
+	}
+
 	cliente := vps.cacheCliente.Cache[filtro.IDCliente]
 	filtro.Complemento = dto.DadosComplementares{
-		Cliente:  cliente,
-		DataHora: time.Now(),
+		Cliente:       cliente,
+		DataHora:      time.Now(),
+		MapaEmpresas:  mapaEmpresas,
+		ListaEmpresas: listaEmpresas,
 	}
 
 	if len(filtro.ListaAgrupamentos) > 0 {
@@ -140,20 +150,30 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	var filtrosConsulta []dto.FilterDTO
 	for _, p := range periodos {
 		for _, t := range trajetos {
+			l, err := vps.cacheTrajeto.Get(t.ID.Hex())
+			if err != nil {
+				return nil, err
+			}
+
+			if l.ID.Valid() {
+				t.Descricao = l.Nome
+			}
+
 			f := dto.FilterDTO{
 				ListaTrajetos: []dto.TrajetoDTO{
 					t,
 				},
-				IDCliente:   filtro.IDCliente,
-				IDVeiculo:   filtro.IDVeiculo,
-				Ordenacao:   filtro.Ordenacao,
-				DataInicio:  util.FormatarAMDHMS(p.Inicio),
-				DataFim:     util.FormatarAMDHMS(p.Fim),
-				TipoDia:     model.TiposDia.FromDate(p.Inicio, []string{"O", "F"}),
-				Complemento: filtro.Complemento,
+				ListaEmpresas: filtro.ListaEmpresas,
+				IDCliente:     filtro.IDCliente,
+				IDVeiculo:     filtro.IDVeiculo,
+				Ordenacao:     filtro.Ordenacao,
+				DataInicio:    util.FormatarAMDHMS(p.Inicio),
+				DataFim:       util.FormatarAMDHMS(p.Fim),
+				TipoDia:       model.TiposDia.FromDate(p.Inicio, []string{"O", "F"}),
+				Complemento:   filtro.Complemento,
 			}
 			if _, existe := Cache.TrajetoLinha[t.ID.Hex()]; !existe {
-				Cache.TrajetoLinha[t.ID.Hex()] = t.Linha
+				Cache.TrajetoLinha[t.ID.Hex()] = dto.LinhaDTO{Numero: l.Linha.Numero}
 			}
 
 			filtrosConsulta = append(filtrosConsulta, f)
@@ -234,7 +254,7 @@ func (vps *Service) complementarInformacoes(consultaViagemPlanejamento *dto.Cons
 			}
 		}
 		if vg.Trajeto.ID != nil {
-			t, err := vps.cacheTrajeto.Get(*vg.Trajeto.ID)
+			t, err := vps.cacheTrajeto.Get(vg.Trajeto.ID.Hex())
 			if err != nil {
 				logger.Errorf("%s\n", err)
 			}

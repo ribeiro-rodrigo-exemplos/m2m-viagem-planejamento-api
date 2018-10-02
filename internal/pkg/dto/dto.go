@@ -13,6 +13,11 @@ type ToleranciaDTO struct {
 	AtrasoPartida int32 `json:"atrasoPartida"`
 }
 
+//EmpresaDTO -
+type EmpresaDTO struct {
+	ID int32 `json:"id"`
+}
+
 //AgrupamentoDTO -
 type AgrupamentoDTO struct {
 	ID int32 `json:"id"`
@@ -36,6 +41,7 @@ type LinhaDTO struct {
 type FilterDTO struct {
 	ListaAgrupamentos []AgrupamentoDTO `json:"lista_agrupamentos"`
 	ListaTrajetos     []TrajetoDTO     `json:"lista_trajetos"`
+	ListaEmpresas     []EmpresaDTO     `json:"lista_empresas"`
 	IDCliente         int32            `json:"id_cliente"`
 	IDVeiculo         int              `json:"id_veiculo"`
 	Ordenacao         string           `json:"ordenacao"`
@@ -49,6 +55,7 @@ type FilterDTO struct {
 type FilterDashboardDTO struct {
 	ListaAgrupamentos []AgrupamentoDashboardDTO `json:"agrupamentos"`
 	ListaTrajetos     []TrajetoDashboardDTO     `json:"trajetos"`
+	ListaEmpresas     []EmpresaDashboardDTO     `json:"empresas"`
 	IDCliente         int32                     `json:"idCliente"`
 	Status            []string                  `json:"status"`
 	Ordenacao         string                    `json:"ordenacao"`
@@ -66,6 +73,11 @@ type EndPointDashboardDTO struct {
 
 //AgrupamentoDashboardDTO -
 type AgrupamentoDashboardDTO struct {
+	ID int32 `json:"id"`
+}
+
+//EmpresaDashboardDTO -
+type EmpresaDashboardDTO struct {
 	ID int32 `json:"id"`
 }
 
@@ -102,8 +114,10 @@ func (f *FilterDTO) GetDataInicioString() *string {
 
 //DadosComplementares -
 type DadosComplementares struct {
-	Cliente  *model.Cliente
-	DataHora time.Time
+	Cliente       *model.Cliente
+	DataHora      time.Time
+	MapaEmpresas  map[int32]struct{}
+	ListaEmpresas []int32
 }
 
 //GetDataFim -
