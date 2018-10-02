@@ -47,20 +47,26 @@ type FilterDTO struct {
 
 //FilterDashboardDTO filtro para consultas dashboard
 type FilterDashboardDTO struct {
-	ListaTrajetos []TrajetoDashboardDTO `json:"trajetos"`
-	IDCliente     int32                 `json:"idCliente"`
-	Status        []string              `json:"status"`
-	Ordenacao     string                `json:"ordenacao"`
-	DataInicio    string                `json:"dataInicio"`
-	HoraInicio    string                `json:"horaInicio"`
-	DataFim       string                `json:"dataFim"`
-	HoraFim       string                `json:"horaFim"`
-	Timezone      string                `json:"timezone"`
+	ListaAgrupamentos []AgrupamentoDashboardDTO `json:"agrupamentos"`
+	ListaTrajetos     []TrajetoDashboardDTO     `json:"trajetos"`
+	IDCliente         int32                     `json:"idCliente"`
+	Status            []string                  `json:"status"`
+	Ordenacao         string                    `json:"ordenacao"`
+	DataInicio        string                    `json:"dataInicio"`
+	HoraInicio        string                    `json:"horaInicio"`
+	DataFim           string                    `json:"dataFim"`
+	HoraFim           string                    `json:"horaFim"`
+	Timezone          string                    `json:"timezone"`
 }
 
 //EndPointDashboardDTO -
 type EndPointDashboardDTO struct {
 	ID *bson.ObjectId `json:"_id"`
+}
+
+//AgrupamentoDashboardDTO -
+type AgrupamentoDashboardDTO struct {
+	ID int32 `json:"id"`
 }
 
 //TrajetoDashboardDTO -

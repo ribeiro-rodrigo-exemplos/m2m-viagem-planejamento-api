@@ -187,6 +187,12 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 
 	logger.Tracef("FILTRO: %#v\n", filter)
 
+	listaAgrupamentos := make([]dto.AgrupamentoDTO, len(filter.ListaAgrupamentos))
+	for i := 0; i < len(filter.ListaAgrupamentos); i++ {
+		a := filter.ListaAgrupamentos[i]
+		listaAgrupamentos[i] = dto.AgrupamentoDTO{ID: a.ID}
+	}
+
 	listaTrajetos := make([]dto.TrajetoDTO, len(filter.ListaTrajetos))
 	for i := 0; i < len(filter.ListaTrajetos); i++ {
 		t := filter.ListaTrajetos[i]
@@ -197,11 +203,12 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 	dataFim := filter.DataFim + " " + strings.Replace(filter.HoraFim, " ", "", -1)
 
 	filterAdaptado := dto.FilterDTO{
-		ListaTrajetos: listaTrajetos,
-		IDCliente:     filter.IDCliente,
-		Ordenacao:     filter.Ordenacao,
-		DataInicio:    &dataInicio,
-		DataFim:       &dataFim,
+		ListaAgrupamentos: listaAgrupamentos,
+		ListaTrajetos:     listaTrajetos,
+		IDCliente:         filter.IDCliente,
+		Ordenacao:         filter.Ordenacao,
+		DataInicio:        &dataInicio,
+		DataFim:           &dataFim,
 	}
 
 	vps := <-viagemplanejamentoService
