@@ -222,6 +222,7 @@ type Trajeto struct {
 	Sentido  string         `bson:"sentido"`
 	Ativo    bool           `bson:"ativo"`
 	EndPoint PontoInteresse `bson:"endPoint"`
+	Linha    Linha          `bson:"-"`
 }
 
 //Linha -

@@ -40,6 +40,7 @@ type Service struct {
 	cacheMotorista      *cache.Motorista
 	cacheTrajeto        *cache.Trajeto
 	cachePontoInteresse *cache.PontoInteresse
+	cacheAgrupamento    *cache.Agrupamento
 
 	err                        error
 	chTotal                    chan int
@@ -54,7 +55,7 @@ type Service struct {
 }
 
 //NewViagemPlanejamentoService -
-func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente, cacheMotorista *cache.Motorista, cacheTrajeto *cache.Trajeto, cachePontoInteresse *cache.PontoInteresse) *Service {
+func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente, cacheMotorista *cache.Motorista, cacheTrajeto *cache.Trajeto, cachePontoInteresse *cache.PontoInteresse, cacheAgrupamento *cache.Agrupamento) *Service {
 	vps := &Service{}
 	vps.planEscRep = planEscRep
 	vps.vigExecRep = vigExecRep
@@ -62,6 +63,7 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 	vps.cacheMotorista = cacheMotorista
 	vps.cacheTrajeto = cacheTrajeto
 	vps.cachePontoInteresse = cachePontoInteresse
+	vps.cacheAgrupamento = cacheAgrupamento
 
 	vps.filaTrabalho = make(chan dto.FilterDTO, 50)
 	vps.resultado = make(chan *dto.ConsultaViagemPlanejamentoDTO, 5)
@@ -116,6 +118,20 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 	filtro.Complemento = dto.DadosComplementares{
 		Cliente:  cliente,
 		DataHora: time.Now(),
+	}
+
+	if len(filtro.ListaAgrupamentos) > 0 {
+		filtro.ListaTrajetos = []dto.TrajetoDTO{}
+		for _, a := range filtro.ListaAgrupamentos {
+			grupo, err := vps.cacheAgrupamento.Get(a.ID)
+			if err != nil {
+				return nil, err
+			}
+			trajetosGrupo := grupo.TrajetosDTO
+			if trajetosGrupo != nil {
+				filtro.ListaTrajetos = append(filtro.ListaTrajetos, trajetosGrupo...)
+			}
+		}
 	}
 
 	periodo := util.Periodo{Inicio: filtro.GetDataInicio(), Fim: filtro.GetDataFim()}

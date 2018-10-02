@@ -83,6 +83,7 @@ func (m *Agrupamento) criar() (err error) {
 
 			entry.AddLinha(l)
 			for _, t := range l.Trajetos {
+				t.Linha = l
 				entry.AddTrajeto(&t)
 			}
 		}

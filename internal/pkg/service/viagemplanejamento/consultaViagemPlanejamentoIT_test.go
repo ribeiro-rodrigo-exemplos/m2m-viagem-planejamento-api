@@ -31,6 +31,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	cacheMotorista, _ := cache.GetMotorista(nil)
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
+	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
 
 	id := bson.ObjectIdHex("555b6e830850536438063762")
 	dataInicio := "2018-07-24 18:00:00"
@@ -63,7 +64,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	}
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -157,8 +158,9 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 	cacheMotorista, _ := cache.GetMotorista(nil)
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
+	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -184,6 +186,86 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 	for _, vg := range consultaViagemPlanejamento.Viagens {
 		t.Logf("%+v\n", vg)
 	}
+}
+
+func TestConsultarViagemPlanejamentoPorUmAgrupamento(t *testing.T) {
+	cfg.InitConfig("../../../../configs/config.json")
+	InitConfig()
+	database.InitConfig()
+
+	repository.InitConfig()
+	cache.InitConfig()
+	t.Log("TestConsultarViagemPlanejamentoPorUmAgrupamento")
+
+	agrupamento := int32(38)
+	id := bson.ObjectIdHex("555b6e830850536438063762")
+	// dataInicio := "2018-08-24 18:00:00"
+	dataInicio := "2018-08-24 00:00:00"
+	dataFim := "2018-08-24 23:59:59"
+	var err error
+	filter := dto.FilterDTO{
+
+		ListaAgrupamentos: []dto.AgrupamentoDTO{
+			dto.AgrupamentoDTO{
+				ID: agrupamento,
+			},
+		},
+		ListaTrajetos: []dto.TrajetoDTO{
+			dto.TrajetoDTO{
+				ID:    &id,
+				Linha: dto.LinhaDTO{Numero: "5702A1"}, // seleção de agrupamento deve olhar p cache de linha
+			},
+		},
+		IDCliente:  209,
+		IDVeiculo:  150,
+		Ordenacao:  "horario",
+		DataInicio: &dataInicio,
+		DataFim:    &dataFim,
+	}
+
+	con, err := database.GetSQLConnection()
+	if err != nil {
+		t.Errorf("Conexão banco de dados - %s\n", err)
+	}
+	planejamentoEscalaRepository := repository.NewPlanejamentoEscalaRepository(con)
+
+	mongoDB, err := database.GetMongoDB()
+	if err != nil {
+		t.Errorf("Conexão banco de dados - %s\n", err)
+	}
+	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
+
+	cacheCliente, _ := cache.GetCliente(nil)
+	cacheMotorista, _ := cache.GetMotorista(nil)
+	cacheTrajeto, _ := cache.GetTrajeto(nil)
+	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
+	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
+
+	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
+
+	consultaViagemPlanejamento, err = vps.Consultar(filter)
+
+	if err != nil {
+		t.Errorf("Erro ao ConsultarViagemPlanejamento - %s\n", err)
+	}
+	if consultaViagemPlanejamento == nil {
+		t.Errorf("Consulta de ViagemPlanejamento não pode ser nula\n")
+		return
+	}
+	if consultaViagemPlanejamento.Viagens == nil {
+		t.Errorf("Viagens de Consulta de ViagemPlanejamento %v não pode ser nula\n", consultaViagemPlanejamento.Viagens)
+	}
+	if len(consultaViagemPlanejamento.Viagens) < 1 {
+		t.Errorf("Viagens de Consulta de ViagemPlanejamento %v não pode ser vazia\n", consultaViagemPlanejamento.Viagens)
+	}
+
+	for _, vg := range consultaViagemPlanejamento.Viagens {
+		t.Logf("%+v\n", vg)
+	}
+
+	t.Logf("%d\n", len(consultaViagemPlanejamento.Viagens))
 }
 
 func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
@@ -228,7 +310,9 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 	cacheMotorista, _ := cache.GetMotorista(nil)
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse)
+	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -299,7 +383,9 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 	cacheMotorista, _ := cache.GetMotorista(nil)
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse)
+	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 

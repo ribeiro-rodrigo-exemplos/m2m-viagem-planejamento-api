@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/dto"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/model"
 )
 
@@ -9,6 +10,7 @@ type AgrupamentoEntry struct {
 	Agrupamento *model.Agrupamento
 	Linhas      []*model.Linha
 	Trajetos    []*model.Trajeto
+	TrajetosDTO []dto.TrajetoDTO
 }
 
 //NewAgrupamentoEntry -
@@ -17,6 +19,7 @@ func NewAgrupamentoEntry(a *model.Agrupamento) (agrupamentoEntry *AgrupamentoEnt
 	agrupamentoEntry.Agrupamento = a
 	agrupamentoEntry.Linhas = []*model.Linha{}
 	agrupamentoEntry.Trajetos = []*model.Trajeto{}
+	agrupamentoEntry.TrajetosDTO = []dto.TrajetoDTO{}
 	return
 }
 
@@ -34,6 +37,14 @@ func (a *AgrupamentoEntry) GetLinhas() (linhas []*model.Linha) {
 //AddTrajeto -
 func (a *AgrupamentoEntry) AddTrajeto(l *model.Trajeto) {
 	a.Trajetos = append(a.Trajetos, l)
+	a.TrajetosDTO = append(a.TrajetosDTO, dto.TrajetoDTO{
+		ID:        &l.ID,
+		Descricao: l.Nome,
+		Linha: dto.LinhaDTO{
+			Numero: l.Linha.Numero,
+		},
+	})
+
 }
 
 //GetTrajetos -

@@ -13,6 +13,11 @@ type ToleranciaDTO struct {
 	AtrasoPartida int32 `json:"atrasoPartida"`
 }
 
+//AgrupamentoDTO -
+type AgrupamentoDTO struct {
+	ID int32 `json:"id"`
+}
+
 //TrajetoDTO -
 type TrajetoDTO struct {
 	ID          *bson.ObjectId `json:"_id"`
@@ -29,14 +34,15 @@ type LinhaDTO struct {
 
 //FilterDTO filtro para consultas
 type FilterDTO struct {
-	ListaTrajetos []TrajetoDTO `json:"lista_trajetos"`
-	IDCliente     int32        `json:"id_cliente"`
-	IDVeiculo     int          `json:"id_veiculo"`
-	Ordenacao     string       `json:"ordenacao"`
-	DataInicio    *string      `json:"data_inicio"`
-	DataFim       *string      `json:"data_fim"`
-	TipoDia       []string
-	Complemento   DadosComplementares
+	ListaAgrupamentos []AgrupamentoDTO `json:"lista_agrupamentos"`
+	ListaTrajetos     []TrajetoDTO     `json:"lista_trajetos"`
+	IDCliente         int32            `json:"id_cliente"`
+	IDVeiculo         int              `json:"id_veiculo"`
+	Ordenacao         string           `json:"ordenacao"`
+	DataInicio        *string          `json:"data_inicio"`
+	DataFim           *string          `json:"data_fim"`
+	TipoDia           []string
+	Complemento       DadosComplementares
 }
 
 //FilterDashboardDTO filtro para consultas dashboard
