@@ -53,17 +53,17 @@ type FilterDTO struct {
 
 //FilterDashboardDTO filtro para consultas dashboard
 type FilterDashboardDTO struct {
-	ListaAgrupamentos []AgrupamentoDashboardDTO `json:"agrupamentos"`
-	ListaTrajetos     []TrajetoDashboardDTO     `json:"trajetos"`
-	ListaEmpresas     []EmpresaDashboardDTO     `json:"empresas"`
-	IDCliente         int32                     `json:"idCliente"`
-	Status            []string                  `json:"status"`
-	Ordenacao         string                    `json:"ordenacao"`
-	DataInicio        string                    `json:"dataInicio"`
-	HoraInicio        string                    `json:"horaInicio"`
-	DataFim           string                    `json:"dataFim"`
-	HoraFim           string                    `json:"horaFim"`
-	Timezone          string                    `json:"timezone"`
+	ListaAgrupamentos []int32               `json:"agrupamentos"`
+	ListaTrajetos     []TrajetoDashboardDTO `json:"trajetos"`
+	ListaEmpresas     []int32               `json:"empresas"`
+	IDCliente         int32                 `json:"idCliente"`
+	Status            []string              `json:"status"`
+	Ordenacao         string                `json:"ordenacao"`
+	DataInicio        string                `json:"dataInicio"`
+	HoraInicio        string                `json:"horaInicio"`
+	DataFim           string                `json:"dataFim"`
+	HoraFim           string                `json:"horaFim"`
+	Timezone          string                `json:"timezone"`
 }
 
 //EndPointDashboardDTO -

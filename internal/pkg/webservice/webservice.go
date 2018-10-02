@@ -189,8 +189,8 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 
 	listaAgrupamentos := make([]dto.AgrupamentoDTO, len(filter.ListaAgrupamentos))
 	for i := 0; i < len(filter.ListaAgrupamentos); i++ {
-		a := filter.ListaAgrupamentos[i]
-		listaAgrupamentos[i] = dto.AgrupamentoDTO{ID: a.ID}
+		agrupamentoID := filter.ListaAgrupamentos[i]
+		listaAgrupamentos[i] = dto.AgrupamentoDTO{ID: agrupamentoID}
 	}
 
 	listaTrajetos := make([]dto.TrajetoDTO, len(filter.ListaTrajetos))
@@ -201,8 +201,8 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 
 	listaEmpresas := make([]dto.EmpresaDTO, len(filter.ListaEmpresas))
 	for i := 0; i < len(filter.ListaEmpresas); i++ {
-		t := filter.ListaEmpresas[i]
-		listaEmpresas[i] = dto.EmpresaDTO{ID: t.ID}
+		empresaID := filter.ListaEmpresas[i]
+		listaEmpresas[i] = dto.EmpresaDTO{ID: empresaID}
 	}
 
 	dataInicio := filter.DataInicio + " " + strings.Replace(filter.HoraInicio, " ", "", -1)
