@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
 	"git.m2mfacil.com.br/golang/m2m-viagem-planejamento-api/internal/pkg/cache"
@@ -212,8 +211,8 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 		listaEmpresas[i] = dto.EmpresaDTO{ID: empresaID}
 	}
 
-	dataInicio := filter.DataInicio + " " + strings.Replace(filter.HoraInicio, " ", "", -1)
-	dataFim := filter.DataFim + " " + strings.Replace(filter.HoraFim, " ", "", -1)
+	dataInicio := filter.DataInicio + " " + filter.HoraInicio
+	dataFim := filter.DataFim + " " + filter.HoraFim
 
 	filterAdaptado := dto.FilterDTO{
 		ListaAgrupamentos: listaAgrupamentos,
