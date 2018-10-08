@@ -41,6 +41,7 @@ type Service struct {
 	cacheTrajeto        *cache.Trajeto
 	cachePontoInteresse *cache.PontoInteresse
 	cacheAgrupamento    *cache.Agrupamento
+	Cache               *CacheViagemplanejamento
 
 	err                        error
 	chTotal                    chan int
@@ -64,6 +65,10 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 	vps.cacheTrajeto = cacheTrajeto
 	vps.cachePontoInteresse = cachePontoInteresse
 	vps.cacheAgrupamento = cacheAgrupamento
+
+	vps.Cache = &CacheViagemplanejamento{
+		TrajetoLinha: make(map[string]dto.LinhaDTO),
+	}
 
 	vps.filaTrabalho = make(chan dto.FilterDTO, 50)
 	vps.resultado = make(chan *dto.ConsultaViagemPlanejamentoDTO, 5)
@@ -172,8 +177,8 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 				TipoDia:       model.TiposDia.FromDate(p.Inicio, []string{"O", "F"}),
 				Complemento:   filtro.Complemento,
 			}
-			if _, existe := Cache.TrajetoLinha[t.ID.Hex()]; !existe {
-				Cache.TrajetoLinha[t.ID.Hex()] = dto.LinhaDTO{Numero: l.Linha.Numero}
+			if _, existe := vps.Cache.TrajetoLinha[t.ID.Hex()]; !existe {
+				vps.Cache.TrajetoLinha[t.ID.Hex()] = dto.LinhaDTO{Numero: l.Linha.Numero}
 			}
 
 			filtrosConsulta = append(filtrosConsulta, f)
@@ -272,7 +277,7 @@ func (vps *Service) complementarInformacoes(consultaViagemPlanejamento *dto.Cons
 	}
 }
 
-func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
+func (vps *Service) processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO) {
 	//TODO - Verificar possibilidade das listas chegarem neste ponto ordenadas. Possível
 	//	Ordenação via banco de dados
 	model.OrdenarViagemExecutadaPorData(consultaViagemPlanejamento.ViagensExecutadaPendentes)
@@ -294,11 +299,11 @@ func processarAtrasadas(consultaViagemPlanejamento *dto.ConsultaViagemPlanejamen
 
 			if vgex.Executada.DataInicio.After(*vg.PartidaOrdenacao) && *vg.Status == dto.StatusViagem.NaoRealizada && vg.IDViagemExecutada == nil {
 				vg.Status = &dto.StatusViagem.Atrasada
-				populaDadosViagem(vgex, vg)
+				vps.populaDadosViagem(vgex, vg)
 			} else {
 				novaVG := &dto.ViagemDTO{}
 				novaVG.Status = &dto.StatusViagem.Extra
-				populaDadosViagem(vgex, novaVG)
+				vps.populaDadosViagem(vgex, novaVG)
 				vgRealizadasNaoPlanejadas = append(vgRealizadasNaoPlanejadas, novaVG)
 			}
 			break
@@ -502,7 +507,7 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 		}
 
 		for _, ples := range planejamentosEscala {
-			vg, _ := converterPlanejamentosEscala(ples, filtro)
+			vg, _ := vps.converterPlanejamentosEscala(ples, filtro)
 			viagensDTO = append(viagensDTO, vg)
 			mapaHorarioViagemAUX[*vg.IDHorario] = vg
 		}
@@ -534,7 +539,7 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 	}
 
 	for _, vgex := range viagensExecutada {
-		vgexNaoEncontrada, vg, _ := converterViagemExecutada(vgex, mapaHorarioViagem)
+		vgexNaoEncontrada, vg, _ := vps.converterViagemExecutada(vgex, mapaHorarioViagem)
 		if vg != nil {
 			viagensDTO = append(viagensDTO, vg)
 
@@ -549,7 +554,7 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 	consultaViagemPlanejamentoDTO.Viagens = viagensDTO
 	consultaViagemPlanejamentoDTO.ViagensExecutadaPendentes = viagensExecutadaPendentes
 
-	processarAtrasadas(consultaViagemPlanejamentoDTO)
+	vps.processarAtrasadas(consultaViagemPlanejamentoDTO)
 	//
 
 	logger.Tracef("%+v\n", consultaViagemPlanejamentoDTO)
@@ -557,7 +562,7 @@ func (vps *Service) ConsultarPorTrajeto(filtro dto.FilterDTO, resultado chan *dt
 	resultado <- consultaViagemPlanejamentoDTO
 }
 
-func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto.FilterDTO) (*dto.ViagemDTO, error) {
+func (vps *Service) converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto.FilterDTO) (*dto.ViagemDTO, error) {
 	var vg *dto.ViagemDTO
 	var err error
 
@@ -580,7 +585,7 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 		obs = append(obs, msg)
 	}
 
-	linha := Cache.TrajetoLinha[filtro.ListaTrajetos[0].ID.Hex()]
+	linha := vps.Cache.TrajetoLinha[filtro.ListaTrajetos[0].ID.Hex()]
 	vg = &dto.ViagemDTO{
 		IDPlanejamento:     ples.IDPlanejamento,
 		IDTabela:           ples.IDTabela,
@@ -617,7 +622,7 @@ func converterPlanejamentosEscala(ples *model.ProcPlanejamentoEscala, filtro dto
 	return vg, err
 }
 
-func converterViagemExecutada(vgex *model.ViagemExecutada, mapaHorarioViagem map[int32]*dto.ViagemDTO) (naoEncontrada *model.ViagemExecutada, processada *dto.ViagemDTO, err error) {
+func (vps *Service) converterViagemExecutada(vgex *model.ViagemExecutada, mapaHorarioViagem map[int32]*dto.ViagemDTO) (naoEncontrada *model.ViagemExecutada, processada *dto.ViagemDTO, err error) {
 
 	logger.Tracef("%+v\n", vgex)
 	// logger.Tracef("%#v\n", vgex)
@@ -643,12 +648,12 @@ func converterViagemExecutada(vgex *model.ViagemExecutada, mapaHorarioViagem map
 		return
 	}
 
-	populaDadosViagem(vgex, vg)
+	vps.populaDadosViagem(vgex, vg)
 
 	return
 }
 
-func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
+func (vps *Service) populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 
 	var vgexDataFim *time.Time
 	if vgex.Executada.DataFim == nil || vgex.SituacaoAtual == model.ViagemEstado.NovaViagem || vgex.SituacaoAtual == model.ViagemEstado.EmPreparacao || vgex.SituacaoAtual == model.ViagemEstado.ViagemAberta || vgex.SituacaoAtual == model.ViagemEstado.DeslocamentoEmCerca {
@@ -720,7 +725,7 @@ func populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.ViagemDTO) {
 	vg.QtdePassageiros = vgex.QntPassageiros
 
 	if vg.Trajeto.ID == nil {
-		linha := Cache.TrajetoLinha[vgex.Partida.TrajetoExecutado.IDObject.Hex()]
+		linha := vps.Cache.TrajetoLinha[vgex.Partida.TrajetoExecutado.IDObject.Hex()]
 		vg.Trajeto = dto.TrajetoDTO{
 			ID:          vgex.Partida.TrajetoExecutado.IDObject,
 			Descricao:   vgex.Partida.TrajetoExecutado.Descricao,
