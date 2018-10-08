@@ -142,9 +142,11 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejam
 			if err != nil {
 				return nil, err
 			}
-			trajetosGrupo := grupo.TrajetosDTO
-			if trajetosGrupo != nil {
-				filtro.ListaTrajetos = append(filtro.ListaTrajetos, trajetosGrupo...)
+			if grupo != nil {
+				trajetosGrupo := grupo.TrajetosDTO
+				if trajetosGrupo != nil {
+					filtro.ListaTrajetos = append(filtro.ListaTrajetos, trajetosGrupo...)
+				}
 			}
 		}
 	}

@@ -273,6 +273,75 @@ func TestConsultarViagemPlanejamentoPorUmAgrupamentoComEmpresa(t *testing.T) {
 	t.Logf("%d\n", len(consultaViagemPlanejamento.Viagens))
 }
 
+func TestConsultarViagemPlanejamentoPorAgrupamentoInexistente(t *testing.T) {
+	cfg.InitConfig("../../../../configs/config.json")
+	InitConfig()
+	database.InitConfig()
+
+	repository.InitConfig()
+	cache.InitConfig()
+	t.Log("TestConsultarViagemPlanejamentoPorUmAgrupamento")
+
+	agrupamento := int32(999999999)
+	dataInicio := "2018-08-24 00:00:00"
+	dataFim := "2018-08-24 23:59:59"
+	var err error
+	filter := dto.FilterDTO{
+
+		ListaAgrupamentos: []dto.AgrupamentoDTO{
+			dto.AgrupamentoDTO{
+				ID: agrupamento,
+			},
+		},
+		ListaEmpresas: []dto.EmpresaDTO{
+			dto.EmpresaDTO{
+				ID: 1851,
+			},
+		},
+		IDCliente:  209,
+		Ordenacao:  "horario",
+		DataInicio: &dataInicio,
+		DataFim:    &dataFim,
+	}
+
+	con, err := database.GetSQLConnection()
+	if err != nil {
+		t.Errorf("Conexão banco de dados - %s\n", err)
+	}
+	planejamentoEscalaRepository := repository.NewPlanejamentoEscalaRepository(con)
+
+	mongoDB, err := database.GetMongoDB()
+	if err != nil {
+		t.Errorf("Conexão banco de dados - %s\n", err)
+	}
+	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
+
+	cacheCliente, _ := cache.GetCliente(nil)
+	cacheMotorista, _ := cache.GetMotorista(nil)
+	cacheTrajeto, _ := cache.GetTrajeto(nil)
+	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
+	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
+
+	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
+
+	consultaViagemPlanejamento, err = vps.Consultar(filter)
+
+	if err != nil {
+		t.Errorf("Erro ao ConsultarViagemPlanejamento - %s\n", err)
+	}
+	if consultaViagemPlanejamento == nil {
+		t.Errorf("Consulta de ViagemPlanejamento não pode ser nula\n")
+		return
+	}
+	if len(consultaViagemPlanejamento.Viagens) > 0 {
+		t.Errorf("Viagens de Consulta de ViagemPlanejamento %v deve ser vazia\n", consultaViagemPlanejamento.Viagens)
+	}
+
+	t.Logf("%d\n", len(consultaViagemPlanejamento.Viagens))
+}
+
 func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 	cfg.InitConfig("../../../../configs/config.json")
 	InitConfig()

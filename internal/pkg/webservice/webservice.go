@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"git.m2mfacil.com.br/golang/go-logging-package-level/pkg/logging"
@@ -190,7 +191,13 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 	listaAgrupamentos := make([]dto.AgrupamentoDTO, len(filter.ListaAgrupamentos))
 	for i := 0; i < len(filter.ListaAgrupamentos); i++ {
 		agrupamentoID := filter.ListaAgrupamentos[i]
-		listaAgrupamentos[i] = dto.AgrupamentoDTO{ID: agrupamentoID}
+		grupoID, err := strconv.Atoi(agrupamentoID)
+		if err != nil {
+			logger.Errorf("Erro ao converter filtro %v\n", err)
+			res.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		listaAgrupamentos[i] = dto.AgrupamentoDTO{ID: int32(grupoID)}
 	}
 
 	listaTrajetos := make([]dto.TrajetoDTO, len(filter.ListaTrajetos))

@@ -53,7 +53,7 @@ type FilterDTO struct {
 
 //FilterDashboardDTO filtro para consultas dashboard
 type FilterDashboardDTO struct {
-	ListaAgrupamentos []int32               `json:"agrupamentos"`
+	ListaAgrupamentos []string              `json:"agrupamentos"`
 	ListaTrajetos     []TrajetoDashboardDTO `json:"trajetos"`
 	ListaEmpresas     []int32               `json:"empresas"`
 	IDCliente         int32                 `json:"idCliente"`
