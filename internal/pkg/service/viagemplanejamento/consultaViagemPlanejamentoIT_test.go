@@ -164,7 +164,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
-	consultaViagemPlanejamento, err = vps.Consultar(filter)
+	consultaViagemPlanejamento, err = vps.ConsultarPeriodo(filter)
 
 	if err != nil {
 		t.Errorf("Erro ao ConsultarViagemPlanejamento - %s\n", err)
@@ -250,7 +250,7 @@ func TestConsultarViagemPlanejamentoPorUmAgrupamentoComEmpresa(t *testing.T) {
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
-	consultaViagemPlanejamento, err = vps.Consultar(filter)
+	consultaViagemPlanejamento, err = vps.ConsultarPeriodo(filter)
 
 	if err != nil {
 		t.Errorf("Erro ao ConsultarViagemPlanejamento - %s\n", err)
@@ -326,7 +326,7 @@ func TestConsultarViagemPlanejamentoPorAgrupamentoInexistente(t *testing.T) {
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
-	consultaViagemPlanejamento, err = vps.Consultar(filter)
+	consultaViagemPlanejamento, err = vps.ConsultarPeriodo(filter)
 
 	if err != nil {
 		t.Errorf("Erro ao ConsultarViagemPlanejamento - %s\n", err)
@@ -390,7 +390,7 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
-	consultaViagemPlanejamento, err = vps.Consultar(filter)
+	consultaViagemPlanejamento, err = vps.ConsultarPeriodo(filter)
 
 	if err != nil {
 		t.Errorf("Erro ao ConsultarViagemPlanejamento - %s\n", err)
@@ -463,7 +463,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
-	consultaViagemPlanejamento, err = vps.Consultar(filter)
+	consultaViagemPlanejamento, err = vps.ConsultarPeriodo(filter)
 
 	if err != nil {
 		t.Errorf("Erro ao ConsultarViagemPlanejamento - %s\n", err)

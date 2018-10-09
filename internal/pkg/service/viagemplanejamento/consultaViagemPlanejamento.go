@@ -115,8 +115,8 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 	return vps
 }
 
-//Consultar -
-func (vps *Service) Consultar(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejamentoDTO, error) {
+//ConsultarPeriodo -
+func (vps *Service) ConsultarPeriodo(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejamentoDTO, error) {
 	start := time.Now()
 
 	var mapaEmpresas = make(map[int32]struct{})

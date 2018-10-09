@@ -157,7 +157,7 @@ func ConsultaViagemPlanejamento(res http.ResponseWriter, req *http.Request, para
 	logger.Tracef("FILTRO: %#v\n", filter)
 
 	vps := <-viagemplanejamentoService
-	consultaViagemPlanejamentoDTO, err := vps.Consultar(filter)
+	consultaViagemPlanejamentoDTO, err := vps.ConsultarPeriodo(filter)
 
 	if err != nil {
 		logger.Errorf("ConsultarViagemPlanejamento %s - %+v\n", err, filter)
