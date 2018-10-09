@@ -572,6 +572,7 @@ func (vps *Service) converterPlanejamentosEscala(ples *model.ProcPlanejamentoEsc
 	// logger.Tracef("%#v\n", ples)
 
 	obs := []dto.MensagemObservacaoDTO{}
+	atrasoPartida := int32(0)
 
 	for _, m := range ples.MensagensObservacao {
 		msg := dto.MensagemObservacaoDTO{
@@ -585,6 +586,10 @@ func (vps *Service) converterPlanejamentosEscala(ples *model.ProcPlanejamentoEsc
 			},
 		}
 		obs = append(obs, msg)
+	}
+
+	if ples.ToleranciaAtrasoPartida != nil {
+		atrasoPartida = *ples.ToleranciaAtrasoPartida
 	}
 
 	linha := vps.Cache.TrajetoLinha[filtro.ListaTrajetos[0].ID.Hex()]
@@ -608,7 +613,7 @@ func (vps *Service) converterPlanejamentosEscala(ples *model.ProcPlanejamentoEsc
 			NumeroLinha: linha.Numero,
 			Linha:       linha,
 		},
-		Tolerancia:          dto.ToleranciaDTO{AtrasoPartida: *ples.ToleranciaAtrasoPartida},
+		Tolerancia:          dto.ToleranciaDTO{AtrasoPartida: atrasoPartida},
 		MensagensObservacao: obs,
 	}
 
