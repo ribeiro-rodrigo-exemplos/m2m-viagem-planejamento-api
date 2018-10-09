@@ -97,8 +97,10 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 		)
 
 		if len(filtro.Complemento.MapaEmpresas) > 0 {
-			if _, k := filtro.Complemento.MapaEmpresas[*idEmpresaPlan]; !k {
+			if idEmpresaPlan == nil {
 				continue
+			}
+			if _, k := filtro.Complemento.MapaEmpresas[*idEmpresaPlan]; !k {
 			}
 		}
 
