@@ -47,6 +47,8 @@ type FilterDTO struct {
 	Ordenacao         string           `json:"ordenacao"`
 	DataInicio        *string          `json:"data_inicio"`
 	DataFim           *string          `json:"data_fim"`
+	TempoRealInicio   string           `json:"tempo_real_inicio"`
+	TempoRealFim      string           `json:"tempo_real_fim"`
 	TipoDia           []string
 	Complemento       DadosComplementares
 }
@@ -64,6 +66,8 @@ type FilterDashboardDTO struct {
 	DataFim           string                `json:"dataFim"`
 	HoraFim           string                `json:"horaFim"`
 	Timezone          string                `json:"timezone"`
+	TempoRealInicio   string                `json:"tempoRealInicio"`
+	TempoRealFim      string                `json:"tempoRealFim"`
 }
 
 //EndPointDashboardDTO -
@@ -114,10 +118,11 @@ func (f *FilterDTO) GetDataInicioString() *string {
 
 //DadosComplementares -
 type DadosComplementares struct {
-	Cliente       *model.Cliente
-	DataHora      time.Time
-	MapaEmpresas  map[int32]struct{}
-	ListaEmpresas []int32
+	Cliente               *model.Cliente
+	DataHora              time.Time
+	MapaEmpresas          map[int32]struct{}
+	ListaEmpresas         []int32
+	ApenasViagemExecutada bool
 }
 
 //GetDataFim -
@@ -140,6 +145,33 @@ func (f *FilterDTO) GetDataFimString() *string {
 	}
 	str := util.FormatarAMDHMS(dt)
 	return str
+}
+
+//AtualizarParaTempoReal ajusta atributos para filtro realtime
+func (f *FilterDTO) AtualizarParaTempoReal(dt time.Time, tmz *time.Location) (err error) {
+	dtIni := dt
+	dtFim := dt
+
+	ini, err := util.DuracaoDeHorario(f.TempoRealInicio)
+	if err != nil {
+		return
+	}
+
+	fim, err := util.DuracaoDeHorario(f.TempoRealFim)
+	if err != nil {
+		return
+	}
+
+	dtIni = dtIni.Add(-1 * ini)
+	dtFim = dtFim.Add(fim)
+
+	dtIniFormatada, _ := util.FormatarDataComTimezone(dtIni, tmz)
+	dtFimFormatada, _ := util.FormatarDataComTimezone(dtFim, tmz)
+
+	f.DataInicio = &dtIniFormatada
+	f.DataFim = &dtFimFormatada
+
+	return
 }
 
 //ViagemDTO estrutura usada para mapear dados enviados para a tela

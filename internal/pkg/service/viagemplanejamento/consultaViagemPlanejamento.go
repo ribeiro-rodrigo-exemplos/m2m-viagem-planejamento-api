@@ -34,6 +34,7 @@ func InitConfig() {
 
 //Service -
 type Service struct {
+	serviceRealTime     *Service
 	planEscRep          *repository.PlanejamentoEscalaRepository
 	vigExecRep          *repository.ViagemExecutadaRepository
 	cacheCliente        *cache.Cliente
@@ -57,8 +58,9 @@ type Service struct {
 }
 
 //NewViagemPlanejamentoService -
-func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente, cacheMotorista *cache.Motorista, cacheTrajeto *cache.Trajeto, cachePontoInteresse *cache.PontoInteresse, cacheAgrupamento *cache.Agrupamento, cacheLinha *cache.Linha) *Service {
+func NewViagemPlanejamentoService(serviceRealTime *Service, planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente, cacheMotorista *cache.Motorista, cacheTrajeto *cache.Trajeto, cachePontoInteresse *cache.PontoInteresse, cacheAgrupamento *cache.Agrupamento, cacheLinha *cache.Linha) *Service {
 	vps := &Service{}
+	vps.serviceRealTime = serviceRealTime
 	vps.planEscRep = planEscRep
 	vps.vigExecRep = vigExecRep
 	vps.cacheCliente = cacheCliente

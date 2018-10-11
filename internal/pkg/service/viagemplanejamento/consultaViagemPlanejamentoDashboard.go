@@ -12,7 +12,7 @@ func (vps *Service) ConsultarDashboard(filtro dto.FilterDTO) (*dto.ConsultaViage
 	var consulta *dto.ConsultaViagemPlanejamentoDTO
 	var err error
 
-	consulta, err = vps.ConsultarPeriodo(filtro)
+	consulta, err = vps.Consultar(filtro)
 
 	start := time.Now()
 	t := &start

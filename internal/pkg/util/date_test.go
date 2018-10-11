@@ -5,6 +5,52 @@ import (
 	"time"
 )
 
+func TestFormatarDataComTimezone(t *testing.T) {
+	var err error
+
+	tmzs := []struct {
+		loc       string
+		resultado string
+	}{
+		{"UTC", "2018-07-27 12:05:18"},
+		{"America/Sao_Paulo", "2018-07-27 09:05:18"},
+		{"America/Maceio", "2018-07-27 09:05:18"},
+		{"America/Fortaleza", "2018-07-27 09:05:18"},
+		{"America/Belem", "2018-07-27 09:05:18"},
+		{"Europe/Lisbon", "2018-07-27 13:05:18"},
+		{"America/Santarem", "2018-07-27 09:05:18"},
+		{"America/Cuiaba", "2018-07-27 08:05:18"},
+		{"America/Bahia", "2018-07-27 09:05:18"},
+		{"America/Rio_Branco", "2018-07-27 07:05:18"},
+		{"America/Recife", "2018-07-27 09:05:18"},
+	}
+
+	dt, err := time.ParseInLocation("2006-01-02 15:04:05", "2018-07-27 12:05:18", time.UTC)
+	if err != nil {
+		t.Error(err)
+	}
+	for _, tmz := range tmzs {
+		loc, err := time.LoadLocation(tmz.loc)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
+
+		d, err := FormatarDataComTimezone(dt, loc)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
+		t.Logf("%v - %v\n", d, tmz.loc)
+
+		if d != tmz.resultado {
+			t.Errorf("Data esperada %q é diferente de %q\n", tmz.resultado, d)
+		}
+
+	}
+
+}
+
 func TestDuracaoEFormatacaoSemDiferenca(t *testing.T) {
 	var err error
 	inicio, err := time.Parse("2006-01-02 15:04:05", "2018-07-27 12:00:00")
@@ -194,6 +240,107 @@ func TestDuracaoEFormatacaoNegativo24h00m10s(t *testing.T) {
 
 	if d.Seconds() != float64(duracaoEsperada) {
 		t.Errorf("Duração esperada %vs é diferente de %v\n", duracaoEsperada, d.Seconds())
+	}
+}
+
+func TestDuracaoDeHorario1h2m3s(t *testing.T) {
+	var err error
+	duracaoEsperada := (1 * time.Hour) + (2 * time.Minute) + (3 * time.Second)
+	hora := "01:02:03"
+
+	d, err := DuracaoDeHorario(hora)
+
+	if err != nil {
+		t.Errorf("%v\n", err)
+	}
+
+	if d != duracaoEsperada {
+		t.Errorf("Duração esperada %v é diferente de %v\n", duracaoEsperada, d)
+	}
+}
+
+func TestDuracaoDeHorario1h0m3s(t *testing.T) {
+	var err error
+	duracaoEsperada := (1 * time.Hour) + (0 * time.Minute) + (3 * time.Second)
+	hora := "01:00:03"
+
+	d, err := DuracaoDeHorario(hora)
+
+	// fmt
+	if err != nil {
+		t.Errorf("%v\n", err)
+	}
+
+	if d != duracaoEsperada {
+		t.Errorf("Duração esperada %v é diferente de %v\n", duracaoEsperada, d)
+	}
+}
+
+func TestDuracaoDeHorario3s(t *testing.T) {
+	var err error
+	duracaoEsperada := (0 * time.Hour) + (0 * time.Minute) + (3 * time.Second)
+	hora := "00:00:03"
+
+	d, err := DuracaoDeHorario(hora)
+
+	// fmt
+	if err != nil {
+		t.Errorf("%v\n", err)
+	}
+
+	if d != duracaoEsperada {
+		t.Errorf("Duração esperada %v é diferente de %v\n", duracaoEsperada, d)
+	}
+}
+
+func TestDuracaoDeHorario1h2m3s14ms(t *testing.T) {
+	var err error
+	duracaoEsperada := (1 * time.Hour) + (2 * time.Minute) + (3 * time.Second) + (14 * time.Millisecond)
+	hora := "01:02:03:14"
+
+	d, err := DuracaoDeHorario(hora)
+
+	// fmt
+	if err != nil {
+		t.Errorf("%v\n", err)
+	}
+
+	if d != duracaoEsperada {
+		t.Errorf("Duração esperada %v é diferente de %v\n", duracaoEsperada, d)
+	}
+}
+
+func TestDuracaoDeHorario14ms(t *testing.T) {
+	var err error
+	duracaoEsperada := (0 * time.Hour) + (0 * time.Minute) + (0 * time.Second) + (14 * time.Millisecond)
+	hora := "00:00:00:14"
+
+	d, err := DuracaoDeHorario(hora)
+
+	// fmt
+	if err != nil {
+		t.Errorf("%v\n", err)
+	}
+
+	if d != duracaoEsperada {
+		t.Errorf("Duração esperada %v é diferente de %v\n", duracaoEsperada, d)
+	}
+}
+
+func TestDuracaoDeHorarioNanosegundosDesconsiderados(t *testing.T) {
+	var err error
+	duracaoEsperada := (0 * time.Hour) + (0 * time.Minute) + (0 * time.Second) + (0 * time.Millisecond) + (0 * time.Nanosecond)
+	hora := "00:00:00:00:14"
+
+	d, err := DuracaoDeHorario(hora)
+
+	// fmt
+	if err != nil {
+		t.Errorf("%v\n", err)
+	}
+
+	if d != duracaoEsperada {
+		t.Errorf("Duração esperada %v é diferente de %v\n", duracaoEsperada, d)
 	}
 }
 

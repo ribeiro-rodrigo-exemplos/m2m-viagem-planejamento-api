@@ -142,7 +142,8 @@ func carragarDependencias() error {
 
 	viagemplanejamentoService = make(chan *viagemplanejamento.Service, cfg.Config.Service.ViagemPlanejamento.MaxConcurrent*2)
 	for i := 0; i < cfg.Config.Service.ViagemPlanejamento.MaxConcurrent; i++ {
-		viagemplanejamentoService <- viagemplanejamento.NewViagemPlanejamentoService(planEscRep, vigExecRep, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento, cacheLinha)
+		serviceRealTime := viagemplanejamento.NewViagemPlanejamentoService(nil, planEscRep, vigExecRep, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento, cacheLinha)
+		viagemplanejamentoService <- viagemplanejamento.NewViagemPlanejamentoService(serviceRealTime, planEscRep, vigExecRep, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento, cacheLinha)
 	}
 	return err
 }
@@ -161,7 +162,8 @@ func ConsultaViagemPlanejamento(res http.ResponseWriter, req *http.Request, para
 	logger.Tracef("FILTRO: %#v\n", filter)
 
 	vps := <-viagemplanejamentoService
-	consultaViagemPlanejamentoDTO, err := vps.ConsultarPeriodo(filter)
+	consultaViagemPlanejamentoDTO, err := vps.Consultar(filter)
+	// consultaViagemPlanejamentoDTO, err := vps.ConsultarPeriodo(filter)
 
 	if err != nil {
 		logger.Errorf("ConsultarViagemPlanejamento %s - %+v\n", err, filter)
@@ -226,6 +228,10 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 		Ordenacao:         filter.Ordenacao,
 		DataInicio:        &dataInicio,
 		DataFim:           &dataFim,
+		TempoRealInicio:   filter.TempoRealInicio,
+		TempoRealFim:      filter.TempoRealFim,
+		// TempoRealInicio: "15:02:30",
+		// TempoRealFim:    "05:03:10",
 	}
 
 	vps := <-viagemplanejamentoService

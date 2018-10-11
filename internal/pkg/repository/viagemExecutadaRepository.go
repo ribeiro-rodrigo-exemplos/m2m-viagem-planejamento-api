@@ -88,7 +88,6 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 	query := bson.M{
 		"excluido":                     false,
 		"clienteId":                    filtro.IDCliente,
-		"situacaoAtual":                bson.M{"$in": situacoes},
 		"partida.trajetoExecutado._id": bson.M{"$in": trajetos},
 		"executada.dataInicio":         bson.M{"$gte": dtInicio, "$lte": dtFim},
 		// "partida":                      bson.M{"$exists": true},
@@ -102,6 +101,14 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 	if len(filtro.Complemento.ListaEmpresas) > 0 {
 		query["executada.veiculo.idEmpresa"] = bson.M{"$in": filtro.Complemento.ListaEmpresas}
 	}
+
+	if filtro.Complemento.ApenasViagemExecutada {
+		query["situacaoAtual"] = model.ViagemEstado.ViagemAberta
+	} else {
+		query["situacaoAtual"] = bson.M{"$in": situacoes}
+	}
+
+	//logger.Debugf("%#v\n\n", query)
 
 	collection := session.DB(cfg.Config.MongoDB.Database).C("ViagemExecutada")
 	var q *mgo.Query

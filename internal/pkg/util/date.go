@@ -3,9 +3,20 @@ package util
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
+
+//FormatarDataComTimezone -
+func FormatarDataComTimezone(t time.Time, l *time.Location) (dataHora string, err error) {
+	if l == nil {
+		return
+	}
+	tml := t.In(l)
+	dataHora = tml.Format("2006-01-02 15:04:05")
+	return
+}
 
 //ObterTimezoneTime - obtem time UTC
 func ObterTimezoneTime(l *time.Location, dataHora string) (*time.Time, error) {
@@ -141,6 +152,21 @@ func DuracaoEFormatacaoMinutosTrunc(inicio time.Time, fim time.Time) (duration t
 		formatacao = fmt.Sprintf("-%02d:%02d", h, m)
 	}
 
+	return
+}
+
+//DuracaoDeHorario calcula duração do tempo informado. Tempo informado pode conter hora, minuto, sgundo, milisegundo
+func DuracaoDeHorario(horMinSegMil string) (duracao time.Duration, err error) {
+	grandezas := [...]time.Duration{time.Hour, time.Minute, time.Second, time.Millisecond}
+	duracoes := strings.Split(horMinSegMil, ":")
+	for i := 0; i < len(duracoes) && i < len(grandezas); i++ {
+		g := grandezas[i]
+		d, err := strconv.Atoi(duracoes[i])
+		if err != nil {
+			return 0, err
+		}
+		duracao += (time.Duration(d) * g)
+	}
 	return
 }
 
