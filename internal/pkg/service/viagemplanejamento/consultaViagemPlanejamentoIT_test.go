@@ -32,6 +32,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
 	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+	cacheLinha, _ := cache.GetLinha(nil)
 
 	id := bson.ObjectIdHex("555b6e830850536438063762")
 	dataInicio := "2018-07-24 18:00:00"
@@ -64,7 +65,7 @@ func TestConsultarViagemPlanejamentoPorUmTrajeto(t *testing.T) {
 	}
 	viagemExecutadaRepository := repository.NewViagemExecutadaRepository(mongoDB)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento, cacheLinha)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -159,8 +160,9 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmUmaNoite(t *testing.T) {
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
 	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+	cacheLinha, _ := cache.GetLinha(nil)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento, cacheLinha)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -245,8 +247,9 @@ func TestConsultarViagemPlanejamentoPorUmAgrupamentoComEmpresa(t *testing.T) {
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
 	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+	cacheLinha, _ := cache.GetLinha(nil)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento, cacheLinha)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -321,8 +324,9 @@ func TestConsultarViagemPlanejamentoPorAgrupamentoInexistente(t *testing.T) {
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
 	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+	cacheLinha, _ := cache.GetLinha(nil)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento, cacheLinha)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -385,8 +389,9 @@ func TestConsultarViagemPlanejamentoPorDoisTrajetosEmUmDia(t *testing.T) {
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
 	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+	cacheLinha, _ := cache.GetLinha(nil)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento, cacheLinha)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 
@@ -458,8 +463,9 @@ func TestConsultarViagemPlanejamentoPorUmTrajetoEmSeteDias(t *testing.T) {
 	cacheTrajeto, _ := cache.GetTrajeto(nil)
 	cachePontoInteresse, _ := cache.GetPontoInteresse(nil)
 	cacheAgrupamento, _ := cache.GetAgrupamento(nil)
+	cacheLinha, _ := cache.GetLinha(nil)
 
-	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento)
+	vps := NewViagemPlanejamentoService(planejamentoEscalaRepository, viagemExecutadaRepository, cacheCliente, cacheMotorista, cacheTrajeto, cachePontoInteresse, cacheAgrupamento, cacheLinha)
 
 	var consultaViagemPlanejamento *dto.ConsultaViagemPlanejamentoDTO
 

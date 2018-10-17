@@ -41,6 +41,7 @@ type Service struct {
 	cacheTrajeto        *cache.Trajeto
 	cachePontoInteresse *cache.PontoInteresse
 	cacheAgrupamento    *cache.Agrupamento
+	cacheLinha          *cache.Linha
 	Cache               *CacheViagemplanejamento
 
 	err                        error
@@ -56,7 +57,7 @@ type Service struct {
 }
 
 //NewViagemPlanejamentoService -
-func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente, cacheMotorista *cache.Motorista, cacheTrajeto *cache.Trajeto, cachePontoInteresse *cache.PontoInteresse, cacheAgrupamento *cache.Agrupamento) *Service {
+func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepository, vigExecRep *repository.ViagemExecutadaRepository, cacheCliente *cache.Cliente, cacheMotorista *cache.Motorista, cacheTrajeto *cache.Trajeto, cachePontoInteresse *cache.PontoInteresse, cacheAgrupamento *cache.Agrupamento, cacheLinha *cache.Linha) *Service {
 	vps := &Service{}
 	vps.planEscRep = planEscRep
 	vps.vigExecRep = vigExecRep
@@ -65,6 +66,7 @@ func NewViagemPlanejamentoService(planEscRep *repository.PlanejamentoEscalaRepos
 	vps.cacheTrajeto = cacheTrajeto
 	vps.cachePontoInteresse = cachePontoInteresse
 	vps.cacheAgrupamento = cacheAgrupamento
+	vps.cacheLinha = cacheLinha
 
 	vps.Cache = &CacheViagemplanejamento{
 		TrajetoLinha: make(map[string]dto.LinhaDTO),
@@ -180,7 +182,21 @@ func (vps *Service) ConsultarPeriodo(filtro dto.FilterDTO) (*dto.ConsultaViagemP
 				Complemento:   filtro.Complemento,
 			}
 			if _, existe := vps.Cache.TrajetoLinha[t.ID.Hex()]; !existe {
-				vps.Cache.TrajetoLinha[t.ID.Hex()] = dto.LinhaDTO{Numero: l.Linha.Numero}
+				fmt.Printf("L.LINHA.ID %v\n", l.Linha.ID)
+				chLinha, err := vps.cacheLinha.Get(l.Linha.ID)
+				if err != nil {
+					return nil, err
+				}
+
+				fmt.Printf("CHLINHA %#v\n", chLinha)
+
+				if chLinha.ID.Valid() {
+					novaLinhaDTO := dto.LinhaDTO{Numero: chLinha.Numero}
+
+					fmt.Printf("NOVALINHADTO %#v\n", novaLinhaDTO)
+					vps.Cache.TrajetoLinha[t.ID.Hex()] = novaLinhaDTO
+				}
+
 			}
 
 			filtrosConsulta = append(filtrosConsulta, f)

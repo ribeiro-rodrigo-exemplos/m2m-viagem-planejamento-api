@@ -135,7 +135,9 @@ func (p *TrajetoRepository) ListarTrajetos() ([]model.Trajeto, error) {
 	var linha model.Linha
 
 	for iter.Next(&linha) {
+		nl := model.Linha{ID: bson.ObjectIdHex(linha.ID.Hex())}
 		for _, t := range linha.Trajetos {
+			t.Linha = nl
 			listaTrajetos = append(listaTrajetos, t)
 		}
 	}
