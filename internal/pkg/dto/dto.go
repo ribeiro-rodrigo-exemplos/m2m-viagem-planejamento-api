@@ -53,6 +53,27 @@ type FilterDTO struct {
 	Complemento       DadosComplementares
 }
 
+//Clone -
+func (f FilterDTO) Clone() (novo FilterDTO) {
+	dataInicio := *f.DataInicio
+	dataFim := *f.DataFim
+	novo = FilterDTO{
+		ListaAgrupamentos: f.ListaAgrupamentos,
+		ListaTrajetos:     f.ListaTrajetos,
+		ListaEmpresas:     f.ListaEmpresas,
+		IDCliente:         f.IDCliente,
+		IDVeiculo:         f.IDVeiculo,
+		Ordenacao:         f.Ordenacao,
+		DataInicio:        &dataInicio,
+		DataFim:           &dataFim,
+		TempoRealInicio:   f.TempoRealInicio,
+		TempoRealFim:      f.TempoRealFim,
+		TipoDia:           f.TipoDia,
+		Complemento:       f.Complemento,
+	}
+	return
+}
+
 //FilterDashboardDTO filtro para consultas dashboard
 type FilterDashboardDTO struct {
 	ListaAgrupamentos []string              `json:"agrupamentos"`
@@ -123,6 +144,7 @@ type DadosComplementares struct {
 	MapaEmpresas          map[int32]struct{}
 	ListaEmpresas         []int32
 	ApenasViagemExecutada bool
+	Instancia             string
 }
 
 //GetDataFim -

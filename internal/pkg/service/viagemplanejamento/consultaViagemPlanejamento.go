@@ -138,6 +138,7 @@ func (vps *Service) ConsultarPeriodo(filtro dto.FilterDTO) (*dto.ConsultaViagemP
 		MapaEmpresas:          mapaEmpresas,
 		ListaEmpresas:         listaEmpresas,
 		ApenasViagemExecutada: filtro.Complemento.ApenasViagemExecutada,
+		Instancia:             filtro.Complemento.Instancia,
 	}
 
 	if len(filtro.ListaAgrupamentos) > 0 {
@@ -185,18 +186,13 @@ func (vps *Service) ConsultarPeriodo(filtro dto.FilterDTO) (*dto.ConsultaViagemP
 				Complemento:   filtro.Complemento,
 			}
 			if _, existe := vps.Cache.TrajetoLinha[t.ID.Hex()]; !existe {
-				fmt.Printf("L.LINHA.ID %v\n", l.Linha.ID)
 				chLinha, err := vps.cacheLinha.Get(l.Linha.ID)
 				if err != nil {
 					return nil, err
 				}
 
-				fmt.Printf("CHLINHA %#v\n", chLinha)
-
 				if chLinha.ID.Valid() {
 					novaLinhaDTO := dto.LinhaDTO{Numero: chLinha.Numero}
-
-					fmt.Printf("NOVALINHADTO %#v\n", novaLinhaDTO)
 					vps.Cache.TrajetoLinha[t.ID.Hex()] = novaLinhaDTO
 				}
 

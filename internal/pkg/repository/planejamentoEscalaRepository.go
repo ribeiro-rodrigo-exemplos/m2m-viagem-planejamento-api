@@ -64,7 +64,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	}
 
 	if logger.IsDebugEnabled() {
-		logger.Debugf("call sp_planejamento_vigente ('%s', '%s', '%s', '%s', '%s')\n", *dtInicio, *dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
+		logger.Debugf("[%s] call sp_planejamento_vigente ('%s', '%s', '%s', '%s', '%s')\n", filtro.Complemento.Instancia, *dtInicio, *dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
 	}
 
 	rows, err := c.connection.Query(sql, dtInicio, dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
@@ -155,7 +155,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	}
 
 	/**/
-	logger.Debugf("planejamentosEscala.size %d\n", len(planejamentosEscala))
+	logger.Debugf("[%s] planejamentosEscala.size %d\n", filtro.Complemento.Instancia, len(planejamentosEscala))
 	/**/
 
 	return planejamentosEscala, err

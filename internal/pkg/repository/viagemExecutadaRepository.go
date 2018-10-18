@@ -117,7 +117,7 @@ func (v *ViagemExecutadaRepository) ListarViagensPor(filtro dto.FilterDTO) ([]*m
 	// q.Limit(1)
 	err = q.All(&listarViagens)
 
-	logger.Debugf("viagemExecutada.size %d\n", len(listarViagens))
+	logger.Debugf("[%s] viagemExecutada.size %d\n", filtro.Complemento.Instancia, len(listarViagens))
 	/** /
 	logger.Tracef("%#v\n", listarViagens)
 	/**/
