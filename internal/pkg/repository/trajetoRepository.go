@@ -47,25 +47,40 @@ func (p *TrajetoRepository) ConsultarPorID(id bson.ObjectId) (model.Trajeto, err
 		"trajetos._id": id,
 	}
 
-	var linha *model.Linha
+	linhas := []*model.Linha{}
 
 	collection := session.DB(cfg.Config.MongoDB.Database).C("Linha")
 	var q *mgo.Query
 	q = collection.Find(query)
 	q.Select(projecao)
-	err = q.One(&linha)
+	err = q.All(&linhas)
 
 	if err != nil {
 		return trajeto, err
 	}
 
-	if linha != nil {
-		for _, t := range linha.Trajetos {
+	var trajetoAtivo model.Trajeto
+	var trajetoInativo model.Trajeto
+
+	for _, l := range linhas {
+		for _, t := range l.Trajetos {
 			if t.ID == id {
-				trajeto = t
+				nl := model.Linha{ID: bson.ObjectIdHex(l.ID.Hex())}
+				t.Linha = nl
+				if t.Ativo {
+					trajetoAtivo = t
+				} else {
+					trajetoInativo = t
+				}
 				break
 			}
 		}
+	}
+
+	if trajetoAtivo.ID.Valid() {
+		trajeto = trajetoAtivo
+	} else {
+		trajeto = trajetoInativo
 	}
 
 	return trajeto, err
@@ -95,9 +110,10 @@ func (p *TrajetoRepository) CarregarMapaTrajetos() (map[string]model.Trajeto, er
 	var linha model.Linha
 
 	for iter.Next(&linha) {
+		nl := model.Linha{ID: bson.ObjectIdHex(linha.ID.Hex())}
 		for _, t := range linha.Trajetos {
 			if t.Ativo {
-				t.Linha = model.Linha{Numero: linha.Numero}
+				t.Linha = nl
 				mapaTrajetos[t.ID.Hex()] = t
 			}
 		}
