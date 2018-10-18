@@ -133,10 +133,11 @@ func (vps *Service) ConsultarPeriodo(filtro dto.FilterDTO) (*dto.ConsultaViagemP
 
 	cliente := vps.cacheCliente.Cache[filtro.IDCliente]
 	filtro.Complemento = dto.DadosComplementares{
-		Cliente:       cliente,
-		DataHora:      time.Now(),
-		MapaEmpresas:  mapaEmpresas,
-		ListaEmpresas: listaEmpresas,
+		Cliente:               cliente,
+		DataHora:              time.Now(),
+		MapaEmpresas:          mapaEmpresas,
+		ListaEmpresas:         listaEmpresas,
+		ApenasViagemExecutada: filtro.Complemento.ApenasViagemExecutada,
 	}
 
 	if len(filtro.ListaAgrupamentos) > 0 {

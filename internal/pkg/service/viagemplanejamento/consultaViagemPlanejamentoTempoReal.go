@@ -15,7 +15,7 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (consulta *dto.ConsultaViage
 	chErr := make(chan error)
 
 	if filtro.TempoRealInicio != "" {
-		(&filtro).AtualizarParaTempoReal(time.Now(), vps.cacheCliente.Cache[filtro.IDCliente].Location)
+		filtro.AtualizarParaTempoReal(time.Now(), vps.cacheCliente.Cache[filtro.IDCliente].Location)
 	}
 
 	go func(f dto.FilterDTO) {
@@ -34,11 +34,12 @@ func (vps *Service) Consultar(filtro dto.FilterDTO) (consulta *dto.ConsultaViage
 		filtroRT.Complemento.Cliente = vps.cacheCliente.Cache[filtro.IDCliente]
 
 		dtIni := *filtroRT.GetDataInicio()
-		dtIni = dtIni.Add(-1 * (1 * time.Hour))
+		dtFim := *filtro.GetDataInicio()
+
+		dtIni = dtIni.Add(-1 * (72 * time.Hour))
 		filtroRT.DataInicio = util.FormatarAMDHMS(&dtIni)
 
-		dtFim := *filtro.GetDataInicio()
-		dtFim = dtIni.Add(-1 * (1 * time.Second))
+		dtFim = dtFim.Add(-1 * (1 * time.Second))
 		filtroRT.DataFim = util.FormatarAMDHMS(&dtFim)
 
 		filtroRT.Complemento.ApenasViagemExecutada = true
