@@ -274,7 +274,8 @@ func (vps *Service) complementarInformacoes(consultaViagemPlanejamento *dto.Cons
 		}
 		if vg.CdMotorista != nil {
 			if m, existe := vps.cacheMotorista.Cache[*vg.CdMotorista]; existe {
-				vg.CdMotorista = &m.Identificacao
+				vg.CdMotorista = &m.Matricula
+				vg.NmMotorista = &m.Nome
 			}
 		}
 		if vg.Trajeto.ID != nil {
