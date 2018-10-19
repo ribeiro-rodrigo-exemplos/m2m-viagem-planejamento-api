@@ -230,6 +230,8 @@ func ConsultaViagemPlanejamentoDashboard(res http.ResponseWriter, req *http.Requ
 		DataFim:           &dataFim,
 		TempoRealInicio:   filter.TempoRealInicio,
 		TempoRealFim:      filter.TempoRealFim,
+		// TempoRealInicio: "00:20:00",
+		// TempoRealFim:    "00:10:00",
 	}
 
 	vps := <-viagemplanejamentoService
