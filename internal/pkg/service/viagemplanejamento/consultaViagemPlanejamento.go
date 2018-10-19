@@ -230,6 +230,8 @@ func (vps *Service) ConsultarPeriodo(filtro dto.FilterDTO) (*dto.ConsultaViagemP
 		dto.OrdenarViagemPorData(vps.consultaViagemPlanejamento.Viagens)
 	case "trajeto":
 		dto.OrdenarViagemPorLinha(vps.consultaViagemPlanejamento.Viagens)
+	case "tabela":
+		dto.OrdenarViagemPorLinha(vps.consultaViagemPlanejamento.Viagens)
 	default:
 		dto.OrdenarViagemPorData(vps.consultaViagemPlanejamento.Viagens)
 	}
