@@ -29,6 +29,11 @@ type Configuration struct {
 		Request struct {
 			MaxConcurrent int `default:"10"`
 		}
+		Response struct {
+			Gzip struct {
+				Enable bool `default:"false"`
+			}
+		}
 		Transport struct {
 			MaxIdleConnsPerHost int `default:"100"`
 		}

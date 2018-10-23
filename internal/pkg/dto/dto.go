@@ -13,6 +13,16 @@ type ToleranciaDTO struct {
 	AtrasoPartida int32 `json:"atrasoPartida"`
 }
 
+//EmpresaDTO -
+type EmpresaDTO struct {
+	ID int32 `json:"id"`
+}
+
+//AgrupamentoDTO -
+type AgrupamentoDTO struct {
+	ID int32 `json:"id"`
+}
+
 //TrajetoDTO -
 type TrajetoDTO struct {
 	ID          *bson.ObjectId `json:"_id"`
@@ -29,35 +39,80 @@ type LinhaDTO struct {
 
 //FilterDTO filtro para consultas
 type FilterDTO struct {
-	ListaTrajetos []TrajetoDTO `json:"lista_trajetos"`
-	IDCliente     int32        `json:"id_cliente"`
-	IDVeiculo     int          `json:"id_veiculo"`
-	Ordenacao     string       `json:"ordenacao"`
-	DataInicio    *string      `json:"data_inicio"`
-	DataFim       *string      `json:"data_fim"`
-	TipoDia       []string
-	Complemento   DadosComplementares
+	ListaAgrupamentos []AgrupamentoDTO `json:"lista_agrupamentos"`
+	ListaTrajetos     []TrajetoDTO     `json:"lista_trajetos"`
+	ListaEmpresas     []EmpresaDTO     `json:"lista_empresas"`
+	IDCliente         int32            `json:"id_cliente"`
+	IDVeiculo         int              `json:"id_veiculo"`
+	Ordenacao         string           `json:"ordenacao"`
+	DataInicio        *string          `json:"data_inicio"`
+	DataFim           *string          `json:"data_fim"`
+	TempoRealInicio   string           `json:"tempo_real_inicio"`
+	TempoRealFim      string           `json:"tempo_real_fim"`
+	TipoDia           []string
+	Complemento       DadosComplementares
+}
+
+//Clone -
+func (f FilterDTO) Clone() (novo FilterDTO) {
+	dataInicio := *f.DataInicio
+	dataFim := *f.DataFim
+	novo = FilterDTO{
+		ListaAgrupamentos: f.ListaAgrupamentos,
+		ListaTrajetos:     f.ListaTrajetos,
+		ListaEmpresas:     f.ListaEmpresas,
+		IDCliente:         f.IDCliente,
+		IDVeiculo:         f.IDVeiculo,
+		Ordenacao:         f.Ordenacao,
+		DataInicio:        &dataInicio,
+		DataFim:           &dataFim,
+		TempoRealInicio:   f.TempoRealInicio,
+		TempoRealFim:      f.TempoRealFim,
+		TipoDia:           f.TipoDia,
+		Complemento:       f.Complemento,
+	}
+	return
 }
 
 //FilterDashboardDTO filtro para consultas dashboard
 type FilterDashboardDTO struct {
-	ListaTrajetos []TrajetoDashboardDTO `json:"trajetos"`
-	IDCliente     int32                 `json:"idCliente"`
-	Status        []string              `json:"status"`
-	Ordenacao     string                `json:"ordenacao"`
-	DataInicio    string                `json:"dataInicio"`
-	HoraInicio    string                `json:"horaInicio"`
-	DataFim       string                `json:"dataFim"`
-	HoraFim       string                `json:"horaFim"`
-	Timezone      string                `json:"timezone"`
+	ListaAgrupamentos []string              `json:"agrupamentos"`
+	ListaTrajetos     []TrajetoDashboardDTO `json:"trajetos"`
+	ListaEmpresas     []int32               `json:"empresas"`
+	IDCliente         int32                 `json:"idCliente"`
+	Status            []string              `json:"status"`
+	Ordenacao         string                `json:"ordenacao"`
+	DataInicio        string                `json:"dataInicio"`
+	HoraInicio        string                `json:"horaInicio"`
+	DataFim           string                `json:"dataFim"`
+	HoraFim           string                `json:"horaFim"`
+	Timezone          string                `json:"timezone"`
+	TempoRealInicio   string                `json:"tempoRealInicio"`
+	TempoRealFim      string                `json:"tempoRealFim"`
+}
+
+//EndPointDashboardDTO -
+type EndPointDashboardDTO struct {
+	ID *bson.ObjectId `json:"_id"`
+}
+
+//AgrupamentoDashboardDTO -
+type AgrupamentoDashboardDTO struct {
+	ID int32 `json:"id"`
+}
+
+//EmpresaDashboardDTO -
+type EmpresaDashboardDTO struct {
+	ID int32 `json:"id"`
 }
 
 //TrajetoDashboardDTO -
 type TrajetoDashboardDTO struct {
-	ID          *bson.ObjectId `json:"_id"`
-	Descricao   string         `json:"nome"`
-	Sentido     string         `json:"sentido"`
-	NumeroLinha string         `json:"numeroLinha"`
+	ID          *bson.ObjectId       `json:"_id"`
+	Descricao   string               `json:"nome"`
+	Sentido     string               `json:"sentido"`
+	NumeroLinha string               `json:"numeroLinha"`
+	EndPoint    EndPointDashboardDTO `json:"endPoint"`
 }
 
 //GetDataInicio -
@@ -84,8 +139,12 @@ func (f *FilterDTO) GetDataInicioString() *string {
 
 //DadosComplementares -
 type DadosComplementares struct {
-	Cliente  *model.Cliente
-	DataHora time.Time
+	Cliente               *model.Cliente
+	DataHora              time.Time
+	MapaEmpresas          map[int32]struct{}
+	ListaEmpresas         []int32
+	ApenasViagemExecutada bool
+	Instancia             string
 }
 
 //GetDataFim -
@@ -108,6 +167,33 @@ func (f *FilterDTO) GetDataFimString() *string {
 	}
 	str := util.FormatarAMDHMS(dt)
 	return str
+}
+
+//AtualizarParaTempoReal ajusta atributos para filtro realtime
+func (f *FilterDTO) AtualizarParaTempoReal(dt time.Time, tmz *time.Location) (err error) {
+	dtIni := dt
+	dtFim := dt
+
+	ini, err := util.DuracaoDeHorario(f.TempoRealInicio)
+	if err != nil {
+		return
+	}
+
+	fim, err := util.DuracaoDeHorario(f.TempoRealFim)
+	if err != nil {
+		return
+	}
+
+	dtIni = dtIni.Add(-1 * ini)
+	dtFim = dtFim.Add(fim)
+
+	dtIniFormatada, _ := util.FormatarDataComTimezone(dtIni, tmz)
+	dtFimFormatada, _ := util.FormatarDataComTimezone(dtFim, tmz)
+
+	f.DataInicio = &dtIniFormatada
+	f.DataFim = &dtFimFormatada
+
+	return
 }
 
 //ViagemDTO estrutura usada para mapear dados enviados para a tela

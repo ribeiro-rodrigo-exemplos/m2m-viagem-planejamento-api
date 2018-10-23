@@ -89,6 +89,21 @@ func (m *Motorista) nomeOuMatricula() (identificacao string) {
 
 //Modelo - MongoDB
 
+//PontoInteresse -
+type PontoInteresse struct {
+	ID    bson.ObjectId `bson:"_id"`
+	Nome  string        `bson:"nome"`
+	Ativo bool          `bson:"fl_ativo"`
+}
+
+// NewPontoInteresse -
+func NewPontoInteresse(id bson.ObjectId, nome string) *PontoInteresse {
+	m := new(PontoInteresse)
+	m.ID = id
+	m.Nome = nome
+	return m
+}
+
 //MensagemObservacaoMongoDB -
 type MensagemObservacaoMongoDB struct {
 	ID              *bson.ObjectId `bson:"_id"`
@@ -198,6 +213,30 @@ type TrajetoExecutado struct {
 	IDObject  *bson.ObjectId `bson:"_id"`
 	Descricao string         `bson:"descricao"`
 	Sentido   string         `bson:"sentido"`
+}
+
+//Trajeto -
+type Trajeto struct {
+	ID       bson.ObjectId  `bson:"_id"`
+	Nome     string         `bson:"nome"`
+	Sentido  string         `bson:"sentido"`
+	Ativo    bool           `bson:"ativo"`
+	EndPoint PontoInteresse `bson:"endPoint"`
+	Linha    Linha          `bson:"-"`
+}
+
+//Linha -
+type Linha struct {
+	ID          bson.ObjectId `bson:"_id"`
+	Nome        string        `bson:"descr"`
+	Numero      string        `bson:"numero"`
+	Trajetos    []Trajeto     `bson:"trajetos"`
+	Agrupamento Agrupamento   `bson:"consorcio"`
+}
+
+//Agrupamento -
+type Agrupamento struct {
+	ID int32 `bson:"consorcioId"`
 }
 
 //Modelo - API Planejamento

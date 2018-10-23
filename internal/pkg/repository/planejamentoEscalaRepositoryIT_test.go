@@ -32,7 +32,7 @@ func TestListarPlanejamentosEscalas(t *testing.T) {
 		},
 		IDCliente:  209,
 		IDVeiculo:  150,
-		Ordenacao:  []string{"veiculo", "data"},
+		Ordenacao:  "horario",
 		DataInicio: &dataInicio,
 		DataFim:    &dataFim,
 		TipoDia:    []string{"O", "E", "3", "U"},

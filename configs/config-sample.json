@@ -7,6 +7,11 @@
         "request": {
             "maxConcurrent": 10
         },
+        "response": {
+            "gzip": {
+                "enable": false
+            }
+        },
         "transport": {
             "maxIdleConnsPerHost": 10
         }

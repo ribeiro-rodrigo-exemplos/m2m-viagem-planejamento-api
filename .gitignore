@@ -1,5 +1,6 @@
 *~
 main
+go.sum
 vendor/*
 !vendor/vendor.json
 configs/*

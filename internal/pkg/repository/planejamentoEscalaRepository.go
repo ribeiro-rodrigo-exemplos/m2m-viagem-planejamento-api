@@ -49,6 +49,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	var sql string
 	// sql = "call sp_planejamento_vigente ('2018-07-24 00:00:00', '2018-07-24 23:59:59', '209', '\"O\",\"E\",\"3\",\"U\"', '\"555b6e830850536438063762\"') "
 	sql = "call sp_planejamento_vigente (?, ?, ?, ?, ?) "
+	// sql = "call teste_proc (?, ?, ?, ?, ?) "
 
 	dtInicio := filtro.GetDataInicioString()
 	dtFim := filtro.GetDataFimString()
@@ -63,7 +64,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	}
 
 	if logger.IsDebugEnabled() {
-		logger.Debugf("call sp_planejamento_vigente ('%s', '%s', '%s', '%s', '%s')\n", *dtInicio, *dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
+		logger.Debugf("[%s] call sp_planejamento_vigente ('%s', '%s', '%s', '%s', '%s')\n", filtro.Complemento.Instancia, *dtInicio, *dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
 	}
 
 	rows, err := c.connection.Query(sql, dtInicio, dtFim, idCliente, strings.Join(tiposDia, ","), strings.Join(listaTrajetos, ","))
@@ -94,6 +95,14 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 			&toleranciaAtrasoPartida,
 			&mensagensObservacao,
 		)
+
+		if len(filtro.Complemento.MapaEmpresas) > 0 {
+			if idEmpresaPlan == nil {
+				continue
+			}
+			if _, k := filtro.Complemento.MapaEmpresas[*idEmpresaPlan]; !k {
+			}
+		}
 
 		if err != nil {
 			logger.Errorf("%s\n", err)
@@ -146,7 +155,7 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 	}
 
 	/**/
-	logger.Debugf("planejamentosEscala.size %d\n", len(planejamentosEscala))
+	logger.Debugf("[%s] planejamentosEscala.size %d\n", filtro.Complemento.Instancia, len(planejamentosEscala))
 	/**/
 
 	return planejamentosEscala, err
