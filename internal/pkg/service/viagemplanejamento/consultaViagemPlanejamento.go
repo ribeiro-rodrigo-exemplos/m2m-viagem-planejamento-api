@@ -44,6 +44,7 @@ type Service struct {
 	cacheAgrupamento    *cache.Agrupamento
 	cacheLinha          *cache.Linha
 	Cache               *CacheViagemplanejamento
+	chCacheTimeout      chan struct{}
 
 	err                        error
 	chTotal                    chan int
@@ -73,6 +74,15 @@ func NewViagemPlanejamentoService(serviceRealTime *Service, planEscRep *reposito
 	vps.Cache = &CacheViagemplanejamento{
 		TrajetoLinha: make(map[string]dto.LinhaDTO),
 	}
+
+	vps.chCacheTimeout = make(chan struct{})
+
+	go func() {
+		for {
+			time.Sleep(10 * time.Minute)
+			vps.chCacheTimeout <- struct{}{}
+		}
+	}()
 
 	vps.filaTrabalho = make(chan dto.FilterDTO, 50)
 	vps.resultado = make(chan *dto.ConsultaViagemPlanejamentoDTO, 5)
@@ -122,6 +132,16 @@ func NewViagemPlanejamentoService(serviceRealTime *Service, planEscRep *reposito
 //ConsultarPeriodo -
 func (vps *Service) ConsultarPeriodo(filtro dto.FilterDTO) (*dto.ConsultaViagemPlanejamentoDTO, error) {
 	start := time.Now()
+
+	select {
+	case <-vps.chCacheTimeout:
+		logger.Tracef("Atualizar Cache Trajetos\n")
+		vps.Cache = &CacheViagemplanejamento{
+			TrajetoLinha: make(map[string]dto.LinhaDTO),
+		}
+	default:
+		logger.Tracef("NÃO Atualizar Cache Trajetos\n")
+	}
 
 	var mapaEmpresas = make(map[int32]struct{})
 	var listaEmpresas = []int32{}
