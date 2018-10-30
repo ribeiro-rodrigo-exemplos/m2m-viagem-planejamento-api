@@ -7,10 +7,11 @@ import (
 
 //AgrupamentoEntry -
 type AgrupamentoEntry struct {
-	Agrupamento *model.Agrupamento
-	Linhas      []*model.Linha
-	Trajetos    []*model.Trajeto
-	TrajetosDTO []dto.TrajetoDTO
+	Agrupamento  *model.Agrupamento
+	Linhas       []*model.Linha
+	Trajetos     []*model.Trajeto
+	TrajetosDTO  []dto.TrajetoDTO
+	MapaTrajetos map[string]*model.Trajeto
 }
 
 //NewAgrupamentoEntry -
@@ -20,6 +21,7 @@ func NewAgrupamentoEntry(a *model.Agrupamento) (agrupamentoEntry *AgrupamentoEnt
 	agrupamentoEntry.Linhas = []*model.Linha{}
 	agrupamentoEntry.Trajetos = []*model.Trajeto{}
 	agrupamentoEntry.TrajetosDTO = []dto.TrajetoDTO{}
+	agrupamentoEntry.MapaTrajetos = make(map[string]*model.Trajeto)
 	return
 }
 
@@ -35,8 +37,13 @@ func (a *AgrupamentoEntry) GetLinhas() (linhas []*model.Linha) {
 }
 
 //AddTrajeto -
-func (a *AgrupamentoEntry) AddTrajeto(l *model.Trajeto) {
-	a.Trajetos = append(a.Trajetos, l)
+func (a *AgrupamentoEntry) AddTrajeto(l model.Trajeto) {
+	idTrajeto := l.ID.Hex()
+	if _, ok := a.MapaTrajetos[idTrajeto]; ok {
+		return
+	}
+	a.MapaTrajetos[idTrajeto] = &l
+	a.Trajetos = append(a.Trajetos, &l)
 	a.TrajetosDTO = append(a.TrajetosDTO, dto.TrajetoDTO{
 		ID:        &l.ID,
 		Descricao: l.Nome,

@@ -96,17 +96,15 @@ func (c *PlanejamentoEscalaRepository) ListarPlanejamentosEscala(filtro *dto.Fil
 			&mensagensObservacao,
 		)
 
-		if len(filtro.Complemento.MapaEmpresas) > 0 {
-			if idEmpresaPlan == nil {
-				continue
-			}
-			if _, k := filtro.Complemento.MapaEmpresas[*idEmpresaPlan]; !k {
-			}
-		}
-
 		if err != nil {
 			logger.Errorf("%s\n", err)
 			return nil, err
+		}
+
+		if idEmpresaPlan != nil && len(filtro.Complemento.MapaEmpresas) > 0 {
+			if _, k := filtro.Complemento.MapaEmpresas[*idEmpresaPlan]; !k {
+				continue
+			}
 		}
 
 		/** /

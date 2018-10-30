@@ -17,6 +17,7 @@ var projecaoLinha = bson.M{
 	"trajetos.ativo":        1,
 	"trajetos.endPoint._id": 1,
 	"consorcio.consorcioId": 1,
+	"excluido":              1,
 }
 
 //LinhaRepository -
@@ -43,7 +44,7 @@ func (p *LinhaRepository) Listar() (linhas []model.Linha, err error) {
 	defer session.Close()
 
 	query := bson.M{
-		//"excluido" : false,
+		"excluido": false,
 	}
 
 	collection := session.DB(cfg.Config.MongoDB.Database).C("Linha")

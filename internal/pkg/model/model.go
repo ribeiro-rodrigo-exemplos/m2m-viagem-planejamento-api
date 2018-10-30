@@ -232,6 +232,7 @@ type Linha struct {
 	Numero      string        `bson:"numero"`
 	Trajetos    []Trajeto     `bson:"trajetos"`
 	Agrupamento Agrupamento   `bson:"consorcio"`
+	Excluido    bool          `bson:"excluido"`
 }
 
 //Agrupamento -

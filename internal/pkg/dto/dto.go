@@ -227,7 +227,7 @@ type ViagemDTO struct {
 	QtdePassageiros     *int32                  `json:"qtdePassageiros"`
 	Proxima             *string                 `json:"proxima"`
 	PercentualConclusao *string                 `json:"percentualConclusao"`
-	Editada             bool                    `json:"editada"`
+	TipoViagem          *int32                  `json:"tipoViagem"`
 	Headway             *int64                  `json:"headway"`
 	HeadwayStr          *string                 `json:"headwayStr"`
 	Data                *time.Time              `json:"data"`
