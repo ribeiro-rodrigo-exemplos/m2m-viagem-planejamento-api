@@ -800,6 +800,8 @@ func (vps *Service) populaDadosViagem(vgex *model.ViagemExecutada, vg *dto.Viage
 		}
 	}
 
+	vg.TipoViagem = &vgex.TipoViagem
+
 }
 
 func diferencaMinutos(d time.Duration) (duracao *int64) {
